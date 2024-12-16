@@ -3,11 +3,11 @@ import { FC } from 'react'
 import Image from 'next/image'
 
 import { useLocale } from 'next-intl'
-import One from '@/public/key/Profile.svg'
-import Two from '@/public/key/reyting.svg'
-import Three from '@/public/key/repeat.svg'
-import four from '@/public/key/Sharhlar.svg'
-import Five from '@/public/key/Last.svg'
+import One from '../../public/key/Profile.svg'
+import Two from '../../public/key/reyting.svg'
+import Three from '../../public/key/repeat.svg'
+import four from '../../public/key/Sharhlar.svg'
+import Five from '../../public/key/Last.svg'
 
 
 

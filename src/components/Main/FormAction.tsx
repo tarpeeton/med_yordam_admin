@@ -1,9 +1,11 @@
 "use client"
 import { FC } from 'react'
 import Image from 'next/image'
-import Mobile from '@/public/action/Mobile.png'
-import Tablet from '@/public/action/Tablet.png'
-import Desktop from '@/public/action/Desktop.png'
+
+
+import Mobile from '../../public/action/Mobile.png'
+import Tablet from '../../public/action/Tablet.png'
+import Desktop from '../../public/action/Desktop.png'
 
 import { useLocale } from 'next-intl'
 

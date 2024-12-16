@@ -1,6 +1,6 @@
 "use client"
 import { FC } from 'react';
-import LogoDefault from '@/public/menu/Logo.svg'
+import LogoDefault from '../../public/menu/Logo.svg'
 import Image from 'next/image';
 import { useLocale } from 'next-intl';
 import Banner from './Banner';
@@ -9,6 +9,7 @@ import Timer from './Timer';
 import About from './About';
 import FormAction from './FormAction';
 import KeyService from './KeyService';
+import WhyChoise from './Choise';
 
 
 
@@ -38,6 +39,7 @@ const Main: FC = () => {
       <About />
       <FormAction />
       <KeyService />
+      <WhyChoise />
     </div>
   );
 };

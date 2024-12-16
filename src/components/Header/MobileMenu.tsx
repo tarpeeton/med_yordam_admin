@@ -2,7 +2,7 @@
 import { FC } from "react";
 import { IoClose } from "react-icons/io5";
 import Image from 'next/image';
-import LogoDefault from '@/public/menu/Logo.svg'
+import LogoDefault from '../../public/menu/Logo.svg'
 import { useLocale } from 'next-intl';
 
 
