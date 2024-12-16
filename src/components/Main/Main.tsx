@@ -7,7 +7,8 @@ import Banner from './Banner';
 
 import Timer from './Timer';
 import About from './About';
-import FormAction from '@/components/Main/FormAction';
+import FormAction from './FormAction';
+import KeyService from './KeyService';
 
 
 
@@ -36,6 +37,7 @@ const Main: FC = () => {
       <Timer />
       <About />
       <FormAction />
+      <KeyService />
     </div>
   );
 };
