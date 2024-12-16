@@ -1,0 +1,14 @@
+{
+	"Links": {
+	  "about": "About us",
+	  "service": "Services",
+	  "project": "Projects",
+	  "seminar": "Seminars and trainings",
+	  "blog": "Blog",
+	  "contact": "Contacts"
+	},
+	"Buttons": {
+		"assatsionADD": "Join the association",
+		"partnerADD": "Become a partner"
+	}
+  }
