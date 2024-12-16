@@ -17,16 +17,16 @@ const Banner: FC = () => {
       <div className='flex flex-col slg:flex-row slg:justify-between'>
         <div className='flex flex-row flex-wrap slg:w-[47%]  justify-between'>
           <div className='rounded-bl-[30px] rounded-tr-[30px] overflow-hidden w-[47%] h-[135px]  mt-[13px] 2xl:h-[200px]'>
-            <Image src={One} alt="Image One" width={300} height={300} quality={100} className='w-full h-full object-cover' />
+            <Image src={One.src} alt="Image One" width={300} height={300} quality={100} className='w-full h-full object-cover' />
           </div>
           <div className='rounded-bl-[30px] rounded-tr-[30px] overflow-hidden w-[47%] h-[135px] 2xl:h-[200px] '>
-            <Image src={Two} alt="Image One" width={300} height={300} quality={100} className='w-full h-full object-cover' />
+            <Image src={Two.src} alt="Image One" width={300} height={300} quality={100} className='w-full h-full object-cover' />
           </div>
           <div className='rounded-bl-[30px] rounded-tr-[30px] overflow-hidden w-[47%] h-[135px] mt-[13px] 2xl:h-[200px]'>
-            <Image src={Three} alt="Image One" width={300} height={300} quality={100} className='w-full h-full object-cover' />
+            <Image src={Three.src} alt="Image One" width={300} height={300} quality={100} className='w-full h-full object-cover' />
           </div>
           <div className='rounded-bl-[30px] rounded-tr-[30px] overflow-hidden w-[47%] h-[135px]  mt-[13px] 2xl:h-[200px]'>
-            <Image src={Four} alt="Image One" width={300} height={300} quality={100} className='w-full h-full object-cover' />
+            <Image src={Four.src} alt="Image One" width={300} height={300} quality={100} className='w-full h-full object-cover' />
           </div>
         </div>
         <div className="mt-[20px] slg:w-[50%] slg:mt-0 flex flex-col gap-[16px] slg:gap-[24px] slg:order-[-1]">

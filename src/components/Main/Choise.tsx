@@ -40,28 +40,28 @@ const WhyChoise: FC = () => {
           {/* 1-karta */}
           <div className="slg:h-[150px] flex items-center justify-center bg-[#379FF2] w-full h-[100px] slg:min-w-[170px] rounded-tr-[35px] rounded-bl-[35px] slg:rounded-tr-[90px] slg:rounded-bl-[90px] 3xl:h-[210px] ">
             <div className="w-[32px] h-[32px] text-white 3xl:w-[72px] 3xl:h-[72px]">
-              <Image width={32} height={32} quality={100} src={One} alt="Heart Icon" className="w-full h-full" />
+              <Image width={32} height={32} quality={100} src={One.src} alt="Heart Icon" className="w-full h-full" />
             </div>
           </div>
 
           {/* 2-karta */}
           <div className="slg:h-[150px] slg:rounded-tl-[90px]  slg:rounded-br-[90px] flex items-center justify-center bg-[#0129E3] w-full h-[90px] slg:min-w-[170px] rounded-tl-[30px] rounded-br-[30px] 3xl:h-[210px] ">
             <div className="w-[32px] h-[32px] text-white 3xl:w-[72px] 3xl:h-[72px]">
-              <Image width={32} height={32} quality={100} src={Two} alt="Plus Icon" className="w-full h-full" />
+              <Image width={32} height={32} quality={100} src={Two.src} alt="Plus Icon" className="w-full h-full" />
             </div>
           </div>
 
           {/* 3-karta */}
           <div className="slg:h-[150px] slg:rounded-tl-[90px]  slg:rounded-br-[90px]  flex items-center justify-center bg-[#0129E3] w-full h-[90px] slg:min-w-[170px] rounded-tl-[30px] rounded-br-[30px] 3xl:h-[210px] ">
             <div className="w-[32px] h-[32px] text-white 3xl:w-[72px] 3xl:h-[72px]">
-              <Image width={32} height={32} quality={100} src={Three} alt="Hospital Icon" className="w-full h-full" />
+              <Image width={32} height={32} quality={100} src={Three.src} alt="Hospital Icon" className="w-full h-full" />
             </div>
           </div>
 
           {/* 4-karta */}
           <div className="slg:h-[150px] slg:rounded-tr-[90px] slg:rounded-bl-[90px] flex items-center justify-center bg-[#379FF2] w-full h-[100px] slg:min-w-[170px] rounded-tr-[35px] rounded-bl-[35px] 3xl:h-[210px] ">
             <div className="w-[32px] h-[32px] text-white 3xl:w-[72px] 3xl:h-[72px]">
-              <Image width={32} height={32} quality={100} src={Four} alt="Ambulance Icon" className="w-full h-full" />
+              <Image width={32} height={32} quality={100} src={Four.src} alt="Ambulance Icon" className="w-full h-full" />
             </div>
           </div>
         </div>

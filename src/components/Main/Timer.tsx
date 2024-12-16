@@ -20,8 +20,8 @@ export default function CountdownTimer() {
 
 
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({
-    days: 14,
-    hours: 6,
+    days: 13,
+    hours: 2,
     minutes: 10,
     seconds: 28,
   })

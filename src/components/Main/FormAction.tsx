@@ -31,7 +31,7 @@ const FormAction: FC = () => {
 
         <div className="hidden slg:block 2xl:hidden absolute bottom-[30%] left-[calc(100%-440px)] translate-y-1/2 z-10 w-[100px] lg:w-[140px] max-w-[15%]">
     <Image
-      src={Tablet}
+      src={Tablet.src}
       alt="Arrow Image"
       width={300}
       height={300}
@@ -42,7 +42,7 @@ const FormAction: FC = () => {
 
   <div className="hidden 2xl:block absolute bottom-[20%] left-[calc(100%-540px)] translate-y-1/2 z-10 w-[200px] ">
     <Image
-      src={Desktop}
+      src={Desktop.src}
       alt="Arrow Image"
       width={300}
       height={300}

@@ -71,7 +71,7 @@ const KeyService: FC = () => {
         {Data.map((item) => (
           <div key={item.id} className='flex flex-col gap-[16px] '>
             <div className='w-[32px] h-[32px]'>
-              <Image src={item.icon} alt="Image One" width={32} height={32} quality={100} className='w-full h-full object-cover' />
+              <Image src={item.icon.src} alt="Image One" width={32} height={32} quality={100} className='w-full h-full object-cover' />
             </div>
             <p className='text-[#050B2B] font-medium text-[18px] slg:text-[20px]'>
               {item.title[locale]}

@@ -16,7 +16,7 @@ const About: FC = () => {
     <div className='mt-[80px] mdl:mt-[120px] 2xl:mt-[150px]'>
       <div className='bg-white flex flex-col 3xl:flex-row 3xl:justify-between px-[20px] 3xl:p-[60px] '>
         <div className='overflow-hidden rounded-br-[60px] rounded-tl-[20px] rounded-bl-[20px] slg:h-[447px] 3xl:w-[48%] 3xl:rounded-br-[100px] '>
-          <Image src={AboutImage} alt="Image One" width={300} height={300} quality={100} className='w-full h-full object-cover' />
+          <Image src={AboutImage.src} alt="Image One" width={300} height={300} quality={100} className='w-full h-full object-cover' />
         </div>
         <div className='flex flex-col gap-[16px] mt-[20px] slg:mt-[40px] slg:gap-[20px] 3xl:gap-[40px] 3xl:w-[48%] '>
           <h3 className='text-[26px] slg:text-[36px] 3xl:text-[50px] font-medium text-titleDark  '>
