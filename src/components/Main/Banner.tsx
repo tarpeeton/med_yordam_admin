@@ -2,10 +2,12 @@
 import { FC } from 'react'
 import Image from 'next/image'
 
-import One from '@/public/Banner/One.jpg'
-import Two from '@/public/Banner/Two.jpg'
-import Three from '@/public/Banner/three.jpg'
-import Four from '@/public/Banner/Four.jpg'
+import One from '../../public/BannerImage/One.jpg'
+import Two from '../../public/BannerImage/Two.jpg'
+import Three from '../../public/BannerImage/three.jpg'
+import Four from '../../public/BannerImage/Four.jpg'
+
+
 import { useLocale } from 'next-intl'
 
 const Banner: FC = () => {
