@@ -22,7 +22,7 @@ const Main: FC = () => {
     <div className='px-[16px] slg:px-[20px] 2xl:px-[100px]'>
       <div className='h-[79px] px-[20px] mdl:flex items-center justify-between flex-row flex-nowrap hidden'>
         <div>
-          <Image src={LogoDefault} alt="" width={300} height={90} quality={100} className='w-full h-full object-cover' />
+          <img src={LogoDefault.src} alt="" width={300} height={90} className='w-full h-full object-cover' />
         </div>
         <div className='flex flex-row gap-[8px] mdl:w-[50%] slg:w-[40%]'>
           <button className='bg-white py-[17px] w-[50%] rounded-tl-[20px] rounded-bl-[20px] flex items-center justify-center text-[16px] '>

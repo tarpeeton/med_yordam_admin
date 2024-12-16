@@ -4,10 +4,10 @@ import Image from 'next/image'
 
 import { useLocale } from 'next-intl'
 // IMAGES
-import One from '../../public/choise/One.svg'
-import Two from '../../public/choise/Two.svg'
-import Three from '../../public/choise/Three.svg'
-import Four from '../../public/choise/Four.svg'
+import One from '@/public/choise/One.svg'
+import Two from '@/public/choise/Two.svg'
+import Three from '@/public/choise/Three.svg'
+import Four from '@/public/choise/Four.svg'
 
 
 
