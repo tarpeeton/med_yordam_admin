@@ -4,8 +4,10 @@ import LogoDefault from '@/public/menu/Logo.svg'
 import Image from 'next/image';
 import { useLocale } from 'next-intl';
 import Banner from './Banner';
-import Timer from './Timer';
 
+import Timer from './Timer';
+import About from './About';
+import FormAction from '@/components/Main/FormAction';
 
 
 
@@ -32,7 +34,8 @@ const Main: FC = () => {
 
       <Banner />
       <Timer />
-
+      <About />
+      <FormAction />
     </div>
   );
 };
