@@ -68,19 +68,27 @@ const Form: FC = () => {
   return (
     <section className='mt-[80px] mdl:mt-[120px] 3xl:mt-[150px] bg-white rounded-[20px]'>
 
-      <div className='py-[20px] px-[16px] slg:p-[40px] 2xl:px-[40px] 2xl:py-[52px] flex flex-col 2xl:flex-row'>
-        <div className='relative flex flex-col 2xl:flex-row'>
-          <div className='h-[192px] w-[160px] '>
+      <div className='py-[20px] px-[16px] slg:p-[40px] 2xl:px-[40px] 2xl:py-[52px] flex flex-col 2xl:flex-row 2xl:justify-between'>
+        <div className='relative flex flex-col slg:flex-row'>
+          
+          <div className='h-[192px] w-[160px]  slg:min-w-[300px] slg:h-[360px] 2xl:h-[400px]'>
             <Image src={DoctorImage} alt="Docotr Image" width={1200} height={1200} quality={100} className='w-full h-full object-cover' />
 
 
           </div>
           <div className='flex flex-col gap-[20px] 2xl:gap-[24px] mt-[20px] slg:mt-0 relative'>
-            <div className='absolute  z-10 top-[-150px] right-[30px] h-[180px] w-[90px]'>
+            <div className='absolute  z-10 top-[-150px] right-[30px] h-[180px] w-[90px] slg:hidden'>
               <Image src={Mobile} alt="Docotr Image" width={1200} height={1200} quality={100} className='w-full h-full object-cover' />
             </div>
+            <div className='hidden  z-10 top-[250px] right-[30px] h-[200px] w-[100px] slg:block slg:absolute 2xl:hidden'>
+              <Image src={Mobile} alt="Docotr Image" width={1200} height={1200} quality={100} className='w-full h-full object-cover' />
+            </div>
+            <div className='hidden  z-10 top-[250px] right-[30px] h-[220px] w-[151px] 2xl:block 2xl:absolute '>
+              <Image src={Desktop} alt="Docotr Image" width={1200} height={1200} quality={100} className='w-full h-full object-cover' />
+            </div>
             {/* DOCtoR TITLE */}
-            <p className='bg-gradient-to-r from-[#050B2B] to-[#112591] bg-clip-text text-transparent text-2xl font-bold'>
+            <div className='2xl:w-[363px] 4xl:w-[620px]'>
+            <p className='bg-gradient-to-r from-[#050B2B] to-[#112591] bg-clip-text text-transparent text-2xl font-bold slg:text-[32px]'>
               {locale === 'ru'
                 ? "Вы врач?"
                 : locale === 'uz'
@@ -88,14 +96,18 @@ const Form: FC = () => {
                   : "Are you a doctor?"}
 
             </p>
-            <p className='text-[15px] text-[#050B2B] leading-[21px] slg:text-[16px] slg:leading-[22.4px]  2xl:text-[20px] 2xl:leading-[28px] '>
+            <p className='text-[15px] slg:mt-[24px] mt-[20px] text-[#050B2B] leading-[21px] slg:text-[16px] slg:leading-[22.4px]  2x 2xl:text-[20px] 2xl:leading-[28px] '>
               {SUBTITLE.item[locale]}
             </p>
+            </div>
+            
           </div>
-          <div className=' mt-[20px]'>
+        </div>
+       
+          <div className=' mt-[20px] slg:mt-[80px] slg:w-[70%] 2xl:w-[40%]  2xl:mt-0'>
             <form className='flex flex-col gap-[16px] slg:gap-[24px]'>
             {inputFields.map((field) => (
-            <div key={field.id} className="relative w-full">
+            <div key={field.id} className="relative w-full cursor-pointer">
               <input
                 id={field.id}
                 type={field.type || "text"}
@@ -126,8 +138,6 @@ const Form: FC = () => {
 
             </form>
           </div>
-        </div>
-
       </div>
 
     </section>

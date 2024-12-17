@@ -13,6 +13,7 @@ import WhyChoise from './Choise';
 import HowWeWork from './HowWork';
 import Map from './Map';
 import Form from './Form';
+import Invite from './Invite';
 
 
 
@@ -46,6 +47,7 @@ const Main: FC = () => {
       <HowWeWork />
       <Map />
       <Form />
+      <Invite />
     </div>
   );
 };
