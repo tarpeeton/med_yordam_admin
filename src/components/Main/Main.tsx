@@ -12,6 +12,7 @@ import KeyService from './KeyService';
 import WhyChoise from './Choise';
 import HowWeWork from './HowWork';
 import Map from './Map';
+import Form from './Form';
 
 
 
@@ -44,6 +45,7 @@ const Main: FC = () => {
       <WhyChoise />
       <HowWeWork />
       <Map />
+      <Form />
     </div>
   );
 };
