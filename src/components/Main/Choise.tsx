@@ -81,7 +81,7 @@ const WhyChoise: FC = () => {
             Пациенты смогут находить вас через платформу и записываться на прием.
           </p>
         </div>
-        <div className='flex flex-col gap-[8px] mt-[20px] slg:w-[185px] slg:mt-[-120px] 3xl:w-[250px] 3xl:mt-[50px]'>
+        <div className='flex flex-col gap-[8px] mt-[20px] slg:w-[185px] slg:mt-[-120px] 3xl:w-[250px] 3xl:mt-[50px] 4xl:mt-[300px]'>
           <p className='text-[#050B2B] text-[18px] slg:text-[20px] 3xl:text-[24px]'>
             Доступ к пациентам
           </p>
@@ -89,7 +89,7 @@ const WhyChoise: FC = () => {
             Пациенты смогут находить вас через платформу и записываться на прием.
           </p>
         </div>
-        <div className='flex flex-col gap-[8px] mt-[20px] slg:w-[185px] slg:mt-[-120px] 3xl:w-[250px] 3xl:mt-[50px]'>
+        <div className='flex flex-col gap-[8px] mt-[20px] slg:w-[185px] slg:mt-[-120px] 3xl:w-[250px] 3xl:mt-[50px] '>
           <p className='text-[#050B2B] text-[18px] slg:text-[20px] 3xl:text-[24px]'>
             Доступ к пациентам
           </p>

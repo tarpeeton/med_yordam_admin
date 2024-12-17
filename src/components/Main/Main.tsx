@@ -10,6 +10,8 @@ import About from './About';
 import FormAction from './FormAction';
 import KeyService from './KeyService';
 import WhyChoise from './Choise';
+import HowWeWork from './HowWork';
+import Map from './Map';
 
 
 
@@ -40,6 +42,8 @@ const Main: FC = () => {
       <FormAction />
       <KeyService />
       <WhyChoise />
+      <HowWeWork />
+      <Map />
     </div>
   );
 };
