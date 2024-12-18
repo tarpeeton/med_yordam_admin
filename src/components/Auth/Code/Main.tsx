@@ -1,15 +1,15 @@
 "use client"
-import { FC, useState } from 'react';
+import { FC, useState, useEffect } from 'react';
 
 import { useLocale } from 'next-intl';
 import { GrFormPrevious } from "react-icons/gr";
 import Axios from 'axios';
 import { Link } from '@/i18n/routing';
-
+import { Modal } from '@/components/Modals/successModal';
 
 const RegisterCode: FC = () => {
   const locale = useLocale();
-
+  const [isModalOpen, setIsModalOpen] = useState(true);
   const [formValues, setFormValues] = useState({
     code: '',
   });
@@ -30,6 +30,21 @@ const RegisterCode: FC = () => {
     }
   };
 
+
+  const handleCloseModal = () =>  setIsModalOpen(false)
+
+  const [timer, setTimer] = useState(60);
+
+  // Add this useEffect for countdown functionality
+  useEffect(() => {
+    if (timer > 0) {
+      const interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+        setIsModalOpen(true)
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [timer]);
 
   return (
     <div className='mt-[10px] slg:mt-[20px] px-[16px] slg:px-[20px] 2xl:px-[100px]'>
@@ -57,6 +72,7 @@ const RegisterCode: FC = () => {
                 : "Confirmation letter sent to your number"
             }
           </h1>
+            <Modal open={isModalOpen} close={handleCloseModal} />
 
           <div className='w-full slg:w-[90%] 2xl:w-[80%] mx-auto p-[15px] bg-white rounded-[20px] 2xl:p-[30px] '>
             <form className='flex flex-col gap-[15px] slg:gap-[20px]'>
@@ -75,20 +91,26 @@ const RegisterCode: FC = () => {
                 />
                 <label
                   onClick={() => handleFocus('code', true)}
-                  className={`absolute left-[25px] w-[calc(100%-50px)] flex items-center justify-between gap-[10px] transition-all ${isFocused['code'] || formValues['code'] ? "top-3 text-xs text-gray-500" : "top-[26px] text-base text-gray-400"
+                  className={`absolute left-[25px] pointer-events-none w-[calc(100%-50px)] flex items-center justify-between gap-[10px] transition-all ${isFocused['code'] || formValues['code'] ? "top-3 text-xs text-gray-500" : "top-[26px] text-base text-gray-400"
                     }`}
                 >
 
                   {locale === 'ru' ? "Код подтверждения" : locale === 'uz' ? "Tasdiqlash kodi" : "Confirmation code"}
 
                   <div>
-                    <p className='text-[15px] text-[#0129E3] font-bold'>00:59</p>
+                    <p className='text-[15px] text-[#0129E3] font-bold'>{`00:${String(timer).padStart(2, '0')}`}</p>
                   </div>
                 </label>
               </div>
-              <Link href='/register' className='text-[14px] slg:text-[15px] text-[#0129E3] 2xl:text-[16px] font-medium text-left'>
-                {locale === 'ru' ? "Изменить номер телефона" : locale === 'uz' ? "Raqamni o'zgartirish" : "Change phone number"}
-              </Link>
+              <div className='flex flex-row justify-between items-center'>
+                <Link href='/register' className='text-[14px] slg:text-[15px] text-[#0129E3] 2xl:text-[16px] font-medium text-left'>
+                  {locale === 'ru' ? "Изменить номер телефона" : locale === 'uz' ? "Raqamni o'zgartirish" : "Change phone number"}
+                </Link>
+                <Link href='/register' className='text-[14px] slg:text-[15px] text-[#747474] 2xl:text-[16px] font-medium text-left'>
+                  {locale === 'ru' ? "запросить код повторно" : locale === 'uz' ? "Qayta kod yuborish" : "Request code again"}
+                </Link>
+              </div>
+
             </form>
           </div>
           <div className='w-full mt-[40px] mx-auto  slg:w-[90%] 2xl:w-[80%]   slg:mt-[43px]'>

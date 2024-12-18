@@ -104,7 +104,7 @@ const RegisterForm: FC = () => {
                 />
                 <label
                 onClick={() => handleFocus('phoneNumber', true)}
-                  className={`absolute left-[25px] flex items-center gap-[10px] transition-all ${isFocused['phoneNumber'] || formValues['phoneNumber'] ? "top-3 text-xs text-gray-500" : "top-[26px] text-base text-gray-400"
+                  className={`absolute  pointer-events-none left-[25px] flex items-center gap-[10px] transition-all ${isFocused['phoneNumber'] || formValues['phoneNumber'] ? "top-3 text-xs text-gray-500" : "top-[26px] text-base text-gray-400"
                     }`}
                 >
                   <MdOutlinePhone />
@@ -124,7 +124,7 @@ const RegisterForm: FC = () => {
                 />
                 <label
                 onClick={() => handleFocus('password', true)}
-                  className={`absolute left-[25px] flex items-center gap-[10px] transition-all ${isFocused['password'] || formValues['password'] ? "top-3 text-xs text-gray-500" : "top-[26px] text-base text-gray-400"
+                  className={`absolute  pointer-events-none left-[25px] flex items-center gap-[10px] transition-all ${isFocused['password'] || formValues['password'] ? "top-3 text-xs text-gray-500" : "top-[26px] text-base text-gray-400"
                     }`}
                 >
                   <TfiKey />
@@ -144,7 +144,7 @@ const RegisterForm: FC = () => {
                 />
                 <label
                 onClick={() => handleFocus('repeatPassword', true)}
-                  className={`absolute left-[25px] flex items-center gap-[10px] transition-all ${isFocused['repeatPassword'] || formValues['repeatPassword'] ? "top-3 text-xs text-gray-500" : "top-[26px] text-base text-gray-400"
+                  className={`absolute  pointer-events-none left-[25px] flex items-center gap-[10px] transition-all ${isFocused['repeatPassword'] || formValues['repeatPassword'] ? "top-3 text-xs text-gray-500" : "top-[26px] text-base text-gray-400"
                     }`}
                 >
                   <TfiKey />
