@@ -6,10 +6,14 @@ import { GrFormPrevious } from "react-icons/gr";
 import Axios from 'axios';
 import { Link } from '@/i18n/routing';
 import { Modal } from '@/components/Modals/successModal';
+import { ErrorModal } from '@/components/Modals/errorModal';
+
 
 const RegisterCode: FC = () => {
   const locale = useLocale();
   const [isModalOpen, setIsModalOpen] = useState(true);
+  const [isResendVisible, setIsResendVisible] = useState(false);
+
   const [formValues, setFormValues] = useState({
     code: '',
   });
@@ -17,6 +21,9 @@ const RegisterCode: FC = () => {
   const [isFocused, setIsFocused] = useState({
     code: false,
   });
+
+
+
 
   const handleFocus = (field: string, focused: boolean) => {
     setIsFocused((prev) => ({ ...prev, [field]: focused }));
@@ -35,16 +42,30 @@ const RegisterCode: FC = () => {
 
   const [timer, setTimer] = useState(60);
 
-  // Add this useEffect for countdown functionality
   useEffect(() => {
     if (timer > 0) {
       const interval = setInterval(() => {
         setTimer((prev) => prev - 1);
-        setIsModalOpen(true)
       }, 1000);
-      return () => clearInterval(interval);
+  
+      return () => clearInterval(interval); // Cleanup interval
+    } else {
+      setIsResendVisible(true); // When timer is 0, show resend button
     }
   }, [timer]);
+  
+
+
+
+  const handleResendCode = () => {
+    setTimer(60); // Reset the timer
+    setIsResendVisible(false); // Hide the resend button
+    // Call API to resend code here
+    console.log('Code resent');
+  };
+
+
+
 
   return (
     <div className='mt-[10px] slg:mt-[20px] px-[16px] slg:px-[20px] 2xl:px-[100px]'>
@@ -72,8 +93,8 @@ const RegisterCode: FC = () => {
                 : "Confirmation letter sent to your number"
             }
           </h1>
-            <Modal open={isModalOpen} close={handleCloseModal} />
-
+            {/* <Modal open={isModalOpen} close={handleCloseModal} /> */}
+            <ErrorModal open={isModalOpen} close={handleCloseModal} />
           <div className='w-full slg:w-[90%] 2xl:w-[80%] mx-auto p-[15px] bg-white rounded-[20px] 2xl:p-[30px] '>
             <form className='flex flex-col gap-[15px] slg:gap-[20px]'>
               <p className='text-[14px] slg:text-[16px] text-[#050B2B] 2xl:text-[20px] font-medium'>
@@ -98,17 +119,28 @@ const RegisterCode: FC = () => {
                   {locale === 'ru' ? "Код подтверждения" : locale === 'uz' ? "Tasdiqlash kodi" : "Confirmation code"}
 
                   <div>
-                    <p className='text-[15px] text-[#0129E3] font-bold'>{`00:${String(timer).padStart(2, '0')}`}</p>
+                    {isResendVisible ? (
+                  <button
+                    onClick={handleResendCode}
+                    type="button"
+                    className="text-[15px] text-[#0129E3] font-bold cursor-pointer"
+                  >
+                    Отправить еще раз
+                  </button>
+                ) : (
+                  <p className="text-[15px] text-[#0129E3] font-bold">
+                    {`00:${String(timer).padStart(2, '0')}`}
+                  </p>
+                )}
+
                   </div>
                 </label>
               </div>
-              <div className='flex flex-row justify-between items-center'>
+              <div className='flex flex-row  items-center'>
                 <Link href='/register' className='text-[14px] slg:text-[15px] text-[#0129E3] 2xl:text-[16px] font-medium text-left'>
                   {locale === 'ru' ? "Изменить номер телефона" : locale === 'uz' ? "Raqamni o'zgartirish" : "Change phone number"}
                 </Link>
-                <Link href='/register' className='text-[14px] slg:text-[15px] text-[#747474] 2xl:text-[16px] font-medium text-left'>
-                  {locale === 'ru' ? "запросить код повторно" : locale === 'uz' ? "Qayta kod yuborish" : "Request code again"}
-                </Link>
+               
               </div>
 
             </form>
