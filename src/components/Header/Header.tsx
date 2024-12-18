@@ -4,10 +4,20 @@ import { RxHamburgerMenu } from "react-icons/rx";
 import { SlLocationPin } from "react-icons/sl";
 import { RiArrowDownSLine } from "react-icons/ri";
 import { useLocale } from 'next-intl';
+import { Link } from '@/i18n/routing';
 import LanguageSwitcher from '@/components/Header/LanguageSwither';
 import MobileMenu from '@/components/Header/MobileMenu';
 import LogoDefault from '../../public/menu/Logo.svg'
-import Image from 'next/image';
+
+
+
+
+
+
+
+
+
+
 
 const Header: FC = () => {
   const locale = useLocale()
@@ -46,9 +56,9 @@ const Header: FC = () => {
           <button className='bg-white py-[17px] w-[50%] rounded-tl-[20px] rounded-bl-[20px] flex items-center justify-center text-[16px] '>
             {locale === 'ru' ? " О проекте" : locale === 'uz' ? 'Loyiha haqida' : locale === 'en' ? 'About the project' : "About the project"}
           </button>
-          <button className='bg-white py-[17px] w-[50%] rounded-tr-[20px] rounded-br-[20px] flex items-center justify-center text-[16px] text-[#0129E3]'>
+          <Link href='/register' className='bg-white py-[17px] w-[50%] rounded-tr-[20px] rounded-br-[20px] flex items-center justify-center text-[16px] text-[#0129E3]'>
             {locale === 'ru' ? "Регистрация" : locale === 'uz' ? 'Ro\'yhatdan o\'tish' : 'Register'}
-          </button>
+          </Link>
         </div>
       </div>
         </div>

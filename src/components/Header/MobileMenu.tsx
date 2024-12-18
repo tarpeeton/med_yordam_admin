@@ -1,9 +1,10 @@
 "use client";
 import { FC } from "react";
 import { IoClose } from "react-icons/io5";
+import { useLocale } from 'next-intl';
+import {Link} from "@/i18n/routing";
 import Image from 'next/image';
 import LogoDefault from '../../public/menu/Logo.svg'
-import { useLocale } from 'next-intl';
 
 
 
@@ -33,11 +34,11 @@ const MobileMenu: FC<MobileMenuProps> = ({ closeMenu }) => {
            
             {locale === 'ru' ? " О проекте": locale ==='uz' ? 'Loyiha haqida': locale === 'en' ? 'About the project' : "About the project"}
             </button>
-          <button className='py-[15px] min-w-[120px] text-[14px] rounded-full bg-white text-[#0129E3] font-medium'>
+          <Link href='/register' className='py-[15px] min-w-[120px] text-[14px] rounded-full bg-white text-[#0129E3] font-medium'>
 
           {locale === 'ru' ? "Регистрация": locale ==='uz' ? 'Ro\'yhatdan o\'tish':  'Register' }
 
-          </button>
+          </Link>
         </div>
       </div>
     </div>
