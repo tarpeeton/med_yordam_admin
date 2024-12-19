@@ -3,6 +3,7 @@ import { FC } from 'react'
 import { Link } from '@/i18n/routing';
 import Image from 'next/image';
 import { useRouter } from "next/router";
+import { useLocale } from 'next-intl';
 
 // SUCCES Image
 import Error from '@/public/modal/error.png'
@@ -10,10 +11,13 @@ import Error from '@/public/modal/error.png'
 interface IModalProps {
   open: boolean
   close: () => void
+  title: {ru: string , uz:string , en:string}
+  sbutitle: {ru: string , uz:string , en:string}
 }
 
 
-export const ErrorModal: FC<IModalProps> = ({ open, close }) => {
+export const ErrorModal: FC<IModalProps> = ({ open, close  , title , sbutitle}) => {
+  const locale = useLocale() as 'ru' | 'uz' | 'en';
 
 
 
@@ -27,11 +31,11 @@ export const ErrorModal: FC<IModalProps> = ({ open, close }) => {
         </div>
         <div className='2xl:flex 2xl:flex-col 2xl:items-center'>
           <h3 className="text-[30px] w-[70%] slg:w-full 2xl:text-center slg:text-[45px] 2xl:text-[50px] text-left text-white font-medium">
-            Ошибка регистрации
+           {title[locale]}
           </h3>
 
           <p className='mt-[16px]  2xl:w-[60%] text-white 2xl:text-center text-left font-medium text-[15px] slg:text-[16px] 2xl:text-[16.5px]'>
-            К сожалению, произошла ошибка при регистрации. Пожалуйста, попробуйте снова
+            {sbutitle[locale]}
           </p>
 
         </div>

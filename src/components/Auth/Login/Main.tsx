@@ -1,4 +1,4 @@
-import RegisterForm from './Inputs'
+import LoginForm from './Inputs'
 import { FC } from 'react'
 
 
@@ -6,7 +6,7 @@ import { FC } from 'react'
 const Main: FC = () => {
   return (
     <div>
-      <RegisterForm />
+      <LoginForm />
     </div>
   )
 }

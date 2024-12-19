@@ -6,15 +6,19 @@ import { useRouter } from "next/router";
 
 // SUCCES Image
 import Success from '@/public/modal/success.png'
+import { useLocale } from 'next-intl';
 
 interface IModalProps {
   open: boolean
   close: () => void
+  title: {ru: string , uz:string , en:string},
+  sbutitle: {ru: string , uz:string , en:string},
 }
 
 
-export const Modal: FC<IModalProps> = ({ open, close }) => {
-
+export const Modal: FC<IModalProps> = ({ open, close , title , sbutitle }) => {
+  const locale = useLocale() as 'ru' | 'uz' | 'en';
+  
  // Prevent the click event from propagating to the overlay
  const handleContentClick = (e: React.MouseEvent) => {
   e.stopPropagation();
@@ -30,12 +34,11 @@ if (!open) return null; // Do not render when modal is closed
         </div>
         <div className='2xl:flex 2xl:flex-col 2xl:items-center'>
         <h3 className="text-[30px] 2xl:text-center slg:text-[45px] 2xl:text-[50px] text-left text-white font-medium">
-          Регистрация прошла успешно!
+          {title[locale]}
           </h3>
          
          <p className='mt-[16px]  2xl:w-[60%] text-white 2xl:text-center text-left font-medium text-[15px] slg:text-[16px] 2xl:text-[16.5px]'>
-         Поздравляем, вы успешно зарегистрировались.
-         Добро пожаловать!
+         {sbutitle[locale]}
          </p>
         
         </div>

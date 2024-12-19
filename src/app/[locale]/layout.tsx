@@ -4,6 +4,7 @@ import '../globals.css';
 import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
+import StoreProvider from '@/store/StoreProvider';
 
 export const metadata: Metadata = {
   title: 'MED YORDAM',
@@ -29,14 +30,18 @@ export default async function LocaleLayout({
     <html lang={locale}>
       <head>
         <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-       
+
       </head>
       <body >
+        <StoreProvider>
+
           <NextIntlClientProvider messages={messages}>
-            <Header  />
-           {children}
+            <Header />
+            {children}
             <Footer />
           </NextIntlClientProvider>
+        </StoreProvider>
+
       </body>
     </html>
   );
