@@ -9,58 +9,40 @@ import { Link } from '@/i18n/routing';
 import Axios from 'axios';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
+import { useLoginStore } from '@/store/createLoginStore';
 
 const RegisterForm: FC = () => {
+  const { phoneNumber, password , setPassword , setPhoneNumber } = useLoginStore();
+
   const locale = useLocale();
 
   const router = useRouter();
 
-  const [formValues, setFormValues] = useState({
-    phoneNumber: '',
-    password: '',
-  });
-
   const [isFocused, setIsFocused] = useState({
-    phoneNumber: false,
+    phoneNumber: false, // Ma'lumot bo'lsa true bo'ladi
     password: false,
   });
+
+  useEffect(() => {
+    setIsFocused({
+      phoneNumber: !!phoneNumber,
+      password: !!password,
+    });
+  }, [phoneNumber, password]);
+
 
   const handleFocus = (field: string, focused: boolean) => {
     setIsFocused((prev) => ({ ...prev, [field]: focused }));
   };
 
-  useEffect(() => {
-    if (formValues.phoneNumber) Cookies.set('phoneNumber', formValues.phoneNumber, { expires: 7 });
-    if (formValues.password) Cookies.set('password', formValues.password, { expires: 7 });
-  }, [formValues.phoneNumber, formValues.password]);
-
-  useEffect(() => {
-    setFormValues({
-      phoneNumber: Cookies.get('phoneNumber') || '',
-      password: Cookies.get('password') || '',
-    });
-  }, []);
+  
 
 
-  const handlePhoneNumberChange = (value: string) => {
-    // Regex to allow only +, digits, and spaces
-    const regex = /^\+?[\d ]*$/;
-    if (regex.test(value)) {
-      setFormValues((prev) => ({ ...prev, phoneNumber: value }));
-    }
-  };
-
+ 
 
 
   const handleLogin = () => {
-    if (formValues.phoneNumber && formValues.password) {
-      Cookies.set('phoneNumber', formValues.phoneNumber, { expires: 1 });
-      Cookies.set('password', formValues.password, { expires: 1 });
-      router.push(`/${locale !== 'default' ? locale : ''}/login/verify`);
-
-    } else {
-      alert('Please enter all required fields');
-    }
+   
   };
 
 
@@ -103,15 +85,15 @@ const RegisterForm: FC = () => {
                 <input
                   id='phoneNumber'
                   type='tel'
-                  value={formValues.phoneNumber}
-                  onChange={(e) => handlePhoneNumberChange(e.target.value)}
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
                   onFocus={() => handleFocus('phoneNumber', true)}
                   onBlur={() => handleFocus('phoneNumber', false)}
                   className="h-[73px] w-full rounded-2xl bg-[#F8F8F8] px-[25px] pt-[25px] outline-none drop-shadow"
                 />
                 <label
                 onClick={() => handleFocus('phoneNumber', true)}
-                  className={`absolute  pointer-events-none left-[25px] flex items-center gap-[10px] transition-all ${isFocused['phoneNumber'] || formValues['phoneNumber'] ? "top-3 text-xs text-gray-500" : "top-[26px] text-base text-gray-400"
+                  className={`absolute  pointer-events-none left-[25px] flex items-center gap-[10px] transition-all ${isFocused['phoneNumber'] || phoneNumber ? "top-3 text-xs text-gray-500" : "top-[26px] text-base text-gray-400"
                     }`}
                 >
                   <MdOutlinePhone />
@@ -123,15 +105,15 @@ const RegisterForm: FC = () => {
                 <input
                   id='password'
                   type='password'
-                  value={formValues.password}
-                  onChange={(e) => setFormValues({ ...formValues, password: e.target.value })}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   onFocus={() => handleFocus('password', true)}
                   onBlur={() => handleFocus('password', false)}
                   className="h-[73px] w-full rounded-2xl bg-[#F8F8F8] px-[25px] pt-[25px] outline-none drop-shadow"
                 />
                 <label
                 onClick={() => handleFocus('password', true)}
-                  className={`absolute  pointer-events-none left-[25px] flex items-center gap-[10px] transition-all ${isFocused['password'] || formValues['password'] ? "top-3 text-xs text-gray-500" : "top-[26px] text-base text-gray-400"
+                  className={`absolute  pointer-events-none left-[25px] flex items-center gap-[10px] transition-all ${isFocused['password'] || password ? "top-3 text-xs text-gray-500" : "top-[26px] text-base text-gray-400"
                     }`}
                 >
                   <TfiKey />

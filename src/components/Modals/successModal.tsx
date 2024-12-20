@@ -12,11 +12,11 @@ interface IModalProps {
   open: boolean
   close: () => void
   title: {ru: string , uz:string , en:string},
-  sbutitle: {ru: string , uz:string , en:string},
+  subtitle: {ru: string , uz:string , en:string},
 }
 
 
-export const Modal: FC<IModalProps> = ({ open, close , title , sbutitle }) => {
+export const SuccessModal: FC<IModalProps> = ({ open, close , title , subtitle }) => {
   const locale = useLocale() as 'ru' | 'uz' | 'en';
   
  // Prevent the click event from propagating to the overlay
@@ -38,7 +38,7 @@ if (!open) return null; // Do not render when modal is closed
           </h3>
          
          <p className='mt-[16px]  2xl:w-[60%] text-white 2xl:text-center text-left font-medium text-[15px] slg:text-[16px] 2xl:text-[16.5px]'>
-         {sbutitle[locale]}
+         {subtitle[locale]}
          </p>
         
         </div>

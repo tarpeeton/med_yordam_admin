@@ -5,48 +5,29 @@ import { useLocale } from 'next-intl';
 import { GrFormPrevious } from "react-icons/gr";
 import Axios from 'axios';
 import { Link } from '@/i18n/routing';
-import { Modal } from '@/components/Modals/successModal';
+import { SuccessModal } from '@/components/Modals/successModal';
 import { ErrorModal } from '@/components/Modals/errorModal';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import { useRegisterStore } from '@/store/createRegisterSlice';
 
 
 
-
-interface IRegisterCodeProps {
-  title: { ru: string; uz: string; en: string };
-  linkBack: string;
-  type: "login" | "register" | "reset";
-}
-
-const RegisterCode: FC<IRegisterCodeProps> = ({ title, linkBack, type }) => {
+const RegisterCodeVerify: FC = () => {
   const locale = useLocale() as "ru" | "uz" | "en";
-  const [isModalOpen, setIsModalOpen] = useState(true);
   const [isResendVisible, setIsResendVisible] = useState(false);
-  const router = useRouter()
+  const [successModalOpen, setSuccessModalOpen] = useState(false);
+  const [errorModalOpen, setErrorModalOpen] = useState(false);
+  
+  const { registerVerifyCode, setRegisterCode  , buttonDisabled} = useRegisterStore()
 
 
-
-  const [formValues, setFormValues] = useState({
-    code: "",
-  });
-  const [isFocused, setIsFocused] = useState({
-    code: false,
-  });
   const [timer, setTimer] = useState(60);
 
-  const handleFocus = (field: string, focused: boolean) => {
-    setIsFocused((prev) => ({ ...prev, [field]: focused }));
-  };
 
-  const handleCodeChange = (value: string) => {
-    const regex = /^[\d ]*$/;
-    if (regex.test(value) && value.length <= 6) {
-      setFormValues((prev) => ({ ...prev, code: value }));
-    }
-  };
+  const HandleSuccessModalSwitcher = () => setSuccessModalOpen(!successModalOpen)
+  const HandleErrorModalSwitcher = () => setErrorModalOpen(!errorModalOpen)
 
-  const handleCloseModal = () => setIsModalOpen(false);
 
   useEffect(() => {
     if (timer > 0) {
@@ -63,44 +44,18 @@ const RegisterCode: FC<IRegisterCodeProps> = ({ title, linkBack, type }) => {
   const handleResendCode = () => {
     setTimer(60);
     setIsResendVisible(false);
-    console.log("Code resent");
   };
 
 
-  const handleConfirm = async () => {
-    if (type === "register") {
-      console.log("Registering user...");
-      try {
-        const response = await axios.post("/api/register/verify", {
-          code: formValues.code,
-        });
-        console.log("Registration successful:", response.data);
-      } catch (error) {
-        console.error("Registration failed:", error);
-      }
-    } else if (type === "login") {
-      console.log("LOGGGINNNNN");
-      try {
-        const response = await axios.post("/api/login/verify", {
-          code: formValues.code,
-        });
-        console.log("Login verification successful:", response.data);
-      } catch (error) {
-        console.error("Login verification failed:", error);
-      }
-    } else if (type === "reset") {
-      console.log("Resetting password...");
-      try {
-        // const response = await axios.post("/api/reset/verify", {
-        //   code: formValues.code,
-        // });
-        router.push(`/${locale}/new-password`);
-      } catch (error) {
-        console.error("Password reset failed:", error);
-      }
+
+
+  const handleConfirm = () => {
+    try {
+      setSuccessModalOpen(true)
+    } catch (error) {
+      setErrorModalOpen(true)
     }
-  };
-
+  }
 
   return (
     <div className='mt-[10px] slg:mt-[20px] px-[16px] slg:px-[20px] 2xl:px-[100px]'>
@@ -121,7 +76,8 @@ const RegisterCode: FC<IRegisterCodeProps> = ({ title, linkBack, type }) => {
 
         <div className='flex flex-col gap-[20px] slg:gap-[40px] 2xl:gap-[50px] w-full text-center '>
           <h1 className='text-[25px] font-medium text-[#050B2B] slg:text-[40px] 2xl:text-[50px] w-[98%] mx-auto slg:w-[70%] 2xl:w-[65%] 3xl:w-[50%] slg:mx-auto 4xl:w-[40%] '>
-            {title[locale]}
+            На ваш номер отправлено
+            письмо с подтверждением
           </h1>
           {/* <Modal open={isModalOpen} close={handleCloseModal} /> */}
           <div className='w-full slg:w-[90%] 2xl:w-[80%] mx-auto p-[15px] bg-white rounded-[20px] 2xl:p-[30px] '>
@@ -133,18 +89,15 @@ const RegisterCode: FC<IRegisterCodeProps> = ({ title, linkBack, type }) => {
                 <input
                   id='code'
                   type='tel'
-                  value={formValues.code}
-                  onChange={(e) => handleCodeChange(e.target.value)}
-                  onFocus={() => handleFocus('code', true)}
-                  onBlur={() => handleFocus('code', false)}
+                  maxLength={6}
+                  value={registerVerifyCode}
+                  onChange={(e) => setRegisterCode(e.target.value)}
+                  placeholder={locale === 'ru' ? "Код" : locale === 'uz' ? "Kod" : "Code"}
                   className="h-[73px] w-full rounded-2xl bg-[#F8F8F8] px-[25px] outline-none drop-shadow relative"
                 />
                 <label
-                  onClick={() => handleFocus('code', true)}
-                  className={`absolute left-[25px]  w-[calc(100%-50px)]  flex items-center justify-end gap-[10px] transition-all  top-[26px] text-xs text-gray-500 top-[26px] text-base text-gray-400"}`}
+                  className={`absolute left-[25px]  w-[calc(100%-50px)]  flex items-center justify-end gap-[10px] transition-all  top-[26px] text-xs text-gray-500  text-gray-400"}`}
                 >
-
-
                   <div>
                     {isResendVisible ? (
                       <button
@@ -164,7 +117,7 @@ const RegisterCode: FC<IRegisterCodeProps> = ({ title, linkBack, type }) => {
                 </label>
               </div>
               <div className='flex flex-row  items-center'>
-                <Link href={`/${linkBack}`} className='text-[14px] slg:text-[15px] text-[#0129E3] 2xl:text-[16px] font-medium text-left'>
+                <Link href={`/register`} className='text-[14px] slg:text-[15px] text-[#0129E3] 2xl:text-[16px] font-medium text-left'>
                   {locale === 'ru' ? "Изменить номер телефона" : locale === 'uz' ? "Raqamni o'zgartirish" : "Change phone number"}
                 </Link>
 
@@ -173,7 +126,7 @@ const RegisterCode: FC<IRegisterCodeProps> = ({ title, linkBack, type }) => {
             </form>
           </div>
           <div className='w-full mt-[40px] mx-auto  slg:w-[90%] 2xl:w-[80%]   slg:mt-[43px]'>
-            <button onClick={handleConfirm} className='font-medium w-full py-[20px] bg-[#0129E3] text-white rounded-[12px] slg:w-[90%] 2xl:min-w-full'>
+            <button disabled={buttonDisabled} onClick={handleConfirm} className={`font-medium w-full py-[20px] bg-[#0129E3] text-white rounded-[12px] slg:w-[90%] 2xl:min-w-full ${buttonDisabled ? 'opacity-[60%] cursor-not-allowed' : ''} `}>
               {locale === 'ru'
                 ? "Подтвердить"
                 : locale === 'uz'
@@ -184,9 +137,17 @@ const RegisterCode: FC<IRegisterCodeProps> = ({ title, linkBack, type }) => {
           </div>
         </div>
       </div>
+      <SuccessModal title={{ ru: "Регистрация прошла успешно!", uz: "Ro'yxatdan o'tish muvaffaqiyatli yakunlandi!", en: "Registration was successful!" }}
+        subtitle={{ ru: "Поздравляем, вы успешно зарегистрировались. Добро пожаловать!", uz: "Tabriklaymiz, siz muvaffaqiyatli ro'yxatdan o'tdingiz. Xush kelibsiz!", en: "Congratulations, you have successfully registered. Welcome!" }}
+        open={successModalOpen} close={HandleSuccessModalSwitcher} />
+      <ErrorModal linkToRouter='register' title={{ ru: "Ошибка регистрации", uz: "Ro'yxatdan o'tishda Xatolik", en: "Registration error" }} subtitle={{ ru: "К сожалению, произошла ошибка при регистрации. Пожалуйста, попробуйте снова", uz: "Afsuski, ro'yxatdan o'tishda xatolik yuz berdi. Iltimos, yana urinib ko'ring", en: "Unfortunately, an error occurred during registration. Please try again." }} open={errorModalOpen} close={HandleErrorModalSwitcher} />
+
+
+
+
 
     </div>
   )
 }
 
-export default RegisterCode
+export default RegisterCodeVerify

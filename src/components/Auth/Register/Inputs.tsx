@@ -7,7 +7,6 @@ import { MdOutlinePhone } from "react-icons/md";
 import { TfiKey } from "react-icons/tfi";
 import { Link } from '@/i18n/routing';
 import Axios from 'axios';
-import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
 import {useRegisterStore} from '@/store/createRegisterSlice';
 
@@ -53,15 +52,13 @@ const RegisterForm: FC = () => {
           phoneNumber,
           password,
         });
-        resetForm(); // Formani tozalash
+       
         router.push(`/${locale !== "default" ? locale : ""}/register/verify`);
       } catch (error) {
         alert("Registration failed. Please try again.");
       }
-    } else if (!isPasswordMatch) {
-      alert("Parollar mos emas!");
     } else {
-      alert("Barcha maydonlarni to'ldiring!");
+     console.log("Please enter all required fields");
     }
   };
 
@@ -143,7 +140,7 @@ const RegisterForm: FC = () => {
                   onChange={(e) => setRepeatPassword(e.target.value)}
                   onFocus={() => handleFocus('repeatPassword', true)}
                   onBlur={() => handleFocus('repeatPassword', false)}
-                  className={`h-[73px] w-full rounded-2xl bg-[#F8F8F8] px-[25px] pt-[25px] outline-none drop-shadow ${!isPasswordMatch}`}
+                  className={`h-[73px] w-full rounded-2xl bg-[#F8F8F8] px-[25px] pt-[25px] outline-none drop-shadow `}
                 />
                 <label
                 onClick={() => handleFocus('repeatPassword', true)}

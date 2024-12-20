@@ -6,19 +6,18 @@ import { GrFormPrevious } from "react-icons/gr";
 import { MdOutlinePhone } from "react-icons/md";
 import { TfiKey } from "react-icons/tfi";
 import { Link } from '@/i18n/routing';
-import Axios from 'axios';
-import Cookies from 'js-cookie';
+import axios from 'axios';
 import { useRouter } from 'next/navigation';
-
+import { useLoginStore } from '@/store/createLoginStore';
+import { useNewPasswordStore } from '@/store/newPasswordStore';
+import { SuccessModal } from '@/components/Modals/successModal';
 const NewPassword: FC = () => {
   const locale = useLocale();
-
+  const {phoneNumber} = useLoginStore();
+  const {setPhoneNumber , password , setPassword , repeatPassword , setRepeatPassword , isPasswordMatch , buttonDisabled} = useNewPasswordStore();
   const router = useRouter();
-
-  const [formValues, setFormValues] = useState({
-    password: '',
-    repeatPassword: '',
-  });
+  const [openModal , setOpenModal] = useState(false);
+ 
 
   const [isFocused, setIsFocused] = useState({
     password: false,
@@ -29,36 +28,18 @@ const NewPassword: FC = () => {
     setIsFocused((prev) => ({ ...prev, [field]: focused }));
   };
 
-  useEffect(() => {
-   
-    if (formValues.password) Cookies.set('password', formValues.password, { expires: 7 });
-  }, [ formValues.password]);
 
-  useEffect(() => {
-    setFormValues({
-      password: Cookies.get('password') || '',
-      repeatPassword: '',
-    });
-  }, []);
+  const handleModalSwitcher = () => setOpenModal(!openModal)
+
 
   const HandleNewPassword = () => {
-    if (formValues.password) {
-      Cookies.set('password', formValues.password, { expires: 1 });
-      router.push(`/${locale !== 'default' ? locale : ''}/dashboard`);
+      console.log("LOGIN PHONE GET" , phoneNumber)
+      setPhoneNumber(phoneNumber)
+      setPassword(password)
+      setRepeatPassword(repeatPassword)
+      router.push(`/${locale !== "default" ? locale : ""}/dashboard`);
 
-    } else {
-      alert('Please enter all required fields');
-    }
-  };
-
-
-  const handlePhoneNumberChange = (value: string) => {
-    // Regex to allow only +, digits, and spaces
-    const regex = /^\+?[\d ]*$/;
-    if (regex.test(value)) {
-      setFormValues((prev) => ({ ...prev, phoneNumber: value }));
-    }
-  };
+  }
 
   return (
     <div className='mt-[10px] slg:mt-[20px] px-[16px] slg:px-[20px] 2xl:px-[100px]'>
@@ -94,15 +75,15 @@ const NewPassword: FC = () => {
                 <input
                   id='password'
                   type='password'
-                  value={formValues.password}
-                  onChange={(e) => setFormValues({ ...formValues, password: e.target.value })}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   onFocus={() => handleFocus('password', true)}
                   onBlur={() => handleFocus('password', false)}
                   className="h-[73px] w-full rounded-2xl bg-[#F8F8F8] px-[25px] pt-[25px] outline-none drop-shadow"
                 />
                 <label
                 onClick={() => handleFocus('password', true)}
-                  className={`absolute  pointer-events-none left-[25px] flex items-center gap-[10px] transition-all ${isFocused['password'] || formValues['password'] ? "top-3 text-xs text-gray-500" : "top-[26px] text-base text-gray-400"
+                  className={`absolute  pointer-events-none left-[25px] flex items-center gap-[10px] transition-all ${isFocused['password'] || password ? "top-3 text-xs text-gray-500" : "top-[26px] text-base text-gray-400"
                     }`}
                 >
                   <TfiKey />
@@ -114,15 +95,15 @@ const NewPassword: FC = () => {
                 <input
                   id='repeatPassword'
                   type='password'
-                  value={formValues.repeatPassword}
-                  onChange={(e) => setFormValues({ ...formValues, repeatPassword: e.target.value })}
+                  value={repeatPassword}
+                  onChange={(e) => setRepeatPassword(e.target.value)}
                   onFocus={() => handleFocus('repeatPassword', true)}
                   onBlur={() => handleFocus('repeatPassword', false)}
                   className="h-[73px] w-full rounded-2xl bg-[#F8F8F8] px-[25px] pt-[25px] outline-none drop-shadow"
                 />
                 <label
                 onClick={() => handleFocus('repeatPassword', true)}
-                  className={`absolute  pointer-events-none left-[25px] flex items-center gap-[10px] transition-all ${isFocused['repeatPassword'] || formValues['repeatPassword'] ? "top-3 text-xs text-gray-500" : "top-[26px] text-base text-gray-400"
+                  className={`absolute  pointer-events-none left-[25px] flex items-center gap-[10px] transition-all ${isFocused['repeatPassword'] || repeatPassword ? "top-3 text-xs text-gray-500" : "top-[26px] text-base text-gray-400"
                     }`}
                 >
                   <TfiKey />
@@ -130,12 +111,21 @@ const NewPassword: FC = () => {
                   Повторите пароль    
                 </label>
               </div>
+              {!isPasswordMatch && (
+                <p className='text-[#D60C0C] font-medium slg:text-[16px] 2xl:text-[17px] text-[15px]'>
+                  {locale === 'ru'
+                    ? "пароли не совпадают"
+                    : locale === 'uz'
+                      ? "parolalar bir xil emas"
+                      : "passwords do not match"}
+                </p>
+              )}
             </form>
           </div>
           <div className='grid grid-cols-1 slg:grid-cols-2 2xl:w-[80%] slg:mx-auto px-[20px] 2xl:px-0'>
             
             <div className='w-full mt-[40px] slg:flex-grow-[1] 2xl:col-span-2  slg:order-3 slg:mt-[43px]'>
-              <button onClick={HandleNewPassword} className='font-medium w-full py-[20px] bg-[#0129E3] text-white rounded-[12px] '>
+              <button onClick={HandleNewPassword}  disabled={buttonDisabled} className={`font-medium w-full py-[20px] bg-[#0129E3] text-white rounded-[12px] ${buttonDisabled ? 'opacity-[60%] cursor-not-allowed' : ''} `}>
                 {locale === 'ru'
                   ? "Подтвердить"
                   : locale === 'uz'
@@ -148,7 +138,7 @@ const NewPassword: FC = () => {
           </div>
         </div>
       </div>
-
+                <SuccessModal open={openModal} close={handleModalSwitcher} title={{ru: "Пароль успешно обновлен!" , uz: "" , en: ""}} subtitle={{ru: "Ваш пароль успешно обновлен" , uz: "" , en: ""}} />
     </div>
   )
 }

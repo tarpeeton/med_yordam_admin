@@ -9,9 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@nextui-org/react": "^2.6.8",
+    "@nextui-org/select": "^2.4.7",
     "@sanity/icons": "^3.4.0",
     "@sanity/image-url": "^1.1.0",
     "@sanity/vision": "^3.64.0",
+    "dayjs": "^1.11.13",
+    "flowbite": "^2.5.2",
     "gsap": "^3.12.5",
     "js-cookie": "^3.0.5",
     "next": "^14.2.14",
@@ -35,7 +39,7 @@
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18",
     "@types/toastr": "^2.1.43",
-    "antd": "^5.22.0",
+    "antd": "^5.22.5",
     "axios": "^1.7.9",
     "flag-icons": "^7.2.3",
     "postcss": "^8",

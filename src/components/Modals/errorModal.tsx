@@ -12,11 +12,12 @@ interface IModalProps {
   open: boolean
   close: () => void
   title: {ru: string , uz:string , en:string}
-  sbutitle: {ru: string , uz:string , en:string}
+  subtitle: {ru: string , uz:string , en:string}
+  linkToRouter: string
 }
 
 
-export const ErrorModal: FC<IModalProps> = ({ open, close  , title , sbutitle}) => {
+export const ErrorModal: FC<IModalProps> = ({ open, close  , title , subtitle , linkToRouter}) => {
   const locale = useLocale() as 'ru' | 'uz' | 'en';
 
 
@@ -35,12 +36,12 @@ export const ErrorModal: FC<IModalProps> = ({ open, close  , title , sbutitle}) 
           </h3>
 
           <p className='mt-[16px]  2xl:w-[60%] text-white 2xl:text-center text-left font-medium text-[15px] slg:text-[16px] 2xl:text-[16.5px]'>
-            {sbutitle[locale]}
+            {subtitle[locale]}
           </p>
 
         </div>
         <div className='mt-[30px] slg:mt-[35px]'>
-          <Link href={'/register'} className='w-full  h-full '>
+          <Link href={`/${linkToRouter}`} className='w-full  h-full '>
             <p className='text-[14px] w-full h-[55px] font-medium slg:text-[15px] rounded-[12px] flex items-center justify-center bg-white  text-[#202020] 2xl:h-[76px] 2xl:text-[17px]'>
               Попробовать еще раз
 

@@ -1,10 +1,10 @@
-import Main from '@/components/Auth/Code/Main'
+import RegisterCodeVerify from '@/components/Auth/Code/register-verify';
 
 
 
 
 export default function RegisterHome() {
   return (
-   <Main title={{ru: 'На ваш номер отправлено письмо с подтверждением' , uz: "Raqamingizga tasdiqlash kodi yuborildi" , en: "A confirmation email has been sent to your number"}} linkBack='register' type='register' />
+  <RegisterCodeVerify />
   );
 }
