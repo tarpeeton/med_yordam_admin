@@ -10,7 +10,6 @@ import Two from '@/public/invite/Two.svg'
 import Three from '@/public/invite/Three.svg'
 import Four from '@/public/invite/Four.svg'
 import TgBotImage from '@/public/TGBOT.png'
-import { Link } from '@/i18n/routing'
 
 
 
@@ -67,15 +66,15 @@ const Invite: FC = () => {
               ))}
             </div>
             <div className='flex flex-col slg:w-[50%] '>
-              <div className='slg:h-[320px] 4xl:h-[500px] 4xl:mt-[-150px]'>
+              <div className='slg:h-[500px] 4xl:mt-[-150px] slg:mt-[-100px]'>
                 <Image src={TgBotImage} alt='TgBotImage' width={300} height={300} quality={100} className='w-full h-full object-cover' />
               </div>
              
             </div>
-            <div className='w-full slg:mt-[40px]  2xl:mt-[-100px] 4xl:mt-[-120px]'>
-                <div className='py-[16px] w-[90%]  2xl:w-[240px] slg:w-[40%] mx-auto flex items-center justify-center font-bold text-[16px]  rounded-full  bg-white text-[#0129E3]'>
+            <div className='w-full slg:mt-[40px]  2xl:mt-[-100px] 4xl:mt-[-120px] '>
+                <a href='https://t.me/@med_yordam_uz_bot' className='py-[16px] w-[90%] shadow-2xl  2xl:w-[240px] slg:w-[40%] mx-auto flex items-center justify-center font-bold text-[16px]  rounded-full  bg-white text-[#0129E3]'>
                   Перейти к боту
-                </div>
+                </a>
 
               </div>
           </div>
