@@ -19,7 +19,6 @@ import { BiSolidPencil } from "react-icons/bi";
 import { GoPencil } from "react-icons/go";
 import { TbPhone } from "react-icons/tb";
 import { MdOutlineDateRange } from "react-icons/md";
-import { FaRegCalendarPlus } from "react-icons/fa";
 
 interface IProfileProps {
   selectedInputLang: "ru" | "uz" | "en";

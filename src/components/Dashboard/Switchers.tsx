@@ -7,6 +7,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowUp } from "react-icons/io";
 import Profile from '@/components/Dashboard/Profile';
 import DashboardLinks from '@/components/Dashboard/Links';
+import DashboardProInfo from '@/components/Dashboard/ProInfo';
 
 
 interface SelectedInterface {
@@ -118,6 +119,8 @@ const DashboardSwitchers = () => {
       {selectedPage.en === 'Profile' && (<Profile selectedInputLang={selectedLanguage} />)
       }
       {selectedPage.en === 'Contacts' && (<DashboardLinks selectedInputLang={selectedLanguage}/>)
+      }
+      {selectedPage.en === 'Profile Info' && (<DashboardProInfo selectedInputLang={selectedLanguage}/>)
       }
 
 

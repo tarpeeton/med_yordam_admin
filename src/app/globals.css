@@ -42,3 +42,23 @@ body {
   border: none !important;
   box-shadow: none !important;
 }
+
+
+
+
+.AdminInput {
+  width: 100%;
+  color: #747474;
+  border-radius: 12px;
+  background-color: #F8F8F8;
+  padding-top: 18px;
+  padding-bottom: 18px;
+  padding-left: 40px;
+  padding-right: 15px;
+  outline: none;
+}
+
+.AdminInput:focus {
+  ring-width: 1px;
+  ring-color: var(--ring-ring);
+}
