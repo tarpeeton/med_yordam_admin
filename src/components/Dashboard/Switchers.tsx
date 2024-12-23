@@ -6,6 +6,7 @@ import { GrFormPrevious } from "react-icons/gr";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowUp } from "react-icons/io";
 import Profile from '@/components/Dashboard/Profile';
+import DashboardLinks from '@/components/Dashboard/Links';
 
 
 interface SelectedInterface {
@@ -27,25 +28,24 @@ const options = [
 
 const DashboardSwitchers = () => {
   const locale = useLocale() as 'ru' | 'uz' | 'en'
-  const [selectedLanguage, setSelectedLanguage] = useState<'ru' | 'uz' | 'en'>('ru');
+  const [selectedLanguage, setSelectedLanguage] = useState<'ru' | 'uz' | 'en'>(locale);
 
-  const [selectedPage, setSelectedPage] = useState<SelectedInterface>({
-    ru: 'Профиль',
-    uz: 'Profil',
-    en: 'profile'
-  })
+  const [selectedPage, setSelectedPage] = useState<SelectedInterface>(options[0]);
 
+  const [open, setOpen] = useState(false);
 
-
-  const [open, setOpen] = useState(false)
-
-
-  const HandleChangeOpen = () => setOpen(!open)
+  const HandleChangeOpen = () => setOpen(!open);
 
   const handleSelect = (option: SelectedInterface) => {
     setSelectedPage(option);
     setOpen(false);
   };
+
+  useEffect(() => {
+    // Update selectedPage when locale changes
+    setSelectedPage(prevPage => ({...prevPage, [locale]: prevPage[locale]}));
+  }, [locale]);
+
 
   return (
     <section>
@@ -115,7 +115,10 @@ const DashboardSwitchers = () => {
         </div>
       </div>
 
-      {selectedPage.en === 'profile' && (<Profile selectedInputLang={selectedLanguage} />)}
+      {selectedPage.en === 'Profile' && (<Profile selectedInputLang={selectedLanguage} />)
+      }
+      {selectedPage.en === 'Contacts' && (<DashboardLinks selectedInputLang={selectedLanguage}/>)
+      }
 
 
     </section>

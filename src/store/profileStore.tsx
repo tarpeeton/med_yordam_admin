@@ -1,4 +1,6 @@
 import { create } from 'zustand';
+import axios from 'axios'
+
 
 interface multiLang {
   ru: string;
@@ -11,19 +13,19 @@ interface ProfileState {
   surname: multiLang;
   patronymic: multiLang;
   phone: string;
-  age: number | string;
-  gender: "male" | "female" | "other";
+  gender: multiLang;
+  stage: string;
   image: string; // Store the profile image URL
   selectedLang: "ru" | "uz" | "en"; // Current language
   setName: (name: multiLang) => void;
   setSurname: (surname: multiLang) => void;
   setPatronymic: (patronymic: multiLang) => void;
   setPhone: (phone: string) => void;
-  setAge: (age: number | string) => void;
-  setGender: (gender: "male" | "female" | "other") => void;
+  setGender: (gender: multiLang) => void;
   setImage: (image: string) => void; // Add function to set image
   setLang: (lang: "ru" | "uz" | "en") => void;
   saveProfile: () => void; // To save the profile via an API
+  setStage: (stage: string) => void; // To save the profile via an API
 }
 
 export const useProfileStore = create<ProfileState>((set) => ({
@@ -31,18 +33,18 @@ export const useProfileStore = create<ProfileState>((set) => ({
   surname: { ru: "", uz: "", en: "" },
   patronymic: { ru: "", uz: "", en: "" },
   phone: "",
-  age: "",
-  gender: "male",
+  stage: "", // Initialize stage as an empty string
+  gender: { ru: "Мужчина", uz: "Erkak", en: "Male" },
   image: "", // Initialize image as an empty string
   selectedLang: "ru", // Default language
   setName: (name) => set({ name }),
   setSurname: (surname) => set({ surname }),
   setPatronymic: (patronymic) => set({ patronymic }),
   setPhone: (phone) => set({ phone }),
-  setAge: (age) => set({ age }),
   setGender: (gender) => set({ gender }),
   setImage: (image) => set({ image }), // Set image function
   setLang: (lang) => set({ selectedLang: lang }),
+  setStage: (stage: string) => set({ stage }), // Explicitly type stage as string
 
   // Save Profile function
   saveProfile: async () => {
@@ -51,24 +53,24 @@ export const useProfileStore = create<ProfileState>((set) => ({
       surname: useProfileStore.getState().surname,
       patronymic: useProfileStore.getState().patronymic,
       phone: useProfileStore.getState().phone,
-      age: useProfileStore.getState().age,
       gender: useProfileStore.getState().gender,
-      image: useProfileStore.getState().image, // Include image data
+      image: useProfileStore.getState().image, 
+      stage: useProfileStore.getState().stage,
     };
 
     // Example API POST request
     try {
-      const response = await fetch('https://your-api-endpoint.com/profile', {
+      const response = await axios.post('https://medyordam.result-me.uz/api/doctor', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/form-data',
         },
         body: JSON.stringify(profileData),
       });
-      
-      if (!response.ok) {
-        throw new Error('Failed to save profile');
-      }
+
+      // if (!response.ok) {
+      //   throw new Error('Failed to save profile');
+      // }
 
       // Handle success (optional)
       alert('Profile saved successfully');

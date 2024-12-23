@@ -19,4 +19,26 @@ body {
 }
 
 
+.ant-picker-input {
+  display: none !important;
+}
 
+
+/* Скрыть стандартный инпут внутри DatePicker */
+.ant-picker-input {
+  display: none !important;
+}
+
+/* Убрать обводку и фон у выпадающего календаря */
+.ant-picker-dropdown {
+  box-shadow: none !important;
+  border: none !important;
+  background: transparent !important;
+}
+
+/* Убрать любые внутренние рамки внутри панели */
+.ant-picker-panel-container,
+.ant-picker-panel {
+  border: none !important;
+  box-shadow: none !important;
+}
