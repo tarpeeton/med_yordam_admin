@@ -2,21 +2,13 @@
 import { FC, useState, useEffect } from 'react';
 
 
-
 import { IoIosArrowDown } from "react-icons/io";
-
 import { FaCheck } from "react-icons/fa6";
-
 import { useProInfoStore } from '@/store/useProInfoStore';
-
 import { IoGlobeOutline } from "react-icons/io5";
-
 import { GoPencil } from "react-icons/go";
-
 import { MdOutlineDateRange } from "react-icons/md";
-
 import { FaPlus } from "react-icons/fa6";
-
 import { IoClose } from "react-icons/io5";
 
 

@@ -8,6 +8,7 @@ import { IoIosArrowUp } from "react-icons/io";
 import Profile from '@/components/Dashboard/Profile';
 import DashboardLinks from '@/components/Dashboard/Links';
 import DashboardProInfo from '@/components/Dashboard/ProInfo';
+import DashboardServices from '@/components/Dashboard/Services';
 
 
 interface SelectedInterface {
@@ -44,7 +45,7 @@ const DashboardSwitchers = () => {
 
   useEffect(() => {
     // Update selectedPage when locale changes
-    setSelectedPage(prevPage => ({...prevPage, [locale]: prevPage[locale]}));
+    setSelectedPage(prevPage => ({ ...prevPage, [locale]: prevPage[locale] }));
   }, [locale]);
 
 
@@ -118,10 +119,11 @@ const DashboardSwitchers = () => {
 
       {selectedPage.en === 'Profile' && (<Profile selectedInputLang={selectedLanguage} />)
       }
-      {selectedPage.en === 'Contacts' && (<DashboardLinks selectedInputLang={selectedLanguage}/>)
+      {selectedPage.en === 'Contacts' && (<DashboardLinks selectedInputLang={selectedLanguage} />)
       }
-      {selectedPage.en === 'Profile Info' && (<DashboardProInfo selectedInputLang={selectedLanguage}/>)
+      {selectedPage.en === 'Profile Info' && (<DashboardProInfo selectedInputLang={selectedLanguage} />)
       }
+      {selectedPage.en === 'Services and Prices' && (<DashboardServices selectedInputLang={selectedLanguage} />)}
 
 
     </section>
