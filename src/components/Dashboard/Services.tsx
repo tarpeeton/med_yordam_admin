@@ -43,7 +43,7 @@ const DashboardServices: FC<ILinksProps> = ({ selectedInputLang }) => {
                   <p className='2xl:hidden font-medium'>
                     Услуга
                   </p>
-                  <button className='text-[#0129E3] 2xl:text-[] text-[]'>
+                  <button onClick={() => deleteService(item.id)} className='text-[#0129E3] 2xl:text-[] text-[]'>
                     <IoClose className='w-[20px] h-[20px] 2xl:w-[25px] 2xl:h-[25px]' />
                   </button>
                 </div>
