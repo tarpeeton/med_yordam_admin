@@ -1,8 +1,5 @@
 "use client";
 import { FC } from 'react';
-import Image from 'next/image';
-import { FaPhoneAlt } from "react-icons/fa";
-import Instagram from '@/public/instagram.svg'
 import { useServiceStore } from '@/store/createServiceStore';
 import { GoPencil } from "react-icons/go";
 import { IoClose } from "react-icons/io5";
@@ -17,9 +14,6 @@ const DashboardServices: FC<ILinksProps> = ({ selectedInputLang }) => {
 
   const {
     services,
-    newService,
-    setNewServiceName,
-    setNewServicePrice,
     addService,
     updateServiceField,
     deleteService,

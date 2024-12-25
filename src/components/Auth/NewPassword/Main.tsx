@@ -1,12 +1,9 @@
 "use client"
-import { FC, useState, useEffect } from 'react';
+import { FC, useState } from 'react';
 
 import { useLocale } from 'next-intl';
 import { GrFormPrevious } from "react-icons/gr";
-import { MdOutlinePhone } from "react-icons/md";
 import { TfiKey } from "react-icons/tfi";
-import { Link } from '@/i18n/routing';
-import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useLoginStore } from '@/store/createLoginStore';
 import { useNewPasswordStore } from '@/store/newPasswordStore';

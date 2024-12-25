@@ -9,6 +9,7 @@ import Profile from '@/components/Dashboard/Profile';
 import DashboardLinks from '@/components/Dashboard/Links';
 import DashboardProInfo from '@/components/Dashboard/ProInfo';
 import DashboardServices from '@/components/Dashboard/Services';
+import DashboardSecurity from '@/components/Dashboard/Password';
 
 
 interface SelectedInterface {
@@ -124,6 +125,7 @@ const DashboardSwitchers = () => {
       {selectedPage.en === 'Profile Info' && (<DashboardProInfo selectedInputLang={selectedLanguage} />)
       }
       {selectedPage.en === 'Services and Prices' && (<DashboardServices selectedInputLang={selectedLanguage} />)}
+      {selectedPage.en === 'Security' && (<DashboardSecurity />)}
 
 
     </section>
