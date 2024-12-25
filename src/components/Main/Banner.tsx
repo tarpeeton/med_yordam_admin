@@ -4,9 +4,8 @@ import Image from 'next/image'
 
 import One from '../../public/BannerImage/One.jpg'
 import Two from '../../public/BannerImage/Two.jpg'
-import Three from '../../public/BannerImage/Three.jpg'
 import Four from '../../public/BannerImage/Four.jpg'
-
+import Three from '../../public/BannerImage/Three.jpg';
 
 import { useLocale } from 'next-intl'
 
