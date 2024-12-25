@@ -1,6 +1,5 @@
 "use client";
-import { FC, useState, useEffect } from 'react';
-
+import { FC, useState } from 'react';
 
 import { IoIosArrowDown } from "react-icons/io";
 import { FaCheck } from "react-icons/fa6";
@@ -12,19 +11,14 @@ import { FaPlus } from "react-icons/fa6";
 import { IoClose } from "react-icons/io5";
 
 
-
 interface ILinksProps {
-
   selectedInputLang: "ru" | "uz" | "en";
-
 }
 
 
 
 
-
 const DashboardProInfo: FC<ILinksProps> = ({ selectedInputLang }) => {
-
   const {
 
     specialties,
@@ -69,72 +63,33 @@ const DashboardProInfo: FC<ILinksProps> = ({ selectedInputLang }) => {
 
   } = useProInfoStore();
 
-
-
   // --- Локальные стейты для дропдаунов ---
-
   const [openSpecialization, setOpenSpecialization] = useState(false);
-
   const [openLanguage, setOpenLanguage] = useState(false);
-
-
-
-
-
-
-
   // Подсчёт выбранных специальностей / языков
-
   const selectedCount = specialties.filter(s => s.selected).length;
-
   const selectedLanguages = languages.filter(l => l.selected).length;
-
-
-
   // Функция для создания нового достижения:
-
   const handleAddAchievement = () => {
-
     addAchievement();
-
   };
-
-
 
 
 
   return (
 
     <div className='mt-[25px] 2xl:mt-[37px]'>
-
       <div className='flex flex-col 2xl:flex-row 2xl:gap-[2%] 2xl:flex-wrap'>
-
-
-
-
-
-
-
         {/* inputs */}
-
         <div className='flex flex-col mt-[20px] 2xl:mt-0 rounded-[18px] gap-[15px] 2xl:gap-[60px] p-[15px] 2xl:py-[37px] 2xl:px-[25px] bg-white w-full'>
-
-
-
           <div className='flex flex-col gap-[12px] 2xl:flex-row 2xl:gap-[1%]'>
-
             <div className='relative flex flex-col 2xl:w-[49%]'>
-
               <button
-
                 type='button'
-
                 onClick={() => setOpenSpecialization((prev) => !prev)}
-
                 className='w-full text-left text-[#747474] rounded-[12px] focus:outline-none focus:ring-1 focus:ring-ring py-[18px] px-[15px] bg-[#F8F8F8] flex items-center justify-between'
 
               >
-
                 <div className="flex items-center pl-[25px] 2xl:pl-[25px]">
 
                   <GoPencil className="absolute text-[#747474] left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
@@ -320,255 +275,124 @@ const DashboardProInfo: FC<ILinksProps> = ({ selectedInputLang }) => {
 
 
           <div className='flex flex-col '>
-
             <div className='relative '>
-
               <h1 className='text-[#000000] text-[17px] 2xl:text-[20px] font-medium '>Образование</h1>
-
               <div className='mt-[15px] w-full  flex flex-col gap-[12px] 2xl:gap-[15px]'>
-
                 {educations.map((education) => (
-
                   <div key={education.id} className='grid grid-cols-1 2xl:grid-cols-2 gap-[12px] 2xl:gap-[15px] w-full' >
-
                     {/* Education Name */}
-
                     <div className="relative">
-
                       <input
-
                         value={education.name[selectedInputLang]}
-
                         onChange={(e) =>
-
                           updateEducationField(
-
                             education.id,
-
                             "name",
-
                             selectedInputLang,
-
                             e.target.value
-
                           )
-
                         }
-
                         placeholder={
-
                           selectedInputLang === "ru"
-
                             ? "Название образования"
-
                             : selectedInputLang === "uz"
-
                               ? "Ta'lim nomi"
-
                               : "Education Name"
 
                         }
-
                         className="w-full text-[#747474] rounded-[12px] focus:outline-none focus:ring-1 focus:ring-ring py-[18px] pl-[40px] px-[15px] bg-[#F8F8F8]"
 
                       />
-
                       <GoPencil className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500" />
-
                     </div>
-
-
-
                     {/* Education Direction */}
-
                     <div className="relative">
-
                       <input
-
                         value={education.direction[selectedInputLang]}
-
                         onChange={(e) =>
-
                           updateEducationField(
-
                             education.id,
-
                             "direction",
-
                             selectedInputLang,
-
                             e.target.value
-
                           )
-
                         }
-
                         placeholder={
-
                           selectedInputLang === "ru"
-
                             ? "Направление"
-
                             : selectedInputLang === "uz"
-
                               ? "Yo'nalish"
-
                               : "Direction"
-
                         }
 
                         className="w-full text-[#747474] rounded-[12px] focus:outline-none focus:ring-1 focus:ring-ring py-[18px] pl-[40px] px-[15px] bg-[#F8F8F8]"
-
                       />
-
                       <GoPencil className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500" />
-
                     </div>
-
                     <div className="relative">
-
                       {/* Start Year */}
-
                       <input
-
                         type="text"
-
                         value={education.startYear}
-
                         onChange={(e) =>
-
                           updateEducationField(
-
                             education.id,
-
                             "startYear",
-
                             null,
-
                             e.target.value
-
                           )
-
                         }
 
                         placeholder="Год начала"
-
                         className="w-full text-[#747474] rounded-[12px] focus:outline-none focus:ring-1 focus:ring-ring py-[18px] pl-[40px] px-[15px] bg-[#F8F8F8]"
-
                       />
-
                       <GoPencil className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500" />
-
                     </div>
 
                     <div className="relative">
-
                       {/* End Year */}
-
                       <input
-
                         type="text"
-
                         value={education.endYear}
-
                         onChange={(e) =>
-
                           updateEducationField(
-
                             education.id,
-
                             "endYear",
-
                             null,
-
                             e.target.value
-
                           )
 
                         }
-
                         placeholder="Год окончания"
-
                         className="w-full text-[#747474] rounded-[12px] focus:outline-none focus:ring-1 focus:ring-ring py-[18px] pl-[40px] px-[15px] bg-[#F8F8F8]"
 
                       />
-
                       <GoPencil className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500" />
-
                     </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
                   </div>
-
                 ))}
-
-
-
               </div>
-
               <button onClick={addEducation} className='mt-[15px]  w-full 2xl:w-[220px]  rounded-[12px] border border-[#0129E3] text-[15px] 2xl:text-[16px] text-[#0129E3] font-medium h-[50px]'>
-
                 Добавить
-
               </button>
-
-
-
             </div>
-
-
-
-
-
-
-
           </div>
-
-          {/* WORK */}
-
           {/* Work Experience Section */}
-
           <div className="flex flex-col">
-
             <h1 className='text-[#000000] text-[17px] 2xl:text-[20px] font-medium'>Опыт работы</h1>
-
             <div className='mt-[15px] flex flex-col gap-[15px]'>
-
               {workExperiences.map((experience) => (
-
                 <div key={experience.id} className='  rounded-[12px]'>
-
                   <div className='grid grid-cols-1 2xl:grid-cols-4 gap-[12px]'>
-
                     <div className='relative'>
-
                       <input
-
                         type="text"
-
                         value={experience.name[selectedInputLang]}
-
                         onChange={(e) =>
-
                           updateWorkExperienceField(
-
                             experience.id,
-
                             "name", // Поле для обновления
-
                             selectedInputLang, // Язык (например, 'ru', 'uz', 'en')
-
                             e.target.value // Новое значение
 
                           )

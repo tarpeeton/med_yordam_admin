@@ -30,7 +30,7 @@ interface ServiceStoreType {
 }
 
 export const useServiceStore = create<ServiceStoreType>((set, get) => ({
-  services: [],
+  services: [{id: 1, name: {ru: "Шунтирование желудка", uz: "Oshqozon shuntlash amaliyoti", en: ""}, price: "100"}],
   newService: {
     id: 0,
     name: { ru: "", uz: "", en: "" },

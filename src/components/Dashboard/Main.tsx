@@ -1,4 +1,4 @@
-"use client"
+
 import DashboardSwitchers from './Switchers'
 
 const DashboardMain = () => {
