@@ -32,7 +32,7 @@ const DashboardServices: FC<ILinksProps> = ({ selectedInputLang }) => {
         <div className='flex flex-col mt-[20px] 2xl:mt-0 rounded-[18px] gap-[12px] 2xl:gap-[20px] p-[15px] 2xl:py-[37px] 2xl:px-[25px] bg-white w-full'>
           <div className='flex flex-col gap-[12px] 2xl:gap-[15px]'>
             {services.map((item) => (
-              <div key={item.id} className='flex flex-col    2xl:flex-row 2xl:items-center 2xl:justify-between'>
+              <div key={item.id} className='flex flex-col  gap-[12px]  2xl:flex-row 2xl:items-center 2xl:justify-between'>
                 <div className='flex flex-row items-center  gap-[8px] text-[17px] text-[#0129E3] 2xl:order-1 w-[25px] h-[25px]'>
                   <p className='2xl:hidden font-medium'>
                     Услуга

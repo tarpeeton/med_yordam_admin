@@ -26,9 +26,15 @@ interface YMapOptions {
 
 interface YMapInstance {
   geoObjects: {
-    add: (object: PlacemarkInstance | MultiRouteInstance) => void
-  }
+    add: (object: PlacemarkInstance | MultiRouteInstance) => void;
+    remove: (object: PlacemarkInstance | MultiRouteInstance) => void; // remove metodi qo'shildi
+  };
+  events?: {
+    add: (event: string, callback: Function) => void;
+    remove: (event: string, callback: Function) => void;
+  };
 }
+
 
 interface PlacemarkProperties {
   hintContent: string
@@ -36,7 +42,14 @@ interface PlacemarkProperties {
 }
 
 interface PlacemarkOptions {
-  iconColor?: string
+  iconColor?: string;
+  preset?: string; 
+}
+
+declare global {
+  interface Window {
+    ymaps: YMaps;
+  }
 }
 
 interface MultiRouteOptions {
@@ -77,4 +90,14 @@ interface OneSignalConfig {
   notifyButton?: {
     enable: boolean
   }
+}
+
+interface YandexMapProps {
+  location: { latitude: number; longitude: number };
+  onLocationChange: (coords: { latitude: number; longitude: number }) => void;
+  controls?: string[]; // Ixtiyoriy controls
+}
+
+declare module 'yandex-maps' {
+  export const ymaps: any;
 }
