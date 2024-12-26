@@ -12,13 +12,62 @@ import Six from "@/public/Map/Six.svg";
 
 // Data for icons and text
 const Data = [
-  { id: "1", title: { ru: "Опыт", uz: "", en: "" }, icon: One },
-  { id: "2", title: { ru: "Отзывы", uz: "", en: "" }, icon: Two },
-  { id: "3", title: { ru: "Запись", uz: "", en: "" }, icon: Three },
-  { id: "4", title: { ru: "Звонок", uz: "", en: "" }, icon: Four },
-  { id: "5", title: { ru: "Местоположение", uz: "", en: "" }, icon: Five },
-  { id: "6", title: { ru: "Адрес приёма", uz: "", en: "" }, icon: Six },
+  { 
+    id: "1", 
+    title: { 
+      ru: "Опыт", 
+      uz: "Tajriba", 
+      en: "Experience" 
+    }, 
+    icon: One 
+  },
+  { 
+    id: "2", 
+    title: { 
+      ru: "Отзывы", 
+      uz: "Fikrlar", 
+      en: "Reviews" 
+    }, 
+    icon: Two 
+  },
+  { 
+    id: "3", 
+    title: { 
+      ru: "Запись", 
+      uz: "Yozilish", 
+      en: "Appointment" 
+    }, 
+    icon: Three 
+  },
+  { 
+    id: "4", 
+    title: { 
+      ru: "Звонок", 
+      uz: "Qo‘ng‘iroq", 
+      en: "Call" 
+    }, 
+    icon: Four 
+  },
+  { 
+    id: "5", 
+    title: { 
+      ru: "Местоположение", 
+      uz: "Joylashuv", 
+      en: "Location" 
+    }, 
+    icon: Five 
+  },
+  { 
+    id: "6", 
+    title: { 
+      ru: "Адрес приёма", 
+      uz: "Qabul manzili", 
+      en: "Reception address" 
+    }, 
+    icon: Six 
+  }
 ];
+
 
 // Clinic locations
 const clinicsLocations: { id: number; name: string; address: string; coords: [number, number] }[] = [

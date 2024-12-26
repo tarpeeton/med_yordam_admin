@@ -12,13 +12,6 @@ import Four from '@/public/choise/Four.svg'
 
 
 
-
-
-
-
-
-
-
 const WhyChoise: FC = () => {
   const locale = useLocale()
 
@@ -65,36 +58,49 @@ const WhyChoise: FC = () => {
             </div>
           </div>
         </div>
+        {/* 1 */}
         <div className='flex flex-col gap-[8px] mt-[20px] slg:order-[-1] slg:w-[185px] 3xl:w-[250px]'>
           <p className='text-[#050B2B] text-[18px] slg:text-[20px] 3xl:text-[24px]'>
-            Доступ к пациентам
+          {locale === 'ru'
+          ? "Доступ к пациентам"
+          : locale === 'uz'
+            ? "Bemorlar bilan aloqa"
+            : "Access to patients"}
           </p>
           <p className='text-[#747474] leading-[21px] slg:leading-[22px] 3xl:leading-[28px] text-[15px] slg:text-[16px] 3xl:text-[20px]'>
-            Пациенты смогут находить вас через платформу и записываться на прием.
+            
+            {locale === 'ru'
+          ? "Пациенты смогут находить вас через платформу и записываться на прием."
+          : locale === 'uz'
+            ? "Bemorlar platforma orqali sizni topib, qabulga yozilishlari mumkin."
+            : "Patients can find you through the platform and book appointments."}
           </p>
         </div>
+        {/* 2 */}
         <div className='flex flex-col gap-[8px] mt-[20px] slg:w-[185px] 3xl:w-[250px] '>
           <p className='text-[#050B2B] text-[18px] slg:text-[20px] 3xl:text-[24px]'>
-            Доступ к пациентам
+           {locale === 'ru' ? "Абсолютно бесплатно" : locale === 'uz' ? "Mutlaqo bepul" : "Absolutely free"}
           </p>
           <p className='text-[#747474] leading-[21px] slg:leading-[22px] 3xl:leading-[28px] text-[15px] slg:text-[16px] 3xl:text-[20px]'>
-            Пациенты смогут находить вас через платформу и записываться на прием.
+          {locale === 'ru' ? "Регистрация и использование платформы не требуют оплаты." : locale === 'uz' ? "Platformaga ro‘yxatdan o‘tish va undan foydalanish mutlaqo bepul." : "Registration and use of the platform are completely free."}
           </p>
         </div>
-        <div className='flex flex-col gap-[8px] mt-[20px] slg:w-[185px] slg:mt-[-120px] 3xl:w-[250px] 3xl:mt-[50px] 4xl:mt-[300px]'>
+        {/* 3 */}
+        <div className='flex flex-col gap-[8px] mt-[20px] slg:w-[185px] slg:mt-[-120px] 3xl:w-[250px] 3xl:mt-[50px] 4xl:w-[350px] 4xl:mt-[50px]'>
           <p className='text-[#050B2B] text-[18px] slg:text-[20px] 3xl:text-[24px]'>
-            Доступ к пациентам
+          {locale === 'ru' ? "Гибкость управления" : locale === 'uz' ? "Boshqaruvning moslashuvchanligi" : "Flexibility of management"}
           </p>
           <p className='text-[#747474] leading-[21px] slg:leading-[22px] 3xl:leading-[28px] text-[15px] slg:text-[16px] 3xl:text-[20px]'>
-            Пациенты смогут находить вас через платформу и записываться на прием.
+          {locale === 'ru' ? "Легко редактируйте информацию о себе и клинике в любое время." : locale === 'uz' ? "O‘zingiz va klinikangiz haqidagi ma’lumotlarni istalgan vaqtda osongina tahrirlash imkoniyati." : "Easily edit information about yourself and your clinic at any time."}
           </p>
         </div>
+        {/* 4 */}
         <div className='flex flex-col gap-[8px] mt-[20px] slg:w-[185px] slg:mt-[-120px] 3xl:w-[250px] 3xl:mt-[50px] '>
           <p className='text-[#050B2B] text-[18px] slg:text-[20px] 3xl:text-[24px]'>
-            Доступ к пациентам
+          {locale === 'ru' ? "Публикация услуг" : locale === 'uz' ? "Xizmatlarni e’lon qilish" : "Service publication"}
           </p>
           <p className='text-[#747474] leading-[21px] slg:leading-[22px] 3xl:leading-[28px] text-[15px] slg:text-[16px] 3xl:text-[20px]'>
-            Пациенты смогут находить вас через платформу и записываться на прием.
+          {locale === 'ru' ? "Размещайте список ваших услуг с ценами или без них." : locale === 'uz' ? "Xizmatlaringiz ro‘yxatini narxlari bilan yoki narxlarsiz joylashtiring." : "Post a list of your services with or without prices."}
           </p>
         </div>
       </div>

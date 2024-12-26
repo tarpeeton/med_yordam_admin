@@ -1,5 +1,4 @@
 
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -14,8 +13,18 @@
 
 
 
+@font-face {
+  font-family: 'SFProDisplay';
+  src: url('/fonts/SFProDisplayRegular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+
 body {
   background-color: #F6FAFF;
+  font-family: 'SFProDisplay', sans-serif !important;
 }
 
 

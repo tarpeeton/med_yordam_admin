@@ -9,6 +9,9 @@ import { Link } from '@/i18n/routing';
 import Axios from 'axios';
 import { useRouter } from 'next/navigation';
 import {useRegisterStore} from '@/store/createRegisterSlice';
+import { handleBack } from '@/hooks/useBack';
+
+
 
 const RegisterForm: FC = () => {
   const locale = useLocale();
@@ -68,7 +71,7 @@ const RegisterForm: FC = () => {
       <div className='flex flex-col gap-[20px] slg:gap-[16px]'>
         <div className='flex flex-row items-center mt-[15px] text-[16px] 2xl:text-[20px] text-[#0129E3] font-medium font-jost'>
           <GrFormPrevious className='2xl:w-[25px] w-[25px]  h-[25px] 2xl:h-[25px]' />
-          <button>
+          <button onClick={handleBack}>
 
             {locale === 'ru'
               ? "Назад"
@@ -109,7 +112,14 @@ const RegisterForm: FC = () => {
                 >
                   <MdOutlinePhone />
 
-                  Номер телефона  <span className="text-red-500">*</span>
+                  {
+  locale === 'ru'
+    ? "Номер телефона"
+    : locale === 'uz'
+    ? "Telefon raqamingiz"
+    : "Phone number"
+}
+  <span className="text-red-500">*</span>
                 </label>
               </div>
               <div className="relative w-full cursor-pointer">
@@ -129,7 +139,14 @@ const RegisterForm: FC = () => {
                 >
                   <TfiKey />
 
-                  Пароль   <span className="text-red-500">*</span>
+                  {
+  locale === 'ru'
+    ? "Пароль"
+    : locale === 'uz'
+    ? "Parol"
+    : "Password"
+}
+ <span className="text-red-500">*</span>
                 </label>
               </div>
               <div className='relative w-full cursor-pointer'>
@@ -149,7 +166,14 @@ const RegisterForm: FC = () => {
                 >
                   <TfiKey />
 
-                  Повторите пароль    <span className="text-red-500">*</span>
+                  {
+  locale === 'ru'
+    ? "Повторите пароль"
+    : locale === 'uz'
+    ? "Parolni takrorlang"
+    : "Repeat password"
+}
+    <span className="text-red-500">*</span>
                 </label>
               </div>
               {!isPasswordMatch && (
@@ -192,7 +216,13 @@ const RegisterForm: FC = () => {
                     ? 'Akkauntingiz bormi?'
                     : "Already have an account?"
                 }
-                <Link href={'/login'} className='text-[#0129E3] ml-[4px]'>Войти</Link>
+                <Link href={'/login'} className='text-[#0129E3] ml-[4px]'>{
+                  locale === 'ru'
+                  ? "Войти"
+                  : locale === 'uz'
+                    ? 'Kirish'
+                    : "Login"
+                }</Link>
               </p>
             </div>
           </div>

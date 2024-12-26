@@ -6,13 +6,12 @@ import { GrFormPrevious } from "react-icons/gr";
 import { MdOutlinePhone } from "react-icons/md";
 import { TfiKey } from "react-icons/tfi";
 import { Link } from '@/i18n/routing';
-import Axios from 'axios';
-import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
 import { useLoginStore } from '@/store/createLoginStore';
+import { handleBack } from '@/hooks/useBack';
 
 const RegisterForm: FC = () => {
-  const { phoneNumber, password , setPassword , setPhoneNumber } = useLoginStore();
+  const { phoneNumber, password, setPassword, setPhoneNumber } = useLoginStore();
 
   const locale = useLocale();
 
@@ -35,18 +34,18 @@ const RegisterForm: FC = () => {
     setIsFocused((prev) => ({ ...prev, [field]: focused }));
   };
 
-  
 
 
- 
+
+
 
 
   const handleLogin = () => {
-   
+
   };
 
 
- 
+
 
   const resetPassword = () => {
     router.push(`/${locale !== 'default' ? locale : ''}/login/reset-password`);
@@ -57,7 +56,7 @@ const RegisterForm: FC = () => {
       <div className='flex flex-col gap-[20px] slg:gap-[16px]'>
         <div className='flex flex-row items-center mt-[15px] text-[16px] 2xl:text-[20px] text-[#0129E3] font-medium font-jost'>
           <GrFormPrevious className='2xl:w-[25px] w-[25px]  h-[25px] 2xl:h-[25px]' />
-          <button>
+          <button onClick={handleBack}>
 
             {locale === 'ru'
               ? "Назад"
@@ -92,13 +91,20 @@ const RegisterForm: FC = () => {
                   className="h-[73px] w-full rounded-2xl bg-[#F8F8F8] px-[25px] pt-[25px] outline-none drop-shadow"
                 />
                 <label
-                onClick={() => handleFocus('phoneNumber', true)}
+                  onClick={() => handleFocus('phoneNumber', true)}
                   className={`absolute  pointer-events-none left-[25px] flex items-center gap-[10px] transition-all ${isFocused['phoneNumber'] || phoneNumber ? "top-3 text-xs text-gray-500" : "top-[26px] text-base text-gray-400"
                     }`}
                 >
                   <MdOutlinePhone />
 
-                  Номер телефона 
+                  {
+                    locale === 'ru'
+                      ? "Номер телефона"
+                      : locale === 'uz'
+                        ? "Telefon raqami"
+                        : "Phone number"
+                  }
+
                 </label>
               </div>
               <div className="relative w-full cursor-pointer">
@@ -112,13 +118,22 @@ const RegisterForm: FC = () => {
                   className="h-[73px] w-full rounded-2xl bg-[#F8F8F8] px-[25px] pt-[25px] outline-none drop-shadow"
                 />
                 <label
-                onClick={() => handleFocus('password', true)}
+                  onClick={() => handleFocus('password', true)}
                   className={`absolute  pointer-events-none left-[25px] flex items-center gap-[10px] transition-all ${isFocused['password'] || password ? "top-3 text-xs text-gray-500" : "top-[26px] text-base text-gray-400"
                     }`}
                 >
                   <TfiKey />
 
-                  Пароль   
+                  {
+                    locale === 'ru'
+                      ? "Пароль"
+                      : locale === 'uz'
+                        ? "Parol"
+                        : locale === 'fr'
+                          ? "Mot de passe"
+                          : "Password"
+                  }
+
                 </label>
               </div>
             </form>
@@ -149,10 +164,18 @@ const RegisterForm: FC = () => {
                 {locale === 'ru'
                   ? "Нет аккаунта? "
                   : locale === 'uz'
-                    ?'Ro`yhatdan otmaganmisiz ?'
+                    ? 'Ro`yhatdan otmaganmisiz ?'
                     : "Don't have an account?"
                 }
-                <Link href={'/register'} className='text-[#0129E3] ml-[4px]'>Зарегестрироваться</Link>
+                <Link href={'/register'} className='text-[#0129E3] ml-[4px]'>
+                  {
+                    locale === 'ru'
+                      ? "Зарегистрироваться"
+                      : locale === 'uz'
+                        ? "Ro‘yxatdan o‘tish"
+                        : "Sign up"
+                  }
+                </Link>
               </p>
             </div>
           </div>

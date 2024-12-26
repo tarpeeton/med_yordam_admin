@@ -10,41 +10,78 @@ import four from '../../public/key/Sharhlar.svg'
 import Five from '../../public/key/Last.svg'
 
 
-
 const Data = [
   {
     id: "1",
-    title: { ru: "Редактирование профиля", uz: "", en: "" },
-    description: { ru: "Управляйте своей информацией, графиком работы и контактами.", uz: "", en: "" },
+    title: { 
+      ru: "Редактирование профиля", 
+      uz: "Profilni tahrirlash", 
+      en: "Profile editing" 
+    },
+    description: { 
+      ru: "Управляйте своей информацией, графиком работы и контактами.", 
+      uz: "O‘zingizning ma'lumotlaringizni, ish jadvalingizni va kontaktlaringizni boshqaring.", 
+      en: "Manage your information, work schedule, and contacts." 
+    },
     icon: One
   },
   {
     id: "2",
-    title: { ru: "Редактирование профиля", uz: "", en: "" },
-    description: { ru: " Пациенты могут оставлять отзывы, которые помогут другим пользователям найти лучших специалистов.", uz: "", en: "" },
+    title: { 
+      ru: "Редактирование профиля", 
+      uz: "Profilni tahrirlash", 
+      en: "Profile editing" 
+    },
+    description: { 
+      ru: "Пациенты могут оставлять отзывы, которые помогут другим пользователям найти лучших специалистов.", 
+      uz: "Bemorlar boshqa foydalanuvchilarga eng yaxshi mutaxassislarni topishga yordam beradigan sharhlar qoldirishi mumkin.", 
+      en: "Patients can leave reviews that help other users find the best specialists." 
+    },
     icon: Two
   },
   {
     id: "3",
-    title: { ru: "Редактирование профиля", uz: "", en: "" },
-    description: { ru: " Удобный поиск по рейтингу, ценам и местоположению.", uz: "", en: "" },
+    title: { 
+      ru: "Редактирование профиля", 
+      uz: "Profilni tahrirlash", 
+      en: "Profile editing" 
+    },
+    description: { 
+      ru: "Удобный поиск по рейтингу, ценам и местоположению.", 
+      uz: "Reyting, narxlar va joylashuv bo‘yicha qulay qidiruv.", 
+      en: "Convenient search by ratings, prices, and location." 
+    },
     icon: Three
   },
   {
     id: "4",
-    title: { ru: "Редактирование профиля", uz: "", en: "" },
-    description: { ru: "Пишите и публикуйте статьи для расширения вашей аудитории и привлечения новых пациентов.", uz: "", en: "" },
+    title: { 
+      ru: "Редактирование профиля", 
+      uz: "Profilni tahrirlash", 
+      en: "Profile editing" 
+    },
+    description: { 
+      ru: "Пишите и публикуйте статьи для расширения вашей аудитории и привлечения новых пациентов.", 
+      uz: "Auditoriyangizni kengaytirish va yangi bemorlarni jalb qilish uchun maqolalar yozing va e’lon qiling.", 
+      en: "Write and publish articles to expand your audience and attract new patients." 
+    },
     icon: four
   },
   {
     id: "5",
-    title: { ru: "Редактирование профиля", uz: "", en: "" },
-    description: { ru: "Поддержка ссылок на Instagram, Telegram, YouTube и Facebook.", uz: "", en: "" },
+    title: { 
+      ru: "Редактирование профиля", 
+      uz: "Profilni tahrirlash", 
+      en: "Profile editing" 
+    },
+    description: { 
+      ru: "Поддержка ссылок на Instagram, Telegram, YouTube и Facebook.", 
+      uz: "Instagram, Telegram, YouTube va Facebook uchun havolalarni qo‘llab-quvvatlash.", 
+      en: "Support for links to Instagram, Telegram, YouTube, and Facebook." 
+    },
     icon: Five
-  },
-
-
-]
+  }
+];
 
 
 

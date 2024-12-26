@@ -1,7 +1,5 @@
 "use client"
 import { FC, useState } from 'react';
-
-import { useLocale } from 'next-intl';
 import { TfiKey } from "react-icons/tfi";
 import { useSecurityStore } from '@/store/createSeucurity';
 
@@ -11,7 +9,7 @@ interface ISecurityProps {
 }
 
 
-const DashboardSecurity: FC<ISecurityProps> = ({selectedInputLang}) => {
+const DashboardSecurity: FC<ISecurityProps> = ({ selectedInputLang }) => {
   const { setNewPassword, save, setOldPassword, setRepeatPassword, newPassword, repeatPassword, oldPassword, success, error, isPasswordMatch, } = useSecurityStore()
 
 
@@ -48,7 +46,7 @@ const DashboardSecurity: FC<ISecurityProps> = ({selectedInputLang}) => {
             >
               <TfiKey />
 
-              
+
               {selectedInputLang === 'ru' ? "Текущий пароль" : selectedInputLang === 'uz' ? "Hozirgi parol" : "Current password"}
             </label>
           </div>
@@ -70,12 +68,12 @@ const DashboardSecurity: FC<ISecurityProps> = ({selectedInputLang}) => {
               <TfiKey />
 
               {
-  selectedInputLang === 'ru'
-    ? "Новый пароль"
-    : selectedInputLang === 'uz'
-    ? "Yangi parol"
-    : "New password"
-}
+                selectedInputLang === 'ru'
+                  ? "Новый пароль"
+                  : selectedInputLang === 'uz'
+                    ? "Yangi parol"
+                    : "New password"
+              }
 
             </label>
           </div>
@@ -99,8 +97,8 @@ const DashboardSecurity: FC<ISecurityProps> = ({selectedInputLang}) => {
               {selectedInputLang === 'ru'
                 ? "Повторите пароль"
                 : selectedInputLang === 'uz'
-                ? "Parolni takrorlang"
-                : "Repeat password"}
+                  ? "Parolni takrorlang"
+                  : "Repeat password"}
             </label>
           </div>
           {!isPasswordMatch && (
@@ -115,7 +113,7 @@ const DashboardSecurity: FC<ISecurityProps> = ({selectedInputLang}) => {
         </form>
         <div className='2xl:order-[3] mt-[25px] w-full 2xl:w-[100%] flex items-center 2xl:justify-end'>
           <button onClick={save} className='bg-[#0129E3] 2xl:w-[235px] py-[20px] w-full rounded-[12px] font-medium text-center text-white'>
-          {selectedInputLang === 'ru' ? 'Сохранить изменения' : selectedInputLang === 'uz' ? 'Ozgartirishlarni saqlash' : 'Save changes'}
+            {selectedInputLang === 'ru' ? 'Сохранить изменения' : selectedInputLang === 'uz' ? 'Ozgartirishlarni saqlash' : 'Save changes'}
           </button>
         </div>
       </div>

@@ -10,34 +10,64 @@ import Three from '@/public/HowWeWork/Three.svg'
 import Four from '@/public/HowWeWork/Four.svg'
 
 
-
 const Data = [
   {
     id: '1',
-    title: { ru: "Регистрация", uz: "", en: "" },
-    subtitle: { ru: "Заполните анкету и создайте профиль", uz: "", en: "" },
+    title: { 
+      ru: "Регистрация", 
+      uz: "Ro‘yxatdan o‘tish", 
+      en: "Registration" 
+    },
+    subtitle: { 
+      ru: "Заполните анкету и создайте профиль", 
+      uz: "Anketani to‘ldiring va profil yarating", 
+      en: "Fill out the form and create a profile" 
+    },
     icon: One
   },
   {
     id: '2',
-    title: { ru: "Управление профилем ", uz: "", en: "" },
-    subtitle: { ru: "Обновляйте информацию, редактируйте контакты и график работы", uz: "", en: "" },
+    title: { 
+      ru: "Управление профилем", 
+      uz: "Profilni boshqarish", 
+      en: "Profile management" 
+    },
+    subtitle: { 
+      ru: "Обновляйте информацию, редактируйте контакты и график работы", 
+      uz: "Ma’lumotlarni yangilang, kontaktlarni va ish jadvalini tahrirlang", 
+      en: "Update information, edit contacts, and work schedule" 
+    },
     icon: Two
   },
   {
     id: '3',
-    title: { ru: "Связь с пациентами", uz: "", en: "" },
-    subtitle: { ru: "Получайте запросы и записывайте пациентов через платформу и Telegram", uz: "", en: "" },
+    title: { 
+      ru: "Связь с пациентами", 
+      uz: "Bemorlar bilan aloqa", 
+      en: "Communication with patients" 
+    },
+    subtitle: { 
+      ru: "Получайте запросы и записывайте пациентов через платформу и Telegram", 
+      uz: "So‘rovlarni qabul qiling va bemorlarni platforma yoki Telegram orqali yozib qo‘ying", 
+      en: "Receive requests and schedule patients through the platform or Telegram" 
+    },
     icon: Three
   },
   {
     id: '4',
-    title: { ru: "Публикации", uz: "", en: "" },
-    subtitle: { ru: "Делитесь профессиональными статьями и блогами, чтобы расширить свою аудиторию", uz: "", en: "" },
+    title: { 
+      ru: "Публикации", 
+      uz: "E’lonlar", 
+      en: "Publications" 
+    },
+    subtitle: { 
+      ru: "Делитесь профессиональными статьями и блогами, чтобы расширить свою аудиторию", 
+      uz: "Auditoriyangizni kengaytirish uchun professional maqolalar va bloglarni ulashing", 
+      en: "Share professional articles and blogs to expand your audience" 
+    },
     icon: Four
-  },
-
-]
+  }
+];
 
 
 

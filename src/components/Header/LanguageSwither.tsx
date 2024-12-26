@@ -2,7 +2,8 @@ import { useState } from "react";
 import Link from "next/link";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
 import { useLocale } from 'next-intl';
-
+import { usePathname } from "next/navigation";
+import  {generateLocalizedPath} from '@/hooks/generateLocalizedPath';
 
 const languages = [
   { code: "en", name: "English", label: "Lang", shortName: "Eng", icon: "fi fi-gb" },
@@ -10,13 +11,12 @@ const languages = [
   { code: "uz", name: "Oʻzbek", label: "Til", shortName: "Oʻz", icon: "fi fi-uz" },
 ];
 
-const generateLocalizedPath = (locale: string) => {
-  return `/${locale}`;
-};
+
 
 const LanguageSwitcher = () => {
   const [menu, setMenu] = useState(false);
   const locale = useLocale()
+  const pathname= usePathname(); // Get the current path
 
   const toggleDropdown = () => {
     setMenu(!menu);
@@ -45,13 +45,14 @@ const LanguageSwitcher = () => {
       {menu && (
         <div
           id="dropdown"
+          onMouseLeave={() => setMenu(false)}
           className="absolute top-full mt-1 bg-white divide-y divide-gray-100 rounded-lg shadow-lg slg:w-40 w-[120px] z-[9999] border border-gray-100"
         >
           <ul>
             {languages.map((lang) => (
               <li key={lang.code} className="text-[16px] font-medium text-gray-700">
                 <Link
-                  href={generateLocalizedPath(lang.code)}
+                  href={generateLocalizedPath(lang.code || "", pathname)}
                   className="px-3 py-2 hover:bg-gray-50 flex flex-row gap-2 items-center"
                   onClick={() => handleLocaleChange(lang.code)}
                 >

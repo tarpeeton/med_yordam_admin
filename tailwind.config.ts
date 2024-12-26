@@ -31,11 +31,6 @@ const config: Config = {
         title80: '#414141',
         titleWhite: '#FFFFFF',
       },
-      fontFamily: {
-        raleway: ['Raleway', 'sans-serif'],
-        manrope: ['Manrope', 'sans-serif'],
-        jost: ['Jost', 'sans-serif'], // Adding Jost to the font family
-      },
     },
   },
   plugins: [],
