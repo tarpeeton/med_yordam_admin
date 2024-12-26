@@ -86,8 +86,8 @@ const DashboardServices: FC<ILinksProps> = ({ selectedInputLang }) => {
 
           <button onClick={addService} className='mt-[15px]  w-full 2xl:w-[220px]  rounded-[12px] border border-[#0129E3] text-[15px] 2xl:text-[16px] text-[#0129E3] font-medium h-[50px]'>
 
-            Добавить услугу
-
+            
+            {selectedInputLang === 'ru' ? 'Добавить услугу' : selectedInputLang === 'uz' ? 'Xizmat qo\'shish' : 'Add Service'}
           </button>
 
         </div>

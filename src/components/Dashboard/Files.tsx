@@ -65,7 +65,9 @@ const DashboardFiles = ({ selectedInputLang }: IFileProps) => {
         {/* LITCENCE */}
         <div>
           <h1 className='mb-[12px] 2xl:pb-[15px] text-[17px] font-medium 2xl:text-[20px]'>
-            Лицензия
+            
+            {selectedInputLang === 'ru' ? 'Лицензия' : selectedInputLang === 'uz' ? 'Litsensiyalar' : 'Licenses'}
+
           </h1>
           <div className='grid grid-cols-2 gap-[8px] 2xl:grid-cols-6 2xl:gap-[20px]'>
             {files.map((file) => (
@@ -92,7 +94,9 @@ const DashboardFiles = ({ selectedInputLang }: IFileProps) => {
                 <MdOutlineAttachFile className='text-[#0129E3] rotate-45 w-[20px] h-[20px]  2xl:w-[30px] 2xl:h-[30px]' />
                 <div>
                   <p className='text-[15px] font-medium 2xl:leading-[20px] 2xl:text-[16px] text-[#0129E3]'>
-                    Прикрепить изображение
+                   
+            {selectedInputLang === 'ru' ? ' Прикрепить изображение' : selectedInputLang === 'uz' ? 'Rasm qo`shish' : 'Attach Image'}
+
                   </p>
                 </div>
               </div>
@@ -103,7 +107,9 @@ const DashboardFiles = ({ selectedInputLang }: IFileProps) => {
         {/* DOCUMENT */}
         <div className='mt-[25px] 2xl:mt-[60px]'>
           <h2 className='mb-[12px] 2xl:pb-[15px] text-[17px] font-medium 2xl:text-[20px]'>
-            Другие документы
+           
+            {selectedInputLang === 'ru' ? ' Другие документы' : selectedInputLang === 'uz' ? 'Boshqa xujjatlar' : 'Other documents'}
+
           </h2>
           <div className='flex flex-col gap-[25px] 2xl:gap-[15px]'>
             {documents.map((doc) => (
@@ -124,7 +130,9 @@ const DashboardFiles = ({ selectedInputLang }: IFileProps) => {
                       className="w-full h-full object-cover rounded-[16px]"
                     />
                   ) : (
-                    <p className="text-[#B0B0B0]">Upload</p>
+                    <p className="text-[#B0B0B0]">
+                      {selectedInputLang === 'ru' ? 'Загрузить' : selectedInputLang === 'uz' ? 'Yuklash' : 'Upload'}
+                    </p>
                   )}
                   <input
                     type="file"
@@ -150,7 +158,7 @@ const DashboardFiles = ({ selectedInputLang }: IFileProps) => {
                       onChange={(e) =>
                         handleTextChange(doc.id, selectedInputLang, e.target.value)
                       }
-                      placeholder="Описание (необязательно)"
+                      placeholder={selectedInputLang === 'ru' ? "Описание (необязательно)" : selectedInputLang === 'uz' ? "Tavsif (majburiy emas)" : "Description(optional)"}
                       className="w-full 2xl:h-[200px]  resize-none text-[#747474] rounded-[12px] focus:outline-none focus:ring-1 focus:ring-ring py-[18px] pl-[40px] px-[15px] bg-[#F8F8F8]"
                     />
                     <GoPencil className="absolute text-[#B0B0B0] left-3 top-[18px] h-5 w-5 " />
@@ -160,21 +168,16 @@ const DashboardFiles = ({ selectedInputLang }: IFileProps) => {
               </div>
             ))}
             <button onClick={addDocument} className='mt-[15px]  w-full 2xl:w-[220px]  rounded-[12px] border border-[#0129E3] text-[15px] 2xl:text-[16px] text-[#0129E3] font-medium h-[50px]'>
-
-              Добавить документ
-
+              {selectedInputLang === 'ru' ? 'Добавить документ' : selectedInputLang =='uz' ?  "Xujjat qo'shish": 'Add document'}
             </button>
           </div>
         </div>
       </div>
-
-
       <div className=' mt-[25px] w-full 2xl:w-[100%] flex items-center 2xl:justify-end'>
         <button onClick={saveDocuments} className='bg-[#0129E3] 2xl:w-[245px] py-[20px] w-full rounded-[12px] font-medium text-center text-white'>
           {selectedInputLang === 'ru' ? 'Сохранить изменения' : selectedInputLang === 'uz' ? 'Ozgartirishlarni saqlash' : 'Save changes'}
         </button>
       </div>
-
     </div>
   );
 };

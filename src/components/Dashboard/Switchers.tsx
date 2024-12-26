@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { useLocale } from 'next-intl';
 import { GrFormPrevious } from "react-icons/gr";
 import { IoIosArrowDown } from "react-icons/io";
-import { IoIosArrowUp } from "react-icons/io";
 import Profile from '@/components/Dashboard/Profile';
 import DashboardLinks from '@/components/Dashboard/Links';
 import DashboardProInfo from '@/components/Dashboard/ProInfo';
@@ -109,7 +108,7 @@ const DashboardSwitchers = () => {
         <div className='inline-block border-b border-b-[#EDEDED] w-full'>
           <div className='grid grid-cols-7 w-full'>
             {options.map((option, index) => (
-              <button key={index} onClick={() => handleSelect(option)} className={`text-[20px] relative py-[20px] text-center text-[#050B2B] font-medium font-jost ${selectedPage[locale] === option[locale] ? 'bg-[#0129E3] text-white rounded-tl-[10px] rounded-tr-[10px]' : 'bg-white text-[#050B2B]'}`}>
+              <button key={index} onClick={() => handleSelect(option)} className={`text-[16px] relative py-[20px] text-center text-[#050B2B] font-medium font-jost ${selectedPage[locale] === option[locale] ? 'bg-[#0129E3] text-white rounded-tl-[10px] rounded-tr-[10px]' : 'bg-white text-[#050B2B]'}`}>
                 <span
                   className={`absolute right-0 top-1/2 transform -translate-y-1/2 h-[30px] w-[1px]  ${selectedPage[locale] === option[locale] ? 'bg-[#0129E3]' : 'bg-[#EDEDED]'} `}
                 ></span>
@@ -127,7 +126,7 @@ const DashboardSwitchers = () => {
       {selectedPage.en === 'Profile Info' && (<DashboardProInfo selectedInputLang={selectedLanguage} />)
       }
       {selectedPage.en === 'Services and Prices' && (<DashboardServices selectedInputLang={selectedLanguage} />)}
-      {selectedPage.en === 'Security' && (<DashboardSecurity />)}
+      {selectedPage.en === 'Security' && (<DashboardSecurity selectedInputLang={selectedLanguage} />)}
       {selectedPage.en === 'Documents' && (<DashboardFiles selectedInputLang={selectedLanguage} />)}
       {selectedPage.en === 'Reception Place' && (<DashboardAddress selectedInputLang={selectedLanguage} />)}
 

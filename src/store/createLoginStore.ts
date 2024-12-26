@@ -36,9 +36,32 @@ export const useLoginStore = create<LoginState>((set, get) => ({
   isPasswordMatch: true,
   
   setPhoneNumber: (phoneNumber) => {
-    set({ phoneNumber });
+    // Allow only digits, spaces, parentheses, and "+"
+    const sanitized = phoneNumber.replace(/[^\d\s()+-]/g, '');
+
+    // Automatically format phone number to +998 (XX) XXX-XX-XX
+    let formatted = sanitized;
+    if (sanitized.startsWith('+998')) {
+      formatted = sanitized
+        // Full format: +998 (XX) XXX-XX-XX
+        .replace(/^(\+998)(\d{2})(\d{3})(\d{2})(\d{2})$/, '$1 ($2) $3-$4-$5')
+        // Progressive formats
+        .replace(/^(\+998)(\d{2})(\d{0,3})$/, '$1 ($2) $3')
+        .replace(/^(\+998)(\d{2})$/, '$1 ($2)');
+    }
+
+    // Validate full phone number
+    const isValidPhoneNumber = /^\+998 \(\d{2}\) \d{3}-\d{2}-\d{2}$/.test(formatted);
+
+    set({
+      phoneNumber: formatted,
+      buttonDisabled: !isValidPhoneNumber, // Disable button if phone number is invalid
+    });
+
     // Save the phoneNumber to localStorage whenever it changes
-    localStorage.setItem('phoneNumber', JSON.stringify(phoneNumber));
+    if (isValidPhoneNumber) {
+      localStorage.setItem('phoneNumber', JSON.stringify(formatted));
+    }
   },
 
   setLoginCode: (loginVerifyCode) => {

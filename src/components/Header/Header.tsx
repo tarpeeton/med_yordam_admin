@@ -27,7 +27,7 @@ const Header: FC = () => {
 
     return (
       <header >
-        <div className='flex flex-row justify-between items-center h-[59px] px-[16px] slg:px-[20px] 2xl:px-[100px]'>
+        <div className='flex flex-row justify-between items-center h-[59px] px-[16px] slg:px-[20px] 2xl:px-[60px] 3xl:px-[100px]'>
         <button className='flex flex-row items-center flex-grow-[1]'>
             <SlLocationPin className='mr-[4px] mdl:mr-[8px] text-[#0129E3] w-[16px] h-[16px] '/>
               <p className='text-[15px] slg:text-[16px] '>
@@ -47,7 +47,7 @@ const Header: FC = () => {
       </button>
         </div>
          
-        <div className='px-[16px] slg:px-[20px] 2xl:px-[100px]'>
+        <div className='px-[16px] slg:px-[20px] 2xl:px-[60px] 3xl:px-[100px]'>
         <div className='h-[79px] px-[20px] mdl:flex items-center justify-between flex-row flex-nowrap hidden'>
         <div>
           <img src={LogoDefault.src} alt="" width={300} height={90} className='w-full h-full object-cover' />

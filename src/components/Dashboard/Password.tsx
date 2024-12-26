@@ -5,8 +5,13 @@ import { useLocale } from 'next-intl';
 import { TfiKey } from "react-icons/tfi";
 import { useSecurityStore } from '@/store/createSeucurity';
 
-const DashboardSecurity: FC = () => {
-  const locale = useLocale();
+
+interface ISecurityProps {
+  selectedInputLang: "ru" | "uz" | "en";
+}
+
+
+const DashboardSecurity: FC<ISecurityProps> = ({selectedInputLang}) => {
   const { setNewPassword, save, setOldPassword, setRepeatPassword, newPassword, repeatPassword, oldPassword, success, error, isPasswordMatch, } = useSecurityStore()
 
 
@@ -43,7 +48,8 @@ const DashboardSecurity: FC = () => {
             >
               <TfiKey />
 
-              Пароль
+              
+              {selectedInputLang === 'ru' ? "Текущий пароль" : selectedInputLang === 'uz' ? "Hozirgi parol" : "Current password"}
             </label>
           </div>
           <div className="relative w-full cursor-pointer">
@@ -63,7 +69,14 @@ const DashboardSecurity: FC = () => {
             >
               <TfiKey />
 
-              Новый пароль
+              {
+  selectedInputLang === 'ru'
+    ? "Новый пароль"
+    : selectedInputLang === 'uz'
+    ? "Yangi parol"
+    : "New password"
+}
+
             </label>
           </div>
           <div className="relative w-full cursor-pointer">
@@ -83,14 +96,18 @@ const DashboardSecurity: FC = () => {
             >
               <TfiKey />
 
-              Повторите пароль
+              {selectedInputLang === 'ru'
+                ? "Повторите пароль"
+                : selectedInputLang === 'uz'
+                ? "Parolni takrorlang"
+                : "Repeat password"}
             </label>
           </div>
           {!isPasswordMatch && (
             <p className='text-[#D60C0C] font-medium slg:text-[16px] 2xl:text-[17px] text-[15px]'>
-              {locale === 'ru'
+              {selectedInputLang === 'ru'
                 ? "пароли не совпадают"
-                : locale === 'uz'
+                : selectedInputLang === 'uz'
                   ? "parolalar bir xil emas"
                   : "passwords do not match"}
             </p>
@@ -98,7 +115,7 @@ const DashboardSecurity: FC = () => {
         </form>
         <div className='2xl:order-[3] mt-[25px] w-full 2xl:w-[100%] flex items-center 2xl:justify-end'>
           <button onClick={save} className='bg-[#0129E3] 2xl:w-[235px] py-[20px] w-full rounded-[12px] font-medium text-center text-white'>
-          {locale === 'ru' ? 'Сохранить изменения' : locale === 'uz' ? 'Ozgartirishlarni saqlash' : 'Save changes'}
+          {selectedInputLang === 'ru' ? 'Сохранить изменения' : selectedInputLang === 'uz' ? 'Ozgartirishlarni saqlash' : 'Save changes'}
           </button>
         </div>
       </div>
