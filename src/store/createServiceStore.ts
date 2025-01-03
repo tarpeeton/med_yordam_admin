@@ -30,8 +30,8 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
   services: [
     {
       
-      name: { ru: "Шунтирование желудка", uz: "Oshqozon shuntlash amaliyoti", en: "" },
-      price: "100",
+      name: { ru: "", uz: "", en: "" },
+      price: "",
     },
   ],
   newService: {
@@ -81,7 +81,6 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
     const state = get();
     const { services } = state;
     const serviceToDelete = services[index];
-    console.log(index , serviceToDelete , "PIDARAZLAR");
     if (serviceToDelete?.id) {
       try {
         const { id: profileId } = useProfileStore.getState();
@@ -133,11 +132,22 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
         return;
       }
 
-      // Собираем данные о сервисах
-      const priceList = services.map((service) => ({
-        name: service.name,
-        price: service.price,
-      }));
+      // Формируем список услуг для отправки
+      const priceList = services.map((service) => {
+        // Если у сервиса есть id, добавляем его в запрос для обновления
+        if (service.id) {
+          return {
+            id: service.id,
+            name: service.name,
+            price: service.price,
+          };
+        }
+        // Если id нет, это новый сервис, и он создается без id
+        return {
+          name: service.name,
+          price: service.price,
+        };
+      });
 
       // Выполняем запрос
       const response = await axios.put(
@@ -154,6 +164,7 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
       if (response.data.data.priceList) {
         set({
           services: response.data.data.priceList.map((service: Service) => ({
+            id: service.id,
             name: service.name,
             price: service.price,
           })),
@@ -166,6 +177,7 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
       alert("Failed to save services. Please try again.");
     }
   },
+
 
   setServicesFromOtherStore: (priceList: Service[]) => {
     const transformedServices = priceList.map((item) => ({
