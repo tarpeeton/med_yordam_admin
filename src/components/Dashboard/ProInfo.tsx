@@ -57,8 +57,8 @@ const DashboardProInfo: FC<ILinksProps> = ({ selectedInputLang }) => {
     addAchievement();
   };
 
-  const handleSave = () => {
-    save();
+  const handleSave =  async () => {
+    const success = await save();
     if (success) {
       const successMessage =
         locale === 'ru'
@@ -80,6 +80,8 @@ const DashboardProInfo: FC<ILinksProps> = ({ selectedInputLang }) => {
     }
   };
 
+
+  
   useEffect(() => {
     fetchSpecialties()
     fetchLanguage()
@@ -88,7 +90,6 @@ const DashboardProInfo: FC<ILinksProps> = ({ selectedInputLang }) => {
 
 
 
-  console.log(specialties , "BU PRO INFO PAGE TSX")
 
  
   

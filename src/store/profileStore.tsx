@@ -65,6 +65,7 @@ interface ProfileState {
   setSurname: (surname: multiLang) => void;
   setPatronymic: (patronymic: multiLang) => void;
   setPhone: (phone: string) => void;
+  photo: null | ServerResponse["photo"];
   setGender: (gender: multiLang) => void;
   setImage: (image: File | null) => void;
   setLang: (lang: "ru" | "uz" | "en") => void;
@@ -84,6 +85,7 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
   phone: "",
   contactId: null,
   success: false,
+  photo: null,
   exp: null,
   gender: { ru: "Мужчина", uz: "Erkak", en: "Male" },
   image: null,
@@ -114,6 +116,7 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
       exp: data.exp,
       phone: data.phone,
       image: data.photo?.url || null,
+      photo: data?.photo || null,
       gender: {
         ru: data.gender === "MALE" ? "Мужчина" : "Женщина",
         uz: data.gender === "MALE" ? "Erkak" : "Ayol",
@@ -123,13 +126,14 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
   },
 
   saveProfile: async (): Promise<boolean> => {
-    const { id, name, surname, patronymic, phone, exp, gender } = get();
+    const { id, name, surname, patronymic, phone, exp, gender  , image , photo} = get();
     const token = localStorage.getItem("token");
   
     if (!exp) {
       toastr.error("Experience date is required.");
       return false; // Возвращаем false при ошибке
     }
+   
   
     const genderEnum = gender.en.toUpperCase();
     
@@ -146,6 +150,24 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
     };
   
     try {
+
+      if (image instanceof File) {
+        const formData = new FormData();
+        formData.append("new-photo", image); // The key should match your API requirements
+  
+        // API endpoint for image update
+        const imageUploadEndpoint = `https://medyordam.result-me.uz/api/photo/${photo?.id}`;
+  
+        const headers = {
+          Authorization: `Bearer ${token}`,
+        };
+  
+        // Upload the image
+        const imageResponse = await axios.put(imageUploadEndpoint, formData, { headers });
+        console.log("Image updated successfully:", imageResponse.data);
+      }
+
+
       const endpoint = "https://medyordam.result-me.uz/api/doctor";
       const headers = {
         Authorization: `Bearer ${token}`,

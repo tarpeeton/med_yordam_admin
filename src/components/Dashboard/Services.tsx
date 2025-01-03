@@ -88,9 +88,12 @@ const DashboardServices: FC<ILinksProps> = ({ selectedInputLang }) => {
                 <div className='relative  2xl:w-[48%]'>
                   <input
                     value={item.price}
-                    onChange={(e) =>
-                      updateServiceFieldByIndex(index, "price", null, e.target.value)
-                    }
+                    onChange={(e) => {
+                      const value = Number(e.target.value); // Convert string to number
+                      if (!isNaN(value)) {
+                        updateServiceFieldByIndex(index, "price", null, value); // Pass the converted number
+                      }
+                    }}
                     placeholder={
                       selectedInputLang === "ru"
                         ? "Цена"

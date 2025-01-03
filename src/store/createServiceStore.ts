@@ -6,21 +6,21 @@ import { useProfileStore } from '@/store/profileStore';
 interface Service {
   id?: number;
   name: multiLang;
-  price: string;
+  price: number;
 }
 
 interface ServiceStoreType {
   services: Service[];
   newService: Service;
   setNewServiceName: (lang: keyof multiLang, value: string) => void;
-  setNewServicePrice: (price: string) => void;
+  setNewServicePrice: (price: number) => void;
   addService: () => void;
   setServicesFromOtherStore: (priceList: Service[]) => void;
   updateServiceFieldByIndex: (
     index: number,
     field: keyof Service,
     lang: keyof multiLang | null,
-    value: string
+    value: string | number
   ) => void;
   deleteServiceByIndex: (index: number) => Promise<boolean>;
   save: () => Promise<boolean>;
@@ -33,13 +33,13 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
     {
       
       name: { ru: "", uz: "", en: "" },
-      price: "",
+      price: 0,
     },
   ],
   newService: {
 
     name: { ru: "", uz: "", en: "" },
-    price: "",
+    price: 0,
   },
 
   setNewServiceName: (lang, value) => {
@@ -60,7 +60,7 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
   addService: () => {
     set((state) => ({
       services: [...state.services, state.newService],
-      newService: { name: { ru: "", uz: "", en: "" }, price: "" },
+      newService: { name: { ru: "", uz: "", en: "" }, price: 0 },
     }));
   },
 
@@ -195,7 +195,7 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
     const transformedServices = priceList.map((item) => ({
       id: item.id,
       name: item.name,
-      price: item.price.toString(), // Преобразуем цену в строку
+      price: item.price,
     }));
 
     set({ services: transformedServices });

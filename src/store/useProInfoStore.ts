@@ -99,7 +99,7 @@ interface ProInfoState {
   removePositionFromWorkExperience: (id: number, positionIndex: number) => void;
   removeWorkExperience: (id: number) => void;
   // Save method
-  save: () => void;
+  save: () => Promise<boolean>;
   fetchSpecialties: () => Promise<void>;
   fetchLanguage: () => Promise<void>;
   setAllData: (workExperiences: WorkExperience[], educations: Education[], languages: LanguageSkill[], specialties: Specialty[], achievements: Achievement[]) => void
@@ -410,7 +410,7 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
 
 
 
-  save: async () => {
+  save: async (): Promise<boolean> => {
     const state = get();
     const { id } = useProfileStore.getState();
     const token = localStorage.getItem("token");
@@ -505,15 +505,11 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
       );
       
   
-      if (response.status === 200) {
-        set({ success: true });
-      } else {
-        console.error("Error saving data:", response.data);
-        set({ success: false });
-      }
+     return true
     } catch (error) {
       console.error("Error saving data:", error);
       set({ success: false });
+      return false
     }
   },
   
