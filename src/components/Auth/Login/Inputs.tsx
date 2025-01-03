@@ -10,8 +10,9 @@ import { useRouter } from 'next/navigation';
 import { useLoginStore } from '@/store/createLoginStore';
 import { handleBack } from '@/hooks/useBack';
 
+
 const RegisterForm: FC = () => {
-  const { phoneNumber, password, setPassword, setPhoneNumber } = useLoginStore();
+  const { phoneNumber, password, setPassword, setPhoneNumber  , save  , success} = useLoginStore();
 
   const locale = useLocale();
 
@@ -35,14 +36,10 @@ const RegisterForm: FC = () => {
   };
 
 
+  if(success === true) {
+    router.push(`/${locale !== 'default' ? locale : ''}/login/verify`);
+  }
 
-
-
-
-
-  const handleLogin = () => {
-
-  };
 
 
 
@@ -79,7 +76,7 @@ const RegisterForm: FC = () => {
           </h1>
 
           <div className='w-full slg:w-[90%] 2xl:w-[80%] mx-auto p-[15px] bg-white rounded-[20px] 2xl:p-[30px] '>
-            <form className='flex flex-col gap-[15px] slg:gap-[20px]'>
+            <form autoComplete="off" className='flex flex-col gap-[15px] slg:gap-[20px]'>
               <div className="relative w-full cursor-pointer">
                 <input
                   id='phoneNumber'
@@ -150,7 +147,7 @@ const RegisterForm: FC = () => {
               </button>
             </div>
             <div className='w-full mt-[40px] slg:flex-grow-[1] 2xl:col-span-2 slg:order-3 slg:mt-[43px]'>
-              <button onClick={handleLogin} className='font-medium w-full py-[20px] bg-[#0129E3] text-white rounded-[12px] '>
+              <button onClick={save} className='font-medium w-full py-[20px] bg-[#0129E3] text-white rounded-[12px] '>
                 {locale === 'ru'
                   ? "Войти"
                   : locale === 'uz'

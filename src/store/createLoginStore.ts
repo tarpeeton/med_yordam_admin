@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import axios from 'axios'
 
 // Helper function to get the stored phoneNumber from localStorage
 const getPersistedPhoneNumber = () => {
@@ -23,10 +24,13 @@ interface LoginState {
   setLoginCode: (loginVerifyCode: string) => void;
   setRepeatPassword: (repeatPassword: string) => void;
   resetForm: () => void;
+  save: () => Promise<void>;
+  setError: () => void;
+  setSuccess: () => void;
 }
 
 export const useLoginStore = create<LoginState>((set, get) => ({
-  phoneNumber: getPersistedPhoneNumber(),  // Retrieve phoneNumber from localStorage
+  phoneNumber: '',  
   password: '',
   repeatPassword: '',
   loginVerifyCode: '',
@@ -36,31 +40,17 @@ export const useLoginStore = create<LoginState>((set, get) => ({
   isPasswordMatch: true,
   
   setPhoneNumber: (phoneNumber) => {
-    // Allow only digits, spaces, parentheses, and "+"
-    const sanitized = phoneNumber.replace(/[^\d\s()+-]/g, '');
+    const sanitized = phoneNumber.replace(/[^\d\s+]/g, ''); // Allow only digits, spaces, and +
 
-    // Automatically format phone number to +998 (XX) XXX-XX-XX
-    let formatted = sanitized;
-    if (sanitized.startsWith('+998')) {
-      formatted = sanitized
-        // Full format: +998 (XX) XXX-XX-XX
-        .replace(/^(\+998)(\d{2})(\d{3})(\d{2})(\d{2})$/, '$1 ($2) $3-$4-$5')
-        // Progressive formats
-        .replace(/^(\+998)(\d{2})(\d{0,3})$/, '$1 ($2) $3')
-        .replace(/^(\+998)(\d{2})$/, '$1 ($2)');
-    }
-
-    // Validate full phone number
-    const isValidPhoneNumber = /^\+998 \(\d{2}\) \d{3}-\d{2}-\d{2}$/.test(formatted);
+    const isValidPhoneNumber = /^[+]?\d[\d\s]+$/.test(sanitized); // Validate number format
 
     set({
-      phoneNumber: formatted,
+      phoneNumber: sanitized,
       buttonDisabled: !isValidPhoneNumber, // Disable button if phone number is invalid
     });
 
-    // Save the phoneNumber to localStorage whenever it changes
     if (isValidPhoneNumber) {
-      localStorage.setItem('phoneNumber', JSON.stringify(formatted));
+      localStorage.setItem('phoneNumber', JSON.stringify(sanitized));
     }
   },
 
@@ -94,6 +84,31 @@ export const useLoginStore = create<LoginState>((set, get) => ({
     });
     // Clear phoneNumber from localStorage as well when resetting the form
     localStorage.removeItem('phoneNumber');
+  },
+
+  save: async () => {
+    const { phoneNumber, password } = get();
+    try {
+      const formData = new FormData();
+      formData.append('username', phoneNumber);
+      formData.append('password', password);
+
+      const response = await axios.post('https://medyordam.result-me.uz/api/auth/login', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      const { token } = response.data.data;
+
+      // Save token to localStorage and sessionStorage
+      localStorage.setItem('token', token);
+      sessionStorage.setItem('token', token);
+
+      set({ success: true, error: false });
+    } catch (error) {
+      console.error('Login failed:', error);
+      set({ success: false, error: true });
+    }
   },
 
   setError: () => set({ error: true, success: false }),

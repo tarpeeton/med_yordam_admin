@@ -7,6 +7,10 @@ import { FaFacebookF } from 'react-icons/fa'
 import { FaYoutube } from 'react-icons/fa'
 import { FaPhoneAlt } from "react-icons/fa";
 import Instagram from '@/public/instagram.svg'
+import toastr from "toastr";
+import "toastr/build/toastr.min.css";
+import { useLocale } from 'next-intl';
+
 
 interface ILinksProps {
   selectedInputLang: "ru" | "uz" | "en";
@@ -15,10 +19,34 @@ interface ILinksProps {
 
 
 const DashboardLinks: FC<ILinksProps> = ({ selectedInputLang }) => {
+  const locale = useLocale();
 
-  const { instagram, setInstagram, phone, setPhone, telegram, setTelegram, facebook, setFacebook, youtube, setYoutube, save, } = useRegisterLinks()
+  const { instagram, setInstagram, phone, setPhone, success, telegram, setTelegram, facebook, setFacebook, youtube, setYoutube, save, } = useRegisterLinks()
 
 
+
+const handleSave = () => {
+  save();
+    if (success) {
+      const successMessage =
+        locale === 'ru'
+          ? "успешно сохранён!"
+          : locale === 'uz'
+          ? "muvaffaqiyatli saqlandi!"
+          : "saved successfully!";
+  
+      toastr.success(successMessage);
+    } else {
+      const errorMessage =
+        locale === 'ru'
+          ? "Ошибка при сохранении"
+          : locale === 'uz'
+          ? "Saqlashda xatolik yuz berdi."
+          : "Error saving profile.";
+  
+      toastr.error(errorMessage);
+    }
+  };
 
 
 
@@ -84,7 +112,7 @@ const DashboardLinks: FC<ILinksProps> = ({ selectedInputLang }) => {
         </div>
         {/* BUTTON SAVE */}
         <div className='2xl:order-[3] mt-[25px] w-full 2xl:w-[100%] flex items-center 2xl:justify-end'>
-          <button onClick={save} className='bg-[#0129E3] 2xl:w-[235px] py-[20px] w-full rounded-[12px] font-medium text-center text-white'>
+          <button onClick={handleSave} className='bg-[#0129E3] 2xl:w-[235px] py-[20px] w-full rounded-[12px] font-medium text-center text-white'>
           {selectedInputLang === 'ru' ? 'Сохранить изменения' : selectedInputLang === 'uz' ? 'Ozgartirishlarni saqlash' : 'Save changes'}
           </button>
         </div>

@@ -1,28 +1,25 @@
 import { create } from "zustand";
 import axios from "axios";
+import { multiLang } from '@/interface/multiLang';
+import { useProfileStore } from '@/store/profileStore';
 
-interface MultiLang {
-  ru: string;
-  uz: string;
-  en: string;
-}
 
 interface Service {
-  id: number;
-  name: MultiLang;
+  id: number | null;
+  name: multiLang;
   price: string;
 }
 
 interface ServiceStoreType {
   services: Service[];
   newService: Service;
-  setNewServiceName: (lang: keyof MultiLang, value: string) => void;
+  setNewServiceName: (lang: keyof multiLang, value: string) => void;
   setNewServicePrice: (price: string) => void;
   addService: () => void;
   updateServiceField: (
     id: number,
     field: keyof Service,
-    lang: keyof MultiLang | null,
+    lang: keyof multiLang | null,
     value: string
   ) => void;
   deleteService: (id: number) => void;
@@ -30,9 +27,9 @@ interface ServiceStoreType {
 }
 
 export const useServiceStore = create<ServiceStoreType>((set, get) => ({
-  services: [{id: 1, name: {ru: "Шунтирование желудка", uz: "Oshqozon shuntlash amaliyoti", en: ""}, price: "100"}],
+  services: [{id: null, name: {ru: "Шунтирование желудка", uz: "Oshqozon shuntlash amaliyoti", en: ""}, price: "100"}],
   newService: {
-    id: 0,
+    id: null,
     name: { ru: "", uz: "", en: "" },
     price: "",
   },
@@ -58,12 +55,12 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
 
       const newServiceCopy = {
         ...newService,
-        id: services.length ? services[services.length - 1].id + 1 : 1,
+        id: null,
       };
 
       return {
         services: [...services, newServiceCopy],
-        newService: { id: 0, name: { ru: "", uz: "", en: "" }, price: "" },
+        newService: { id: null, name: { ru: "", uz: "", en: "" }, price: "" },
       };
     });
   },
@@ -75,7 +72,7 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
           ? {
               ...service,
               [field]: lang
-                ? { ...(service[field] as MultiLang), [lang]: value }
+                ? { ...(service[field] as multiLang), [lang]: value }
                 : value,
             }
           : service
@@ -92,13 +89,48 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
   save: async () => {
     try {
       const { services } = get();
-
+      const { id } = useProfileStore.getState();
+      
       if (!services.length) {
         alert("Нет услуг для сохранения!");
         return;
       }
+  
+      // Собираем данные о сервисах
+      const priceList = services.map((service) => ({
+        id: service.id ?? null,
+        name: service.name,
+        price: service.price,
+      }));
+  
+      // Выполняем запрос
+      const response = await axios.put(
+        "https://medyordam.result-me.uz/api/doctor",
+        {
+          id,
+          // поменяйте ключ, если бэкенд ожидает другое название поля
+          priceList,
+          // или, например, priceList: payloadData
+        }
+      );
 
-      const response = await axios.post("/api/services", { services });
+      if (response.data.data.priceList) {
+        const serverResponseNewPriceList = response.data.data.priceList;
+
+
+        const updatedServices = serverResponseNewPriceList.map((service: Service) => ({
+          id: service.id ?? null,
+          name: service.name,
+          price: service.price
+        }))
+
+
+        set((prevState) => ({
+          ...prevState,
+          services: updatedServices,
+        }));
+      }
+  
       alert("Services saved successfully!");
       console.log("Saved services:", response.data);
     } catch (error) {
@@ -106,4 +138,6 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
       alert("Failed to save services. Please try again.");
     }
   },
-}));
+  
+   
+})); 

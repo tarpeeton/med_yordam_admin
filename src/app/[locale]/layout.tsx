@@ -3,7 +3,6 @@ import Footer from '@/components/Footer/Footer';
 import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
-import StoreProvider from '@/store/StoreProvider';
 import '../globals.css';
 
 export const metadata: Metadata = {
@@ -44,13 +43,11 @@ export default async function LocaleLayout({
         <meta property="og:type" content="website" />
       </head>
       <body>
-        <StoreProvider>
           <NextIntlClientProvider messages={messages}>
             <Header />
             {children}
             <Footer />
           </NextIntlClientProvider>
-        </StoreProvider>
       </body>
     </html>
   );

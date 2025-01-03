@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import axios from 'axios';
+import { useProfileStore } from '@/store/profileStore';
 
 interface RegisterState {
   phone: string;
@@ -8,12 +9,15 @@ interface RegisterState {
   facebook: string;
   youtube: string;
   isLoading: boolean;
+  success: boolean;
   setPhone: (phone: string) => void;
   setInstagram: (instagram: string) => void;
   setTelegram: (telegram: string) => void;
   setFacebook: (facebook: string) => void;
   setYoutube: (youtube: string) => void;
   save: () => Promise<void>;
+  setSuccess: (sussess: boolean) => void;
+  setAll: (phone: string, instagram: string, telegram: string, facebook: string, youtube: string) => void;
 }
 
 export const useRegisterLinks = create<RegisterState>((set, get) => ({
@@ -23,6 +27,7 @@ export const useRegisterLinks = create<RegisterState>((set, get) => ({
   facebook: '',
   youtube: '',
   isLoading: false,
+  success: false,
 
   setPhone: (phone) => {
     // Allow only digits, spaces, parentheses, and "+"
@@ -46,42 +51,55 @@ export const useRegisterLinks = create<RegisterState>((set, get) => ({
   setTelegram: (telegram) => set({ telegram }),
   setFacebook: (facebook) => set({ facebook }),
   setYoutube: (youtube) => set({ youtube }),
+  setSuccess: (success) => set({ success }),
+
+
+
 
   save: async () => {
     try {
       set({ isLoading: true });
 
-      // Collect the data
+      // Collect contact data
       const { phone, instagram, telegram, facebook, youtube } = get();
-      const token = localStorage.getItem('token'); // Replace with the actual bearer token
-
-      // Prepare the payload
-      const contactData = {
-        phone,
-        instagram,
-        telegram,
-        facebook,
-        youtube,
+      const { id , contactId } = useProfileStore.getState(); // Get the ID from profile store
+      const token = localStorage.getItem('token'); // Bearer token for authorization
+      // Prepare the payload for contact update
+      const contact = {
+        id, // Profile ID
+        contact: {
+          id: contactId,
+          phone,
+          instagram,
+          telegram,
+          facebook,
+          youtube,
+        },
       };
 
-      // Send the POST request with the bearer token
-      const response = await axios.post(
-        'https://example.com/api/social-links',
-        contactData,
+      // Make the PUT request to update contact
+      const response = await axios.put(
+        'https://medyordam.result-me.uz/api/doctor',
+        contact,
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Include the bearer token
+            Authorization: `Bearer ${token}`, // Include token
             'Content-Type': 'application/json',
           },
         }
       );
-      console.log('Social links saved successfully:', response.data);
 
-      alert('Social links saved successfully!');
+      set({ success: true });
+      console.log(response.data)
     } catch (error) {
-      console.error('Error saving social links:', error);
-      alert('An error occurred while saving the social links.');
+      set({ success: false });
+    } finally {
       set({ isLoading: false });
     }
   },
+
+  setAll: (phone:string, instagram:string, telegram:string, facebook:string, youtube:string) => {
+    set({ phone, instagram, telegram, facebook, youtube });
+  },
+  
 }));
