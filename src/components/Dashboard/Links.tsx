@@ -21,31 +21,26 @@ interface ILinksProps {
 const DashboardLinks: FC<ILinksProps> = ({ selectedInputLang }) => {
   const locale = useLocale();
 
-  const { instagram, setInstagram, phone, setPhone, success, telegram, setTelegram, facebook, setFacebook, youtube, setYoutube, save, } = useRegisterLinks()
+  const { instagram, setInstagram, phone, setPhone, telegram, setTelegram, facebook, setFacebook, youtube, setYoutube, save, } = useRegisterLinks()
 
 
 
-const handleSave = () => {
-  save();
-    if (success) {
-      const successMessage =
-        locale === 'ru'
+  const handleSave = async () => {
+    const success = await save();
+    const message =
+      locale === "ru"
+        ? success
           ? "успешно сохранён!"
-          : locale === 'uz'
+          : "Ошибка при сохранении"
+        : locale === "uz"
+        ? success
           ? "muvaffaqiyatli saqlandi!"
-          : "saved successfully!";
-  
-      toastr.success(successMessage);
-    } else {
-      const errorMessage =
-        locale === 'ru'
-          ? "Ошибка при сохранении"
-          : locale === 'uz'
-          ? "Saqlashda xatolik yuz berdi."
-          : "Error saving profile.";
-  
-      toastr.error(errorMessage);
-    }
+          : "Saqlashda xatolik yuz berdi."
+        : success
+        ? "saved successfully!"
+        : "Error saving profile.";
+
+    toastr[success ? "success" : "error"](message);
   };
 
 

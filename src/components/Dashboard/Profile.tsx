@@ -4,9 +4,7 @@ import { useState , useEffect } from 'react';
 import Image from 'next/image';
 import { useProfileStore } from '@/store/profileStore';
 import 'flowbite';
-import dayjs, { Dayjs } from 'dayjs';
 import 'dayjs/locale/ru'; // если нужна локализация (подставьте нужную локаль)
-import customParseFormat from 'dayjs/plugin/customParseFormat';
 import ruLocale from 'antd/es/date-picker/locale/ru_RU';
 import enLocale from 'antd/es/date-picker/locale/en_US';
 
@@ -29,21 +27,16 @@ interface IProfileProps {
 
 
 
-dayjs.extend(customParseFormat);
 
-const dateFormat = 'YYYY/MM/DD';
 
 
 const Profile = ({ selectedInputLang }: IProfileProps) => {
-  const locale = useLocale() as 'ru' | "uz" | "en"
-  const { setName, name, setSurname, surname, setPatronymic, patronymic, phone, setPhone, gender, setGender, setImage, image, setStage, exp , saveProfile , success , getAllDataWithSlug} = useProfileStore();
+  const { setName, name, setSurname, surname, setPatronymic, patronymic, phone, setPhone, gender, setGender, setImage, image, setStage, exp , saveProfile  , getAllDataWithSlug} = useProfileStore();
 
   const slug = localStorage.getItem('slug')
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
   const [openGender, setOpenGender] = useState(false)
-
+  const locale = useLocale()
 
   const [previewImage, setPreviewImage] = useState<string>(
     "https://ucarecdn.com/568467e3-d7fd-4272-854e-884e5325aa23/-/preview/354x370/"
@@ -56,6 +49,25 @@ const Profile = ({ selectedInputLang }: IProfileProps) => {
       }
     } , [slug])
 
+
+
+    const SaveChanges = async () => {
+      const success = await saveProfile();
+      const message =
+      locale === "ru"
+        ? success
+          ? "успешно сохранён!"
+          : "Ошибка при сохранении"
+        : locale === "uz"
+        ? success
+          ? "muvaffaqiyatli saqlandi!"
+          : "Saqlashda xatolik yuz berdi."
+        : success
+        ? "saved successfully!"
+        : "Error saving profile.";
+
+    toastr[success ? "success" : "error"](message);
+    }
 
 
 
@@ -78,14 +90,7 @@ const Profile = ({ selectedInputLang }: IProfileProps) => {
   
    
 
-  const handleDateChange = (date: Dayjs | null) => {
-    setSelectedDate(date);
-    if (date) {
-      setStage(Number(date))
-    }
-    // Закрываем календарь после выбора
-    setIsDatePickerOpen(false);
-  };
+
 
   
 
@@ -225,7 +230,7 @@ const Profile = ({ selectedInputLang }: IProfileProps) => {
         </div>
         {/* BUTTON SAVE */}
         <div className='2xl:order-[3] mt-[25px] w-full 2xl:w-[100%] flex items-center 2xl:justify-end'>
-          <button  onClick={saveProfile} className='bg-[#0129E3] 2xl:w-[245px] py-[20px] w-full rounded-[12px] font-medium text-center text-white'>
+          <button  onClick={SaveChanges} className='bg-[#0129E3] 2xl:w-[245px] py-[20px] w-full rounded-[12px] font-medium text-center text-white'>
           {selectedInputLang === 'ru' ? 'Сохранить изменения' : selectedInputLang === 'uz' ? 'Ozgartirishlarni saqlash' : 'Save changes'}
           </button>
         </div>

@@ -111,7 +111,7 @@ const DashboardProInfo: FC<ILinksProps> = ({ selectedInputLang }) => {
                 <IoIosArrowDown className={`w-4 h-4 ml-2 transition-transform ${openSpecialization ? 'rotate-180' : ''}`} />
               </button>
               {openSpecialization && (
-                <div onMouseLeave={() => setOpenSpecialization(false)} className='w-full absolute z-[222] top-[70px] 2xl:top-[80px] bg-white  p-[10px] rounded-[12px] shadow-xl '>
+                <div onMouseLeave={() => setOpenSpecialization(false)} className='w-full absolute z-[222] top-[70px] 2xl:top-[80px] bg-white  p-[10px] rounded-[12px] shadow-xl 2xl:max-h-[420px]  2xl:h-[420px] overflow-y-auto'>
                   {specialties.map((item, index) => (
                     <button onClick={() => toggleSpecialty(item.id)} key={index} className='flex rounded-[12px] hover:bg-[#F8F8F8]  w-full flex-row items-center  text-[15px] 2xl:text-[16px] text-[#747474] flex-nowrap justify-between py-[20px] px-[24px]'>
                       {item.name[selectedInputLang]}

@@ -8,15 +8,6 @@ export type Language = "ru" | "uz" | "en";
 
 
 
-
-
-
-
-
-
-
-
-
 interface Specialty {
   id: number;
   name: multiLang;
@@ -44,8 +35,6 @@ interface Education {
   toYear: string;
   direction?: string
 }
-
-
 
 
 
@@ -337,6 +326,12 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
       workExperiences: state.workExperiences.filter((experience) => experience.id !== id),
     }));
   },
+
+
+
+
+
+
   fetchSpecialties: async () => {
     try {
       const response = await axios.get("https://medyordam.result-me.uz/api/speciality" , {headers: {'Accept-Language': ""}});
@@ -355,6 +350,9 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
   },
 
   
+
+
+
 
 
   save: async () => {
@@ -445,8 +443,8 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
         payload,
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Получение токена из localStorage
-            "Content-Type": "application/json", // Указание типа содержимого
+            Authorization: `Bearer ${token}`, 
+            "Content-Type": "application/json", 
           },
         }
       );
@@ -476,8 +474,7 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
     specialties: Specialty[],
     achievements: Achievement[]
   ) => {
-  
-
+      console.log(specialties , languages , "HUYSOOOOOOSSSSSSOOOOOOSSSSSS")
     set({
       workExperiences,
       educations,

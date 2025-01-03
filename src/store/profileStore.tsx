@@ -1,9 +1,12 @@
 import { create } from 'zustand';
-import axios from 'axios'
+import axios from 'axios';
 import { multiLang } from '@/interface/multiLang';
 import { useRegisterLinks } from '@/store/createLinksStore';
-import {Achievement, useProInfoStore} from '@/store/useProInfoStore';
-import {useServiceStore} from '@/store/createServiceStore';
+import { Achievement, useProInfoStore } from '@/store/useProInfoStore';
+import { useServiceStore } from '@/store/createServiceStore';
+
+
+
 
 const transformAchievements = (data: {
   ru: string[];
@@ -17,7 +20,6 @@ const transformAchievements = (data: {
     en: data.en[i] ? [data.en[i]] : [],
   }));
 };
-
 
 interface ServerResponse {
   id: number;
@@ -44,11 +46,7 @@ interface ServerResponse {
     youtube: string | null;
   };
   phone: string;
- 
 }
-
-
-
 
 interface ProfileState {
   id: number;
@@ -62,19 +60,19 @@ interface ProfileState {
   exp: number | null;
   image: File | null | string;
   contactId: null | number;
-  selectedLang: "ru" | "uz" | "en"; // Current language
+  selectedLang: "ru" | "uz" | "en";
   setName: (name: multiLang) => void;
   setSurname: (surname: multiLang) => void;
   setPatronymic: (patronymic: multiLang) => void;
   setPhone: (phone: string) => void;
   setGender: (gender: multiLang) => void;
-  setImage: (image: File | null) => void; // Add function to set image
+  setImage: (image: File | null) => void;
   setLang: (lang: "ru" | "uz" | "en") => void;
-  saveProfile: () => void; // To save the profile via an API
-  setStage: (exp: number) => void; // To save the profile via an API
+  setStage: (exp: number) => void;
   setProfile: (data: ServerResponse) => void;
   setSuccess: (success: boolean) => void;
   getAllDataWithSlug: (slug: string) => void;
+  saveProfile: () => Promise<boolean>;
 }
 
 export const useProfileStore = create<ProfileState>((set, get) => ({
@@ -85,18 +83,30 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
   slug: "",
   phone: "",
   contactId: null,
-  success:false,
-  exp: null, 
+  success: false,
+  exp: null,
   gender: { ru: "Мужчина", uz: "Erkak", en: "Male" },
-  image: null, 
-  selectedLang: "ru", // Default language
+  image: null,
+  selectedLang: "ru",
   setName: (name) => set({ name }),
-  setSuccess: (success) => set({ success }),
   setSurname: (surname) => set({ surname }),
+  setPatronymic: (patronymic) => set({ patronymic }),
+  setPhone: (phone) => {
+    let sanitized = phone.replace(/[^\d\s+]/g, '');
+    if (!sanitized.startsWith('+')) sanitized = `+${sanitized}`;
+    sanitized = sanitized.replace(/\s+/g, ' ').trim();
+    set({ phone: sanitized });
+  },
+  setGender: (gender) => set({ gender }),
+  setImage: (image) => set({ image }),
+  setLang: (lang) => set({ selectedLang: lang }),
+  setStage: (exp) => set({ exp }),
+  setSuccess: (success) => set({ success }),
+
   setProfile: (data: ServerResponse) => {
     set({
       id: data.id,
-      contactId: data.contact ? data.contact.id : null, 
+      contactId: data.contact?.id || null,
       slug: data.slug,
       name: data.name,
       surname: data.surname,
@@ -111,110 +121,70 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
       },
     });
   },
-  
-  
-  setPatronymic: (patronymic) => set({ patronymic }),
-  setPhone: (phone) => {
-    
-    // Allow only digits, spaces, parentheses, and "+"
-    const sanitized = phone.replace(/[^\d\s()+-]/g, '');
 
-    // Automatically format phone number to +998 (XX) XXX-XX-XX
-    let formatted = sanitized;
-    if (sanitized.startsWith('+998')) {
-      formatted = sanitized
-        .replace(/^(\+998)(\d{2})(\d{3})(\d{2})(\d{2})$/, '$1 ($2) $3-$4-$5') // Full format
-        .replace(/^(\+998)(\d{2})(\d{0,3})$/, '$1 ($2) $3') // Partial formats
-        .replace(/^(\+998)(\d{2})$/, '$1 ($2)'); // Handle first few digits
+  saveProfile: async (): Promise<boolean> => {
+    const { id, name, surname, patronymic, phone, exp, gender } = get();
+    const token = localStorage.getItem("token");
+  
+    if (!exp) {
+      toastr.error("Experience date is required.");
+      return false; // Возвращаем false при ошибке
     }
-
-    set({ phone: formatted });
-  },
-
-
-  setGender: (gender) => set({ gender }),
-  setImage: (image) => set({ image }), // Set image function
-  setLang: (lang) => set({ selectedLang: lang }),
-  setStage: (exp: number) => set({ exp }), // Explicitly type stage as string
-
-  // Save Profile function
-  saveProfile: async () => {
-    try {
-      const { name, surname, patronymic, phone, image, exp, gender} = get();
-      const token = localStorage.getItem("token");
-      if (!exp) {
-        alert("Experience date is required.");
-        return;
-      }
   
+    const genderEnum = gender.en.toUpperCase();
     
+    // Формирование данных профиля
+    const profileData = {
+      id: id > 0 ? id : undefined, // Include id only for updates
+      name,
+      surname,
+      patronymic,
+      exp,
+      phone,
+      gender: genderEnum,
+      ...(id === 0 && { cityId: 13 }),
+    };
   
-      
-      const genderEnum = gender.en.toUpperCase(); // Convert gender to MALE/FEMALE
-  
-      const profileData = {
-        name,
-        surname,
-        patronymic,
-        exp: exp, // Send years of experience as an integer
-        phone,
-        gender: genderEnum,
-        cityId: 13, // Assuming cityId is constant
+    try {
+      const endpoint = "https://medyordam.result-me.uz/api/doctor";
+      const headers = {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       };
   
-      const formData = new FormData();
-      formData.append("json", JSON.stringify(profileData));
-  
-      if (image instanceof File) {
-        formData.append("photo", image);
+      let response;
+      if (id === 0) {
+        response = await axios.post(endpoint, profileData, { headers });
+      } else {
+        response = await axios.put(endpoint, profileData, { headers });
       }
   
-      const response = await axios.post(
-        "https://medyordam.result-me.uz/api/doctor",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      set({success:true})
-
-      // Update the profile directly in the store
+      set({ success: true });
       const updatedProfile: ServerResponse = response.data.data;
-      localStorage.setItem("slug", response.data.data.slug);
-      get().setProfile(updatedProfile); // Call setProfile directly
-  
-      alert("Profile saved successfully!");
+      localStorage.setItem("slug", updatedProfile.slug);
+      get().setProfile(updatedProfile);
+      return true; // Возвращаем true при успехе
     } catch (error) {
       console.error("Error saving profile:", error);
-      alert("An error occurred while saving the profile.");
+      return false; // Возвращаем false при ошибке
     }
   },
   
-  
 
 
 
-
-
-  getAllDataWithSlug: async (slug: string) => {
+  getAllDataWithSlug: async (slug) => {
     try {
       const response = await axios.get(`https://medyordam.result-me.uz/api/doctor/${slug}`, {
         headers: { "Accept-Language": "" },
       });
-  
+
       const data = response.data.data;
-  
-      // Установить профиль пользователя
       get().setProfile(data);
-  
-      // Установить контактные данные
+
       const { phone, instagram, telegram, facebook, youtube } = data.contact;
       useRegisterLinks.getState().setAll(phone, instagram, telegram, facebook, youtube);
-  
-      // Установить дополнительные данные
+
       useProInfoStore.getState().setAllData(
         data.experience,
         data.education,
@@ -222,12 +192,10 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
         data.speciality,
         transformAchievements(data.achievement)
       );
+
       useServiceStore.getState().setServicesFromOtherStore(data.priceList);
     } catch (error) {
       console.error("Error loading profile data:", error);
     }
   },
-  
-  
-  
 }));

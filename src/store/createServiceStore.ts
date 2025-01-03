@@ -22,9 +22,11 @@ interface ServiceStoreType {
     lang: keyof multiLang | null,
     value: string
   ) => void;
-  deleteServiceByIndex: (index: number) => void;
-  save: () => Promise<void>;
+  deleteServiceByIndex: (index: number) => Promise<boolean>;
+  save: () => Promise<boolean>;
 }
+
+
 
 export const useServiceStore = create<ServiceStoreType>((set, get) => ({
   services: [
@@ -77,7 +79,7 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
     }));
   },
 
-  deleteServiceByIndex: async (index) => {
+  deleteServiceByIndex:async (index): Promise<boolean> => {
     const state = get();
     const { services } = state;
     const serviceToDelete = services[index];
@@ -97,39 +99,43 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
           ],
         };
 
-        await axios.put("https://medyordam.result-me.uz/api/doctor", payload, {
+       await axios.put("https://medyordam.result-me.uz/api/doctor", payload, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         });
 
-        // Удаляем сервис локально
         set((state) => ({
           services: state.services.filter((_, i) => i !== index),
         }));
 
-        alert("Service deleted successfully!");
+        return true
       } catch (error) {
         console.error("Failed to delete service:", error);
-        alert("Failed to delete service. Please try again.");
+        return false
       }
     } else {
-      // Если ID нет, просто удаляем локально
       set((state) => ({
         services: state.services.filter((_, i) => i !== index),
       }));
+      return true
     }
   },
-  save: async () => {
+
+
+
+
+
+  //  SAVE CHANGES
+  save: async (): Promise<boolean> => {
     try {
       const { services } = get();
       const { id } = useProfileStore.getState();
       const token = localStorage.getItem("token");
 
       if (!services.length) {
-        alert("Нет услуг для сохранения!");
-        return;
+        return false;
       }
 
       // Формируем список услуг для отправки
@@ -171,12 +177,18 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
         });
       }
 
-      alert("Services saved successfully!");
+      return true
     } catch (error) {
       console.error("Failed to save services", error);
-      alert("Failed to save services. Please try again.");
+      return false
     }
   },
+
+
+
+
+
+
 
 
   setServicesFromOtherStore: (priceList: Service[]) => {

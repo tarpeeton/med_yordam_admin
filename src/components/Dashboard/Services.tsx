@@ -3,6 +3,12 @@ import { FC } from 'react';
 import { useServiceStore } from '@/store/createServiceStore';
 import { GoPencil } from "react-icons/go";
 import { IoClose } from "react-icons/io5";
+import { useLocale } from 'next-intl';
+import toastr from "toastr";
+import "toastr/build/toastr.min.css";
+
+
+
 
 interface ILinksProps {
   selectedInputLang: "ru" | "uz" | "en";
@@ -11,6 +17,7 @@ interface ILinksProps {
 
 
 const DashboardServices: FC<ILinksProps> = ({ selectedInputLang }) => {
+  const locale = useLocale()
 
   const {
     services,
@@ -19,6 +26,27 @@ const DashboardServices: FC<ILinksProps> = ({ selectedInputLang }) => {
     deleteServiceByIndex,
     save,
   } = useServiceStore();
+
+
+  const SaveChanges = async () => {
+    const success = await save();
+    const message =
+    locale === "ru"
+      ? success
+        ? "успешно сохранён!"
+        : "Ошибка при сохранении"
+      : locale === "uz"
+      ? success
+        ? "muvaffaqiyatli saqlandi!"
+        : "Saqlashda xatolik yuz berdi."
+      : success
+      ? "saved successfully!"
+      : "Error saving profile.";
+
+  toastr[success ? "success" : "error"](message);
+  }
+
+
 
 
 
@@ -93,7 +121,7 @@ const DashboardServices: FC<ILinksProps> = ({ selectedInputLang }) => {
         </div>
         {/* BUTTON SAVE */}
         <div className='2xl:order-[3] mt-[25px] w-full 2xl:w-[100%] flex items-center 2xl:justify-end'>
-          <button onClick={save} className='bg-[#0129E3] 2xl:w-[235px] py-[20px] w-full rounded-[12px] font-medium text-center text-white'>
+          <button onClick={SaveChanges} className='bg-[#0129E3] 2xl:w-[235px] py-[20px] w-full rounded-[12px] font-medium text-center text-white'>
             {selectedInputLang === 'ru' ? 'Сохранить' : selectedInputLang === 'uz' ? 'Saqlash' : 'Save'}
           </button>
         </div>
