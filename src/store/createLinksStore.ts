@@ -90,7 +90,6 @@ export const useRegisterLinks = create<RegisterState>((set, get) => ({
       );
 
       set({ success: true });
-      console.log(response.data)
     } catch (error) {
       set({ success: false });
     } finally {

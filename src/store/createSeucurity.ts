@@ -61,7 +61,6 @@ export const useSecurityStore = create<SecurityState>((set, get) => ({
 
     try {
       // Simulate API call
-      console.log('Submitting passwords:', { oldPassword, newPassword });
       // Example: await axios.post('/api/change-password', { oldPassword, newPassword });
       set({ success: true, error: false });
     } catch (err) {

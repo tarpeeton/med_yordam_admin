@@ -3,9 +3,8 @@ import axios from "axios";
 import { multiLang } from '@/interface/multiLang';
 import { useProfileStore } from '@/store/profileStore';
 
-
 interface Service {
-  id: number | null;
+  id?: number;
   name: multiLang;
   price: string;
 }
@@ -16,20 +15,27 @@ interface ServiceStoreType {
   setNewServiceName: (lang: keyof multiLang, value: string) => void;
   setNewServicePrice: (price: string) => void;
   addService: () => void;
-  updateServiceField: (
-    id: number,
+  setServicesFromOtherStore: (priceList: Service[]) => void;
+  updateServiceFieldByIndex: (
+    index: number,
     field: keyof Service,
     lang: keyof multiLang | null,
     value: string
   ) => void;
-  deleteService: (id: number) => void;
+  deleteServiceByIndex: (index: number) => void;
   save: () => Promise<void>;
 }
 
 export const useServiceStore = create<ServiceStoreType>((set, get) => ({
-  services: [{id: null, name: {ru: "Шунтирование желудка", uz: "Oshqozon shuntlash amaliyoti", en: ""}, price: "100"}],
+  services: [
+    {
+      
+      name: { ru: "Шунтирование желудка", uz: "Oshqozon shuntlash amaliyoti", en: "" },
+      price: "100",
+    },
+  ],
   newService: {
-    id: null,
+
     name: { ru: "", uz: "", en: "" },
     price: "",
   },
@@ -50,25 +56,16 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
   },
 
   addService: () => {
-    set((state) => {
-      const { newService, services } = state;
-
-      const newServiceCopy = {
-        ...newService,
-        id: null,
-      };
-
-      return {
-        services: [...services, newServiceCopy],
-        newService: { id: null, name: { ru: "", uz: "", en: "" }, price: "" },
-      };
-    });
+    set((state) => ({
+      services: [...state.services, state.newService],
+      newService: { name: { ru: "", uz: "", en: "" }, price: "" },
+    }));
   },
 
-  updateServiceField: (id, field, lang, value) => {
+  updateServiceFieldByIndex: (index, field, lang, value) => {
     set((state) => ({
-      services: state.services.map((service) =>
-        service.id === id
+      services: state.services.map((service, i) =>
+        i === index
           ? {
               ...service,
               [field]: lang
@@ -80,64 +77,106 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
     }));
   },
 
-  deleteService: (id) => {
-    set((state) => ({
-      services: state.services.filter((service) => service.id !== id),
-    }));
-  },
+  deleteServiceByIndex: async (index) => {
+    const state = get();
+    const { services } = state;
+    const serviceToDelete = services[index];
+    console.log(index , serviceToDelete , "PIDARAZLAR");
+    if (serviceToDelete?.id) {
+      try {
+        const { id: profileId } = useProfileStore.getState();
+        const token = localStorage.getItem("token");
 
+        const payload = {
+          id: profileId,
+          priceList: [
+            {
+              id: serviceToDelete.id.toString(),
+              name: { uz: null, ru: null, en: null },
+              price: null,
+            },
+          ],
+        };
+
+        await axios.put("https://medyordam.result-me.uz/api/doctor", payload, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        // Удаляем сервис локально
+        set((state) => ({
+          services: state.services.filter((_, i) => i !== index),
+        }));
+
+        alert("Service deleted successfully!");
+      } catch (error) {
+        console.error("Failed to delete service:", error);
+        alert("Failed to delete service. Please try again.");
+      }
+    } else {
+      // Если ID нет, просто удаляем локально
+      set((state) => ({
+        services: state.services.filter((_, i) => i !== index),
+      }));
+    }
+  },
   save: async () => {
     try {
       const { services } = get();
       const { id } = useProfileStore.getState();
-      
+      const token = localStorage.getItem("token");
+
       if (!services.length) {
         alert("Нет услуг для сохранения!");
         return;
       }
-  
+
       // Собираем данные о сервисах
       const priceList = services.map((service) => ({
-        id: service.id ?? null,
         name: service.name,
         price: service.price,
       }));
-  
+
       // Выполняем запрос
       const response = await axios.put(
         "https://medyordam.result-me.uz/api/doctor",
+        { id, priceList },
         {
-          id,
-          // поменяйте ключ, если бэкенд ожидает другое название поля
-          priceList,
-          // или, например, priceList: payloadData
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         }
       );
 
       if (response.data.data.priceList) {
-        const serverResponseNewPriceList = response.data.data.priceList;
-
-
-        const updatedServices = serverResponseNewPriceList.map((service: Service) => ({
-          id: service.id ?? null,
-          name: service.name,
-          price: service.price
-        }))
-
-
-        set((prevState) => ({
-          ...prevState,
-          services: updatedServices,
-        }));
+        set({
+          services: response.data.data.priceList.map((service: Service) => ({
+            name: service.name,
+            price: service.price,
+          })),
+        });
       }
-  
+
       alert("Services saved successfully!");
-      console.log("Saved services:", response.data);
     } catch (error) {
       console.error("Failed to save services", error);
       alert("Failed to save services. Please try again.");
     }
   },
-  
-   
-})); 
+
+  setServicesFromOtherStore: (priceList: Service[]) => {
+    const transformedServices = priceList.map((item) => ({
+      id: item.id,
+      name: item.name,
+      price: item.price.toString(), // Преобразуем цену в строку
+    }));
+
+    set({ services: transformedServices });
+  },
+
+
+
+}));

@@ -2,7 +2,21 @@ import { create } from 'zustand';
 import axios from 'axios'
 import { multiLang } from '@/interface/multiLang';
 import { useRegisterLinks } from '@/store/createLinksStore';
-import {useProInfoStore} from '@/store/useProInfoStore';
+import {Achievement, useProInfoStore} from '@/store/useProInfoStore';
+import {useServiceStore} from '@/store/createServiceStore';
+
+const transformAchievements = (data: {
+  ru: string[];
+  uz: string[];
+  en: string[];
+}): Achievement[] => {
+  const length = Math.max(data.ru.length, data.uz.length, data.en.length);
+  return Array.from({ length }, (_, i) => ({
+    ru: data.ru[i] ? [data.ru[i]] : [],
+    uz: data.uz[i] ? [data.uz[i]] : [],
+    en: data.en[i] ? [data.en[i]] : [],
+  }));
+};
 
 
 interface ServerResponse {
@@ -180,19 +194,39 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
   },
   
   
+
+
+
+
+
+  getAllDataWithSlug: async (slug: string) => {
+    try {
+      const response = await axios.get(`https://medyordam.result-me.uz/api/doctor/${slug}`, {
+        headers: { "Accept-Language": "" },
+      });
   
-  getAllDataWithSlug: async  (slug:string) => {
-    const res = await axios.get(`https://medyordam.result-me.uz/api/doctor/${slug}` , {headers: {"Accept-Language": ""}});
-    console.log(res.data.data , 'BU GET ALL DATA WITH SLUG')
-    
-
-
-    get().setProfile(res.data.data);
-
-    useRegisterLinks.getState().setAll(res.data.data.contact.phone, res.data.data.contact.instagram, res.data.data.contact.telegram, res.data.data.contact.facebook, res.data.data.contact.youtube);
-
-    useProInfoStore.getState().setAllData(res.data.data.experience , res.data.data.education , res.data.data.language , res.data.data.speciality );
-  }
+      const data = response.data.data;
+  
+      // Установить профиль пользователя
+      get().setProfile(data);
+  
+      // Установить контактные данные
+      const { phone, instagram, telegram, facebook, youtube } = data.contact;
+      useRegisterLinks.getState().setAll(phone, instagram, telegram, facebook, youtube);
+  
+      // Установить дополнительные данные
+      useProInfoStore.getState().setAllData(
+        data.experience,
+        data.education,
+        data.language,
+        data.speciality,
+        transformAchievements(data.achievement)
+      );
+      useServiceStore.getState().setServicesFromOtherStore(data.priceList);
+    } catch (error) {
+      console.error("Error loading profile data:", error);
+    }
+  },
   
   
   

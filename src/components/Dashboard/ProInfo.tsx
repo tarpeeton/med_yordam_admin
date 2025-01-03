@@ -36,7 +36,7 @@ const DashboardProInfo: FC<ILinksProps> = ({ selectedInputLang }) => {
     save,
     addEducation,
     addWorkExperience,
-    updateWorkExperienceField,
+    updateWorkExperienceFieldByIndex,
     workExperiences,
     removePositionFromWorkExperience,
     fetchSpecialties,
@@ -85,9 +85,8 @@ const DashboardProInfo: FC<ILinksProps> = ({ selectedInputLang }) => {
     fetchLanguage()
   }, [locale])
 
-  const handleInputChange = (lang: Language, index: number, value: string) => {
-    updateAchievementField(index, lang, value);
-  };
+
+ 
   
   
   return (
@@ -158,7 +157,7 @@ const DashboardProInfo: FC<ILinksProps> = ({ selectedInputLang }) => {
                   {achievements.map((achievement, index) => (
                     <div key={index} className='relative w-full'>
                       <input
-                        value={achievement[selectedInputLang]}
+                        value={achievement[selectedInputLang]?.[0] || ''}
                         onChange={(e) =>
                           updateAchievementField(
                             index,
@@ -305,7 +304,7 @@ const DashboardProInfo: FC<ILinksProps> = ({ selectedInputLang }) => {
               {selectedInputLang === 'ru' ? "Опыт работы" : selectedInputLang === 'uz' ? "Ish tajribasi" : "Work Experience"}
             </h1>
             <div className='mt-[15px] flex flex-col gap-[15px]'>
-              {workExperiences?.map((experience) => (
+              {workExperiences?.map((experience , index) => (
                 <div key={experience.id as number} className='  rounded-[12px]'>
                   <div className='grid grid-cols-1 2xl:grid-cols-4 gap-[12px]'>
                     <div className='relative'>
@@ -313,8 +312,8 @@ const DashboardProInfo: FC<ILinksProps> = ({ selectedInputLang }) => {
                         type="text"
                         value={experience?.name[selectedInputLang]}
                         onChange={(e) =>
-                          updateWorkExperienceField(
-                            experience.id as number as number,
+                          updateWorkExperienceFieldByIndex(
+                            index,
                             "name", // Поле для обновления
                             selectedInputLang, // Язык (например, 'ru', 'uz', 'en')
                             e.target.value // Новое значение
@@ -334,8 +333,8 @@ const DashboardProInfo: FC<ILinksProps> = ({ selectedInputLang }) => {
                         type="text"
                         value={experience.city[selectedInputLang]}
                         onChange={(e) =>
-                          updateWorkExperienceField(
-                            experience.id as number as number,
+                          updateWorkExperienceFieldByIndex(
+                            index,
                             "city", // Поле для обновления
                             selectedInputLang, // Язык (например, 'ru', 'uz', 'en')
                             e.target.value // Новое значение
@@ -355,8 +354,8 @@ const DashboardProInfo: FC<ILinksProps> = ({ selectedInputLang }) => {
                         type="text"
                         value={experience.fromYear}
                         onChange={(e) =>
-                          updateWorkExperienceField(
-                            experience.id as number,
+                          updateWorkExperienceFieldByIndex(
+                            index,
                             "fromYear", // Поле для обновления
                             null, // Язык (например, 'ru', 'uz', 'en')
                             e.target.value // Новое значение
@@ -373,11 +372,11 @@ const DashboardProInfo: FC<ILinksProps> = ({ selectedInputLang }) => {
                         type="text"
                         value={experience.toYear}
                         onChange={(e) =>
-                          updateWorkExperienceField(
-                            experience.id as number,
-                            "toYear", // Поле для обновления
-                            null, // Язык (например, 'ru', 'uz', 'en')
-                            e.target.value // Новое значение
+                          updateWorkExperienceFieldByIndex(
+                            index,
+                            "toYear", 
+                            null, 
+                            e.target.value 
                           )
                         }
                         placeholder={selectedInputLang === 'ru' ? "Год окончания" : selectedInputLang === 'uz' ? "Tugatilgan yili" : "End year"}

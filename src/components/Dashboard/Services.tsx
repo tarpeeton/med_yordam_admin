@@ -15,8 +15,8 @@ const DashboardServices: FC<ILinksProps> = ({ selectedInputLang }) => {
   const {
     services,
     addService,
-    updateServiceField,
-    deleteService,
+    updateServiceFieldByIndex,
+    deleteServiceByIndex,
     save,
   } = useServiceStore();
 
@@ -31,13 +31,13 @@ const DashboardServices: FC<ILinksProps> = ({ selectedInputLang }) => {
         {/* inputs */}
         <div className='flex flex-col mt-[20px] 2xl:mt-0 rounded-[18px] gap-[12px] 2xl:gap-[20px] p-[15px] 2xl:py-[37px] 2xl:px-[25px] bg-white w-full'>
           <div className='flex flex-col gap-[12px] 2xl:gap-[15px]'>
-            {services.map((item) => (
-              <div key={item.id} className='flex flex-col  gap-[12px]  2xl:flex-row 2xl:items-center 2xl:justify-between'>
+            {services.map((item , index) => (
+              <div key={index} className='flex flex-col  gap-[12px]  2xl:flex-row 2xl:items-center 2xl:justify-between'>
                 <div className='flex flex-row items-center  gap-[8px] text-[17px] text-[#0129E3] 2xl:order-1 w-[25px] h-[25px]'>
                   <p className='2xl:hidden font-medium'>
                     Услуга
                   </p>
-                  <button onClick={() => deleteService(item.id)} className='text-[#0129E3] 2xl:text-[] text-[]'>
+                  <button onClick={() => deleteServiceByIndex(index)} className='text-[#0129E3] 2xl:text-[] text-[]'>
                     <IoClose className='w-[20px] h-[20px] 2xl:w-[25px] 2xl:h-[25px]' />
                   </button>
                 </div>
@@ -45,7 +45,7 @@ const DashboardServices: FC<ILinksProps> = ({ selectedInputLang }) => {
                   <input
                     value={item.name[selectedInputLang]}
                     onChange={(e) =>
-                      updateServiceField(item.id, "name", selectedInputLang, e.target.value)
+                      updateServiceFieldByIndex(index, "name", selectedInputLang, e.target.value)
                     }
                     placeholder={
                       selectedInputLang === "ru"
@@ -61,7 +61,7 @@ const DashboardServices: FC<ILinksProps> = ({ selectedInputLang }) => {
                   <input
                     value={item.price}
                     onChange={(e) =>
-                      updateServiceField(item.id, "price", null, e.target.value)
+                      updateServiceFieldByIndex(index, "price", null, e.target.value)
                     }
                     placeholder={
                       selectedInputLang === "ru"

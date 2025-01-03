@@ -30,7 +30,6 @@ const NewPassword: FC = () => {
 
 
   const HandleNewPassword = () => {
-      console.log("LOGIN PHONE GET" , phoneNumber)
       setPhoneNumber(phoneNumber)
       setPassword(password)
       setRepeatPassword(repeatPassword)

@@ -30,7 +30,7 @@ interface LanguageSkill {
   selected: boolean;
 }
 
-interface Achievement {
+export interface Achievement {
     ru: string[];  
     uz: string[]; 
     en: string[];  
@@ -93,11 +93,11 @@ interface ProInfoState {
   updateAchievementField: (index: number, lang: Language, value: string) => void;
   // Work experience methods
   addWorkExperience: () => void;
-  updateWorkExperienceField: (
-    id: number,
-    field: "name" | "city" | "fromYear" | "toYear",
+  updateWorkExperienceFieldByIndex: (
+    index: number,
+    field: keyof WorkExperience,
     lang: Language | null,
-    value: string
+    value: string | number
   ) => void;
   addPositionToWorkExperience: (id: number, lng: Language) => void;
   updatePositionInWorkExperience: (
@@ -112,7 +112,7 @@ interface ProInfoState {
   save: () => void;
   fetchSpecialties: () => Promise<void>;
   fetchLanguage: () => Promise<void>;
-  setAllData: (workExperiences: WorkExperience[], educations: Education[], languages: LanguageSkill[], specialties: Specialty[]) => void
+  setAllData: (workExperiences: WorkExperience[], educations: Education[], languages: LanguageSkill[], specialties: Specialty[], achievements: Achievement[]) => void
 }
 
 
@@ -127,7 +127,7 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
   ],
   educations: [
     {
-      id: null,
+      id: 1,
       name: { ru: "Университет", uz: "Universitet", en: "University" },
       faculty: { ru: "Информатика", uz: "Informatika", en: "Computer Science" },
       fromYear: "2015",
@@ -149,6 +149,8 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
     },
   ],
   setSuccess: (success) => set({ success }),
+
+
   toggleSpecialty: (id) => {
     set((state) => ({
       specialties: state.specialties.map((specialty) =>
@@ -260,10 +262,10 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
     }));
   },
 
-  updateWorkExperienceField: (id, field, lang, value) => {
+  updateWorkExperienceFieldByIndex: (index: number, field: keyof WorkExperience, lang: Language | null, value: string | number) => {
     set((state) => ({
-      workExperiences: state.workExperiences.map((experience) =>
-        experience.id === id
+      workExperiences: state.workExperiences.map((experience, idx) =>
+        idx === index
           ? {
               ...experience,
               [field]: lang
@@ -296,7 +298,6 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
   updatePositionInWorkExperience: (id, positionIndex, lang, value) => {
     set((state) => ({
         workExperiences: state.workExperiences.map((experience) => {
-            console.log(experience, "JALAPMISAN AMBAShA");
             if (experience.id === id) {
                 return {
                     ...experience,
@@ -359,156 +360,130 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
   save: async () => {
     const state = get();
     const { id } = useProfileStore.getState();
-  
+    const token = localStorage.getItem("token");
     try {
       // =========
-      // Achievements
+      // Achievements Transformation
       // =========
-     
+      const achievementsTransformed = {
+        uz: state.achievements.map((achievement) => achievement.uz[0]).filter(Boolean),
+        ru: state.achievements.map((achievement) => achievement.ru[0]).filter(Boolean),
+        en: state.achievements.map((achievement) => achievement.en[0]).filter(Boolean),
+      };
   
       // =========
-      // Education
+      // Education Transformation
       // =========
-      const educationArray = state.educations;
-      const educationTransformed = educationArray.map((item) => ({
-        id: item.id ?? null, 
+      const educationTransformed = state.educations.map((education) => ({
+        id: education.id ?? null,
         name: {
-          ru: item.name.ru,
-          uz: item.name.uz,
-          en: item.name.en,
+          ru: education.name.ru,
+          uz: education.name.uz,
+          en: education.name.en,
         },
-        fromYear: Number(item.fromYear),
-        toYear: Number(item.toYear),
         faculty: {
-          ru: item.faculty.ru,
-          uz: item.faculty.uz,
-          en: item.faculty.en,
+          ru: education.faculty.ru,
+          uz: education.faculty.uz,
+          en: education.faculty.en,
         },
+        fromYear: Number(education.fromYear),
+        toYear: Number(education.toYear),
       }));
   
       // =========
-      // Work Experience
+      // Work Experience Transformation
       // =========
-      const experiencesArray = state.workExperiences;
-  
-      // Превращаем локальные записи в формат, который ожидает сервер.
-      // Если у вас "новые" записи без id, можно передавать id=null (или совсем не передавать),
-      // чтобы бэкенд понимал: нужно создать новую запись и сгенерировать для неё id.
-      const experiencesTransformed = experiencesArray.map((exp) => ({
-        id: exp.id ?? null, 
+      const experienceTransformed = state.workExperiences.map((experience) => ({
+        id: experience.id ?? null,
         name: {
-          ru: exp.name.ru,
-          uz: exp.name.uz,
-          en: exp.name.en,
+          ru: experience.name.ru,
+          uz: experience.name.uz,
+          en: experience.name.en,
         },
-        fromYear: Number(exp.fromYear),
-        toYear: Number(exp.toYear),
         city: {
-          ru: exp.city.ru,
-          uz: exp.city.uz,
-          en: exp.city.en,
+          ru: experience.city.ru,
+          uz: experience.city.uz,
+          en: experience.city.en,
         },
         position: {
-          ru: exp.position.ru.map((p) => p),
-          uz: exp.position.uz.map((p) => p),
-          en: exp.position.en.map((p) => p),
+          ru: experience.position.ru.filter(Boolean),
+          uz: experience.position.uz.filter(Boolean),
+          en: experience.position.en.filter(Boolean),
         },
+        fromYear: Number(experience.fromYear),
+        toYear: Number(experience.toYear),
       }));
   
       // =========
-      // Specialities
+      // Specialities and Languages
       // =========
       const specialitiesSelected = state.specialties
         .filter((specialty) => specialty.selected)
         .map((specialty) => specialty.id);
   
-      const languagesForUpdate = state.languages
+      const languagesSelected = state.languages
         .filter((language) => language.selected)
         .map((language) => language.id);
   
       // =========
-      // Отправка на сервер
+      // Payload Formation
       // =========
-      const response = await axios.put("https://medyordam.result-me.uz/api/doctor", {
+      const payload = {
         id,
-        achievement: state.achievements,
+        achievement: achievementsTransformed,
         education: educationTransformed,
         speciality: specialitiesSelected,
-        language: languagesForUpdate,
-        experience: experiencesTransformed,
-      });
+        language: languagesSelected,
+        experience: experienceTransformed,
+      };
   
-     
-      if (response.data.data.experience) {
-        const updatedExperiencesFromServer = response.data.data.experience;
-       
-        const updatedExperiences = updatedExperiencesFromServer.map((srv: { id: number; name: multiLang; city: multiLang; fromYear: string; toYear: string; position: { ru: string[]; uz: string[]; en: string[]; }; }) => {
-          return {
-            id: srv.id,
-            name: srv.name, // при необходимости адаптируйте под multiLang
-            city: srv.city, // аналогично
-            fromYear: srv.fromYear?.toString() ?? "", 
-            toYear: srv.toYear?.toString() ?? "",
-            position: Array.isArray(srv.position?.ru)
-              ? srv.position.ru.map((_:string, idx:number) => ({
-                  ru: srv.position.ru[idx] || "",
-                  uz: srv.position.uz[idx] || "",
-                  en: srv.position.en[idx] || "",
-                }))
-              : [],
-          };
-        });
+      // =========
+      // API Call
+      // =========
+      const response = await axios.put(
+        "https://medyordam.result-me.uz/api/doctor",
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Получение токена из localStorage
+            "Content-Type": "application/json", // Указание типа содержимого
+          },
+        }
+      );
+      
   
-        set((prevState) => ({
-          ...prevState,
-          workExperiences: updatedExperiences,
-        }));
+      if (response.status === 200) {
+        set({ success: true });
+      } else {
+        console.error("Error saving data:", response.data);
+        set({ success: false });
       }
-      if(response.data.data.education){
-        const updatedEducationFromServer = response.data.data.education;
-        console.log(updatedEducationFromServer , 'EDUCATION')
-        const updatedEducation = updatedEducationFromServer.map((srv: { id: number; name: multiLang; fromYear: string; toYear: string; faculty: multiLang; }) => {
-          return {
-            id: srv.id,
-            name: srv.name, // при необходимости адаптируйте под multiLang
-            startYear: srv.fromYear?.toString() ?? "",
-            endYear: srv.toYear?.toString() ?? "",
-            direction: srv.faculty, // аналогично
-          };
-        });
-        set((prevState) => ({
-          ...prevState,
-          educations: updatedEducation,
-        }));
-      }
-      set({ success: true });
     } catch (error) {
       console.error("Error saving data:", error);
       set({ success: false });
     }
   },
+  
 
 
 
   
-
 
   setAllData: (
     workExperiences: WorkExperience[],
     educations: Education[],
     languages: LanguageSkill[],
     specialties: Specialty[],
+    achievements: Achievement[]
   ) => {
-    console.log("Work Experiences:", workExperiences);
-    console.log("Educations:", educations);
-    console.log("Languages:", languages);
-    console.log("Specialties:", specialties);
-    
+  
+
     set({
       workExperiences,
       educations,
       languages,
       specialties,
+      achievements
     });
   },
   

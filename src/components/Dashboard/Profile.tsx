@@ -38,13 +38,11 @@ const Profile = ({ selectedInputLang }: IProfileProps) => {
   const locale = useLocale() as 'ru' | "uz" | "en"
   const { setName, name, setSurname, surname, setPatronymic, patronymic, phone, setPhone, gender, setGender, setImage, image, setStage, exp , saveProfile , success , getAllDataWithSlug} = useProfileStore();
 
-// console.log(name)
   const slug = localStorage.getItem('slug')
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
   const [openGender, setOpenGender] = useState(false)
-  console.log(image , 'ZAYBAL')
 
 
   const [previewImage, setPreviewImage] = useState<string>(

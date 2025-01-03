@@ -108,7 +108,6 @@ export const useDocumentStore = create<UploadFilesState>((set, get) => ({
         })),
       }));
   
-      console.log("Documents saved successfully");
     } catch (error) {
       console.error("Error saving documents:", error);
   

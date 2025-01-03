@@ -55,7 +55,6 @@ export const useAddressStore = create<AddressState>((set , get) => ({
           throw new Error("No addresses to save");
         }
   
-          console.log(mapData)
         const response = await axios.post("https://example.com/api/addresses", {
           addresses: mapData, // Send all address entries as an array
         });
