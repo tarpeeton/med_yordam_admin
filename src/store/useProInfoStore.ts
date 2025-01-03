@@ -60,9 +60,10 @@ interface ProInfoState {
   educations: Education[];
   workExperiences: WorkExperience[];
   success: boolean;
+  selectedUserSpecialties: number[];
+  selectedUserLanguages: number[];
   // Specialty methods
   toggleSpecialty: (id: number) => void;
-
   // Language methods
   toggleLanguage: (id: number) => void;
 
@@ -111,6 +112,9 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
   success: false,
   specialties: [],
   languages: [],
+  selectedUserSpecialties: [],
+  selectedUserLanguages: [],
+  specialtiesFinished: false,
   achievements: [
     { ru:[""] , uz: [""] , en: [""] },
   ],
@@ -137,6 +141,26 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
     },
     },
   ],
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   setSuccess: (success) => set({ success }),
 
 
@@ -150,6 +174,10 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
     }));
   },
 
+
+ 
+
+  
   toggleLanguage: (id) => {
     set((state) => ({
       languages: state.languages.map((language) =>
@@ -158,6 +186,17 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
           : language
       ),
     }));
+  },
+
+  setSelectedSpecialties: () => {
+    const { specialties, selectedUserSpecialties } = get();
+    const updatedSpecialties = specialties.map((specialty) =>
+      selectedUserSpecialties.includes(specialty.id)
+        ? { ...specialty, selected: true }
+        : { ...specialty, selected: false }
+    );
+
+    set({ specialties: updatedSpecialties });
   },
 
 
@@ -330,20 +369,36 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
 
 
 
-
-
   fetchSpecialties: async () => {
     try {
-      const response = await axios.get("https://medyordam.result-me.uz/api/speciality" , {headers: {'Accept-Language': ""}});
-      set({ specialties: response.data.data });
+      const response = await axios.get("https://medyordam.result-me.uz/api/speciality", {
+        headers: { 'Accept-Language': "" },
+      });
+  
+      const currentSelectedIds = get().selectedUserSpecialties;
+  
+      const specialties = response.data.data.map((specialty: { id: number; name: multiLang; active: boolean }) => ({
+        ...specialty,
+        selected: currentSelectedIds.includes(specialty.id), // Check if the specialty ID is in the selected list
+      }));
+  
+      set({ specialties });
     } catch (error) {
       console.error("Error fetching specialties:", error);
     }
   },
+  
+
   fetchLanguage: async () => {
     try {
       const response = await axios.get("https://medyordam.result-me.uz/api/language" );
-      set({ languages: response.data.data });
+      const currentSelectedIds = get().selectedUserLanguages;
+
+      const languages = response.data.data.map((language: { id: number; name: multiLang; active: boolean }) => ({
+        ...language,
+        selected: currentSelectedIds.includes(language.id), // Check if the specialty ID is in the selected list
+      }));
+      set({ languages });
     } catch (error) {
       console.error("Error fetching specialties:", error);
     }
@@ -467,24 +522,19 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
 
   
 
-  setAllData: (
-    workExperiences: WorkExperience[],
-    educations: Education[],
-    languages: LanguageSkill[],
-    specialties: Specialty[],
-    achievements: Achievement[]
-  ) => {
-      console.log(specialties , languages , "HUYSOOOOOOSSSSSSOOOOOOSSSSSS")
+  setAllData: (workExperiences, educations, languages, specialties, achievements) => {
+   
+  
     set({
       workExperiences,
       educations,
-      languages,
-      specialties,
-      achievements
+      selectedUserLanguages: languages.map((item) => item.id),
+      achievements,
+      selectedUserSpecialties: specialties.map((item) => item.id),
     });
   },
   
-  
+
   
 
  

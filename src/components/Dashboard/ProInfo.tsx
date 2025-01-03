@@ -86,6 +86,10 @@ const DashboardProInfo: FC<ILinksProps> = ({ selectedInputLang }) => {
   }, [locale])
 
 
+
+
+  console.log(specialties , "BU PRO INFO PAGE TSX")
+
  
   
   

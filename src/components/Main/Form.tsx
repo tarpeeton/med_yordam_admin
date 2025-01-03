@@ -63,7 +63,6 @@ const Form: FC = () => {
     setIsFocused((prev) => ({ ...prev, [field]: false }));
   };
 
-  console.log(value)
 
   return (
     <section className='mt-[80px] mdl:mt-[120px] 3xl:mt-[150px] bg-white rounded-[20px]'>

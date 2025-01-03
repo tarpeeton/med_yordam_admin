@@ -60,7 +60,6 @@ export const useAddressStore = create<AddressState>((set , get) => ({
         });
   
         // Optional: Handle success response
-        console.log("Save successful:", response.data);
         alert("Addresses saved successfully!");
       } catch (error) {
         console.error("Error saving addresses:", error);
