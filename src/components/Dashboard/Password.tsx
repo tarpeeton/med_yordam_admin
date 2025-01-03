@@ -2,7 +2,9 @@
 import { FC, useState } from 'react';
 import { TfiKey } from "react-icons/tfi";
 import { useSecurityStore } from '@/store/createSeucurity';
-
+import toastr from "toastr";
+import "toastr/build/toastr.min.css";
+import { useLocale } from 'next-intl';
 
 interface ISecurityProps {
   selectedInputLang: "ru" | "uz" | "en";
@@ -11,7 +13,7 @@ interface ISecurityProps {
 
 const DashboardSecurity: FC<ISecurityProps> = ({ selectedInputLang }) => {
   const { setNewPassword, save, setOldPassword, setRepeatPassword, newPassword, repeatPassword, oldPassword, success, error, isPasswordMatch, } = useSecurityStore()
-
+  const locale = useLocale()
 
   const [isFocused, setIsFocused] = useState({
     oldPassword: false,
@@ -22,6 +24,27 @@ const DashboardSecurity: FC<ISecurityProps> = ({ selectedInputLang }) => {
   const handleFocus = (field: string, focused: boolean) => {
     setIsFocused((prev) => ({ ...prev, [field]: focused }));
   };
+
+
+  const SaveChanges = async () => {
+    const success = await save();
+    const message =
+      locale === "ru"
+        ? success
+          ? "успешно изменён!"
+          : "Текущий пароль не совпадает!"
+        : locale === "uz"
+          ? success
+            ? "muvaffaqiyatli ozgartirildi!"
+            : "Hozirgi parol mos emas!"
+          : success
+            ? "Password changed successfully!"
+            : "The current password does not match!";
+
+    toastr[success ? "success" : "error"](message);
+  }
+
+
 
   return (
     <div>
@@ -112,7 +135,7 @@ const DashboardSecurity: FC<ISecurityProps> = ({ selectedInputLang }) => {
           )}
         </form>
         <div className='2xl:order-[3] mt-[25px] w-full 2xl:w-[100%] flex items-center 2xl:justify-end'>
-          <button onClick={save} className='bg-[#0129E3] 2xl:w-[235px] py-[20px] w-full rounded-[12px] font-medium text-center text-white'>
+          <button onClick={SaveChanges} className='bg-[#0129E3] 2xl:w-[235px] py-[20px] w-full rounded-[12px] font-medium text-center text-white'>
             {selectedInputLang === 'ru' ? 'Сохранить изменения' : selectedInputLang === 'uz' ? 'Ozgartirishlarni saqlash' : 'Save changes'}
           </button>
         </div>

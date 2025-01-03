@@ -28,30 +28,31 @@ export const useRegisterStore = create<RegisterState>((set, get) => ({
   buttonDisabled: true,  // Initial button state is disabled
   isPasswordMatch: true, 
   setPhoneNumber: (phoneNumber) => {
-    // Allow only digits, spaces, parentheses, and "+"
-    const sanitized = phoneNumber.replace(/[^\d\s()+-]/g, '');
-  
-    // Automatically format phone number to +998 (XX) XXX-XX-XX
-    let formatted = sanitized;
-    if (sanitized.startsWith('+998')) {
-      formatted = sanitized
-        // Full format: +998 (XX) XXX-XX-XX
-        .replace(/^(\+998)(\d{2})(\d{3})(\d{2})(\d{2})$/, '$1 ($2) $3-$4-$5')
-        // Progressive formats for intermediate typing states
-        .replace(/^(\+998)(\d{2})(\d{0,3})$/, '$1 ($2) $3')
-        .replace(/^(\+998)(\d{2})$/, '$1 ($2)');
+    // Remove all non-digit characters except the leading +
+    let sanitized = phoneNumber.replace(/[^\d+]/g, '');
+    
+    // Automatically add a + if it's missing
+    if (!sanitized.startsWith('+')) {
+      sanitized = '+' + sanitized;
     }
   
-    // Validate full phone number format
-    const isValidPhoneNumber = /^\+998 \(\d{2}\) \d{3}-\d{2}-\d{2}$/.test(formatted);
+    // Ensure no extra spaces and digits-only format
+    sanitized = sanitized.replace(/\s+/g, ''); // Remove all spaces
   
+    // Validate the phone number format
+    const isValidPhoneNumber = /^[+]\d+$/.test(sanitized); // Must start with + and have only digits after
+    
     set({
-      phoneNumber: formatted,
+      phoneNumber: sanitized,
       buttonDisabled: !isValidPhoneNumber, // Disable button if the phone number is invalid
     });
   
-   
+    // Save to localStorage if valid
+    if (isValidPhoneNumber) {
+      localStorage.setItem('phoneNumber', sanitized); // Save sanitized number
+    }
   },
+  
   
 
 

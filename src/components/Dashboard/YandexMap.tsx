@@ -46,8 +46,6 @@ const YandexMap: React.FC<YandexMapProps> = ({
           const coords = e.get("coords");
           if (coords) {
             onLocationChange({ latitude: coords[0], longitude: coords[1] });
-
-            // Eski markerni o'chirish
             if (markerRef.current) {
               map.geoObjects.remove(markerRef.current);
             }

@@ -57,7 +57,7 @@ export const useRegisterLinks = create<RegisterState>((set, get) => ({
     try {
       const { phone, instagram, telegram, facebook, youtube } = get();
       const { id, contactId } = useProfileStore.getState();
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
 
       const payload = {
         id,

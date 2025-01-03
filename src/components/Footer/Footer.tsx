@@ -1,4 +1,3 @@
-"use client"
 import { FC } from 'react'
 import Image from 'next/image'
 
@@ -7,7 +6,6 @@ import { FaInstagram } from "react-icons/fa"
 import { FaTelegramPlane } from "react-icons/fa"
 import { BiLogoFacebook } from "react-icons/bi";
 import { SiYoutube } from "react-icons/si";
-// image
 // import FooterLogo from '@/public/footerLOGO.png'
 import { Link } from '@/i18n/routing'
 import Logo from './Logo.svg'
@@ -17,7 +15,7 @@ import { useLocale } from 'next-intl'
 const DataSocials = [
     { id: '1', icon: <FaInstagram className='text-white' />, link: 'https://www.instagram.com/med_yordam' },
     { id: '2', icon: <FaTelegramPlane className='text-white' />, link: 'https://t.me/med_yordam' },
-    { id: '3', icon: <BiLogoFacebook className='text-white' />, link: '' },
+    { id: '3', icon: <BiLogoFacebook className='text-white' />, link: 'https://www.facebook.com/profile.php?id=61571497348833' },
     { id: '4', icon: <SiYoutube className='text-white' />, link: 'https://www.youtube.com/@MedYordam' },
 ]
 
@@ -47,9 +45,9 @@ const Footer: FC = () => {
                     </p>
                 </div>
                 <div className='flex flex-col gap-[10px] mt-[20px] 2xl:mt-[0] 2xl:justify-end slg:mt-[-50px] slg:order-[3] 2xl:order-[2]'>
-                    <p className='text-white font-medium text-[20px]'>
+                    <a href='tel:+998998388078' className='text-white font-medium text-[20px]'>
                         +998 (99) 838 80 78
-                    </p>
+                    </a>
                     <div className='flex flex-row gap-[8px]'>
                         {DataSocials.map((item) => (
                             <Link href={item.link} key={item.id} className='w-[45px] border border-[#31385E] h-[45px] rounded-full flex items-center justify-center mt-[16px]'>

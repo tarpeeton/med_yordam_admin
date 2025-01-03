@@ -4,28 +4,44 @@ import { useAddressStore } from "@/store/createAddressStore";
 import { FC } from "react";
 import { GoPencil } from "react-icons/go";
 import { IoClose } from "react-icons/io5";
-import { v4 as uuidv4 } from "uuid"; // For generating unique IDs
+import { v4 as uuidv4 } from "uuid";
 
 interface IAddressProps {
   selectedInputLang: "ru" | "uz" | "en";
 }
 
-const DashboardAddress: FC<IAddressProps> = ({ selectedInputLang }) => {
-  const { mapData, addAddress, updateAddress, deleteAddress  , save } = useAddressStore();
+const daysOfWeek = [
+  { key: "MONDAY", label: { ru: "Понедельник", uz: "Dushanba", en: "Monday" } },
+  { key: "TUESDAY", label: { ru: "Вторник", uz: "Seshanba", en: "Tuesday" } },
+  { key: "WEDNESDAY", label: { ru: "Среда", uz: "Chorshanba", en: "Wednesday" } },
+  { key: "THURSDAY", label: { ru: "Четверг", uz: "Payshanba", en: "Thursday" } },
+  { key: "FRIDAY", label: { ru: "Пятница", uz: "Juma", en: "Friday" } },
+  { key: "SATURDAY", label: { ru: "Суббота", uz: "Shanba", en: "Saturday" } },
+  { key: "SUNDAY", label: { ru: "Воскресенье", uz: "Yakshanba", en: "Sunday" } },
+];
 
-  // Handle adding a new empty address entry
+const DashboardAddress: FC<IAddressProps> = ({ selectedInputLang }) => {
+  const { mapData, addAddress, updateAddress, deleteAddress, save } =
+    useAddressStore();
+
   const handleAddAddress = () => {
     addAddress({
       id: uuidv4(),
       clinicName: "",
-      address: "",
-      days: "",
-      cost: "",
-      time: "",
+      address: { ru: "", uz: "", en: "" },
+      days: daysOfWeek.map(({ key }) => ({
+        dayOfWeek: key,
+        from: "",
+        to: "",
+      })),
+      price: "",
       landmark: "",
       location: { latitude: 41.351424, longitude: 69.288937 },
+      addressLink: "", 
+      orientir: { ru: "", uz: "", en: "" },
     });
   };
+  
 
   return (
     <div>
@@ -46,7 +62,7 @@ const DashboardAddress: FC<IAddressProps> = ({ selectedInputLang }) => {
               <IoClose className="text-[#0129E3] ml-[10px] text-[20px] 2xl:w-[25px] 2xl:h-[25px]" />
             </button>
           </div>
-          <div className="grid grid-cols-1 2xl:grid-cols-3 gap-[12px]">
+          <div className="grid grid-cols-1 2xl:grid-cols-2 gap-[12px]">
             {/* Clinic Name */}
             <div className="relative">
               <input
@@ -65,66 +81,15 @@ const DashboardAddress: FC<IAddressProps> = ({ selectedInputLang }) => {
               />
               <GoPencil className="absolute text-[#0129E3] left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
             </div>
-            {/* Address */}
-            <div className="relative">
-              <input
-                value={entry.address}
-                onChange={(e) =>
-                  updateAddress(entry.id, { address: e.target.value })
-                }
-                placeholder={
-                  selectedInputLang === "ru"
-                    ? "Адрес"
-                    : selectedInputLang === "uz"
-                    ? "Manzil"
-                    : "Address"
-                }
-                className="w-full text-[#747474] rounded-[12px] focus:outline-none focus:ring-1 focus:ring-ring py-[18px] pl-[50px] px-[15px] bg-[#F8F8F8]"
-              />
-              <GoPencil className="absolute text-[#0129E3] left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-            </div>
-            {/* Landmark */}
-            <div className="relative">
-              <input
-                value={entry.landmark}
-                onChange={(e) =>
-                  updateAddress(entry.id, { landmark: e.target.value })
-                }
-                placeholder={
-                  selectedInputLang === "ru"
-                    ? "Ориентир"
-                    : selectedInputLang === "uz"
-                    ? "Xonadon"
-                    : "Landmark"
-                }
-                className="w-full text-[#747474] rounded-[12px] focus:outline-none focus:ring-1 focus:ring-ring py-[18px] pl-[50px] px-[15px] bg-[#F8F8F8]"
-              />
-              <GoPencil className="absolute text-[#0129E3] left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-            </div>
-            {/* Reception Days */}
-            <div className="relative">
-              <input
-                value={entry.days}
-                onChange={(e) =>
-                  updateAddress(entry.id, { days: e.target.value })
-                }
-                placeholder={
-                  selectedInputLang === "ru"
-                    ? "Дни приема"
-                    : selectedInputLang === "uz"
-                    ? "Qabul kunlari"
-                    : "Reception Days"
-                }
-                className="w-full text-[#747474] rounded-[12px] focus:outline-none focus:ring-1 focus:ring-ring py-[18px] pl-[50px] px-[15px] bg-[#F8F8F8]"
-              />
-              <GoPencil className="absolute text-[#0129E3] left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-            </div>
+
+          
+
             {/* Cost */}
             <div className="relative">
               <input
-                value={entry.cost}
+                value={entry.price}
                 onChange={(e) =>
-                  updateAddress(entry.id, { cost: e.target.value })
+                  updateAddress(entry.id, { price: e.target.value })
                 }
                 placeholder={
                   selectedInputLang === "ru"
@@ -137,40 +102,96 @@ const DashboardAddress: FC<IAddressProps> = ({ selectedInputLang }) => {
               />
               <GoPencil className="absolute text-[#0129E3] left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
             </div>
-            <div className="relative w-full col-span-full">
-              <input
-                value={entry.location.latitude + " " + entry.location.longitude}
-                disabled={true}
-                placeholder={
-                  selectedInputLang === "ru"
-                    ? "Место на карте"
-                    : selectedInputLang === "uz"
-                    ? "Xaritadagi joylashuv"
-                    : "Location on the map"
-                }
-                className="w-full text-[#747474] rounded-[12px] focus:outline-none focus:ring-1 focus:ring-ring py-[18px] pl-[50px] px-[15px] bg-[#F8F8F8]"
-              />
-              <GoPencil className="absolute text-[#0129E3] left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-            </div>
-            {/* Time */}
             <div className="relative">
               <input
-                value={entry.time}
+                value={entry.address[selectedInputLang]}
                 onChange={(e) =>
-                  updateAddress(entry.id, { time: e.target.value })
+                  updateAddress(entry.id, {
+                    address: {
+                      ...entry.address, // Keep existing values for other languages
+                      [selectedInputLang]: e.target.value, // Update only the selected language
+                    },
+                  })
                 }
                 placeholder={
                   selectedInputLang === "ru"
-                    ? "Время приема"
+                    ? "Адрес"
                     : selectedInputLang === "uz"
-                    ? "Qabul vaqti"
-                    : "Reception Time"
+                    ? "Manzil"
+                    : "Address"
                 }
                 className="w-full text-[#747474] rounded-[12px] focus:outline-none focus:ring-1 focus:ring-ring py-[18px] pl-[50px] px-[15px] bg-[#F8F8F8]"
               />
               <GoPencil className="absolute text-[#0129E3] left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
             </div>
-            {/* Location */}
+            <div className="relative">
+              <input
+                value={entry.orientir[selectedInputLang]}
+                onChange={(e) =>
+                  updateAddress(entry.id, {
+                    orientir: {
+                      ...entry.orientir, // Keep existing values for other languages
+                      [selectedInputLang]: e.target.value, // Update only the selected language
+                    },
+                  })
+                }
+                placeholder={
+                  selectedInputLang === "ru"
+                    ? "Ориентир"
+                    : selectedInputLang === "uz"
+                    ? "Orientir"
+                    : "Orientir"
+                }
+                
+                className="w-full text-[#747474] rounded-[12px] focus:outline-none focus:ring-1 focus:ring-ring py-[18px] pl-[50px] px-[15px] bg-[#F8F8F8]"
+              />
+              <GoPencil className="absolute text-[#0129E3] left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+            </div>
+
+
+            {entry.days.map((dayEntry, dayIndex) => (
+              <div key={`${entry.id}-${dayIndex}`} className="relative">
+               
+                <div className="grid grid-cols-3 gap-4 items-center">
+                  {/* From Time */}
+                  {dayEntry.dayOfWeek}
+                  <div className="relative">
+                    <input
+                      type="time"
+                      value={dayEntry.from}
+                      onChange={(e) =>
+                        updateAddress(entry.id, {
+                          days: entry.days.map((d, i) =>
+                            i === dayIndex
+                              ? { ...d, from: e.target.value }
+                              : d
+                          ),
+                        })
+                      }
+                      className="w-full text-[#747474] rounded-[12px] focus:outline-none focus:ring-1 focus:ring-ring py-[17px] px-[10px] bg-[#F8F8F8]"
+                    />
+                  </div>
+                  {/* To Time */}
+                  <div className="relative">
+                    <input
+                      type="time"
+                      value={dayEntry.to}
+                      onChange={(e) =>
+                        updateAddress(entry.id, {
+                          days: entry.days.map((d, i) =>
+                            i === dayIndex
+                              ? { ...d, to: e.target.value }
+                              : d
+                          ),
+                        })
+                      }
+                      className="w-full text-[#747474] rounded-[12px] focus:outline-none focus:ring-1 focus:ring-ring py-[17px] px-[10px] bg-[#F8F8F8] "
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+            {/* Map */}
             <div className="relative col-span-full w-full">
               <YandexMap
                 location={entry.location}
@@ -197,7 +218,10 @@ const DashboardAddress: FC<IAddressProps> = ({ selectedInputLang }) => {
 
       {/* Save changes button */}
       <div className="mt-[25px] w-full 2xl:w-[100%] flex items-center 2xl:justify-end">
-        <button onClick={save} className="bg-[#0129E3] 2xl:w-[245px] py-[20px] w-full rounded-[12px] font-medium text-center text-white">
+        <button
+          onClick={save}
+          className="bg-[#0129E3] 2xl:w-[245px] py-[20px] w-full rounded-[12px] font-medium text-center text-white"
+        >
           {selectedInputLang === "ru"
             ? "Сохранить изменения"
             : selectedInputLang === "uz"

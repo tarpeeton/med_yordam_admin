@@ -111,12 +111,12 @@ const Profile = ({ selectedInputLang }: IProfileProps) => {
     <div className='mt-[25px] 2xl:mt-[37px]'>
       <div className='flex flex-col 2xl:flex-row 2xl:gap-[2%] 2xl:flex-wrap'>
         <div className='w-full  bg-white 2xl:w-[38%] relative  overflow-hidden p-[4px] h-[264px] slg:h-[300px] 2xl:h-[350px] ' >
-          <label htmlFor="file-input" className=" cursor-pointer z-[99] w-ful h-full absolute">
+          <label htmlFor="file-input" className=" cursor-pointer z-[99] w-full h-full absolute">
             <Image
               src={image instanceof File ? URL.createObjectURL(image) : (typeof image === 'string' ? image : previewImage)}
               alt="Profile Preview"
               width={1000}
-              height={400}
+              height={950}
               className='w-full h-full object-cover rounded-[20px]'
             />
             <button   className="absolute  z-10  top-[20px] right-[20px] rounded-full flex items-center justify-center text-center w-[40px] h-[40px] 2xl:w-[45px] 2xl:h-[45px]  bg-[#050B2B80] bg-opacity-[50%] text-white">

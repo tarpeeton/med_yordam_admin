@@ -31,7 +31,7 @@ const Banner: FC = () => {
           </div>
         </div>
         <div className="mt-[20px] slg:w-[50%] slg:mt-0 flex flex-col gap-[16px] slg:gap-[24px] slg:order-[-1]">
-          <h1 className='text-titleDark font-medium tracking-[-2%] text-[32px] leading-[33.6px] slg:text-[30px] slg:leading-[42px] 2xl:text-[60px]  2xl:leading-[63px]'>
+          <h1 className='text-titleDark font-medium tracking-[-2%] text-[32px] leading-[33.6px] slg:text-[30px] slg:leading-[42px] 2xl:text-[55px] 4xl:text-[60px]  2xl:leading-[63px]'>
             <span className='text-[#0129E3]'>Med Yordam -</span>
             {locale === 'ru' ? "Простой и удобный сервис для врачей и клиник" : locale === 'uz' ? "Shifokorlar va klinikalar uchun oddiy va qulay xizmat" : "A simple and convenient service for doctors and clinics"}
 

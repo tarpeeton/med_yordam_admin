@@ -4,7 +4,8 @@ import { multiLang } from '@/interface/multiLang';
 import { useRegisterLinks } from '@/store/createLinksStore';
 import { Achievement, useProInfoStore } from '@/store/useProInfoStore';
 import { useServiceStore } from '@/store/createServiceStore';
-
+import { useAddressStore } from '@/store/createAddressStore';
+import { AddressEntry } from '@/store/createAddressStore';
 
 
 
@@ -126,71 +127,70 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
   },
 
   saveProfile: async (): Promise<boolean> => {
-    const { id, name, surname, patronymic, phone, exp, gender  , image , photo} = get();
-    const token = localStorage.getItem("token");
+    const { id, name, surname, patronymic, phone, exp, gender, image , photo } = get();
+    const token = sessionStorage.getItem("token");
   
     if (!exp) {
       toastr.error("Experience date is required.");
       return false; // Возвращаем false при ошибке
     }
-   
-  
+
+    if(photo?.id) {
+      const formData = new FormData();
+      if (image instanceof File) {
+        formData.append("new-photo", image); // photo kaliti bilan yuboriladi
+      }
+      await axios.put(`https://medyordam.result-me.uz/api/photo/${photo.id}`, formData, {
+        headers: {Authorization: `Bearer ${token}`},
+      });
+      return true
+    }
+
+
     const genderEnum = gender.en.toUpperCase();
-    
-    // Формирование данных профиля
-    const profileData = {
-      id: id > 0 ? id : undefined, // Include id only for updates
-      name,
-      surname,
-      patronymic,
-      exp,
-      phone,
-      gender: genderEnum,
-      ...(id === 0 && { cityId: 13 }),
-    };
   
     try {
-
+      // Form-data yaratish
+      const formData = new FormData();
+  
+      // Rasmni qo'shish
       if (image instanceof File) {
-        const formData = new FormData();
-        formData.append("new-photo", image); // The key should match your API requirements
-  
-        // API endpoint for image update
-        const imageUploadEndpoint = `https://medyordam.result-me.uz/api/photo/${photo?.id}`;
-  
-        const headers = {
-          Authorization: `Bearer ${token}`,
-        };
-  
-        // Upload the image
-        const imageResponse = await axios.put(imageUploadEndpoint, formData, { headers });
-        console.log("Image updated successfully:", imageResponse.data);
+        formData.append("photo", image); // photo kaliti bilan yuboriladi
       }
-
-
+  
+      // JSON ma'lumotlarni qo'shish
+      const profileJson = JSON.stringify({
+        id: id > 0 ? id : undefined, // Faqat yangilash uchun id
+        name,
+        surname,
+        patronymic,
+        exp,
+        phone,
+        gender: genderEnum,
+        ...(id === 0 && { cityId: 13 }), // Faqat yangi profil uchun cityId
+      });
+      formData.append("json", profileJson); // json kaliti bilan yuboriladi
+  
       const endpoint = "https://medyordam.result-me.uz/api/doctor";
       const headers = {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
       };
   
-      let response;
-      if (id === 0) {
-        response = await axios.post(endpoint, profileData, { headers });
-      } else {
-        response = await axios.put(endpoint, profileData, { headers });
-      }
+      // POST so'rov yuborish
+      const response = await axios.post(endpoint, formData, { headers });
   
       set({ success: true });
       const updatedProfile: ServerResponse = response.data.data;
       localStorage.setItem("slug", updatedProfile.slug);
       get().setProfile(updatedProfile);
-      return true; // Возвращаем true при успехе
+  
+      return true; // Muvaffaqiyat
     } catch (error) {
       console.error("Error saving profile:", error);
-      return false; // Возвращаем false при ошибке
+      return false; // Xatolik
     }
   },
+  
   
 
 
@@ -216,6 +216,7 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
       );
 
       useServiceStore.getState().setServicesFromOtherStore(data.priceList);
+       useAddressStore.getState().setAllData(data.receptionTime as AddressEntry[]);
     } catch (error) {
       console.error("Error loading profile data:", error);
     }

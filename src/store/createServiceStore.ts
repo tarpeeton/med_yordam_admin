@@ -86,7 +86,7 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
     if (serviceToDelete?.id) {
       try {
         const { id: profileId } = useProfileStore.getState();
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
 
         const payload = {
           id: profileId,
@@ -132,7 +132,7 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
     try {
       const { services } = get();
       const { id } = useProfileStore.getState();
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
 
       if (!services.length) {
         return false;

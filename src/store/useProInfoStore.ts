@@ -413,7 +413,7 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
   save: async (): Promise<boolean> => {
     const state = get();
     const { id } = useProfileStore.getState();
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     try {
       // =========
       // Achievements Transformation

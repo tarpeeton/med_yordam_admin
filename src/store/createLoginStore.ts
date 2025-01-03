@@ -40,19 +40,31 @@ export const useLoginStore = create<LoginState>((set, get) => ({
   isPasswordMatch: true,
   
   setPhoneNumber: (phoneNumber) => {
-    const sanitized = phoneNumber.replace(/[^\d\s+]/g, ''); // Allow only digits, spaces, and +
-
-    const isValidPhoneNumber = /^[+]?\d[\d\s]+$/.test(sanitized); // Validate number format
-
+    // Remove all non-digit characters except the leading +
+    let sanitized = phoneNumber.replace(/[^\d+]/g, '');
+    
+    // Automatically add a + if it's missing
+    if (!sanitized.startsWith('+')) {
+      sanitized = '+' + sanitized;
+    }
+  
+    // Ensure no extra spaces and digits-only format
+    sanitized = sanitized.replace(/\s+/g, ''); // Remove all spaces
+  
+    // Validate the phone number format
+    const isValidPhoneNumber = /^[+]\d+$/.test(sanitized); // Must start with + and have only digits after
+    
     set({
       phoneNumber: sanitized,
-      buttonDisabled: !isValidPhoneNumber, // Disable button if phone number is invalid
+      buttonDisabled: !isValidPhoneNumber, // Disable button if the phone number is invalid
     });
-
+  
+    // Save to localStorage if valid
     if (isValidPhoneNumber) {
-      localStorage.setItem('phoneNumber', JSON.stringify(sanitized));
+      localStorage.setItem('phoneNumber', sanitized); // Save sanitized number
     }
   },
+  
 
   setLoginCode: (loginVerifyCode) => {
     const isValidCode = /^[0-9]{6}$/.test(loginVerifyCode); // Validate 6-digit code
@@ -82,12 +94,11 @@ export const useLoginStore = create<LoginState>((set, get) => ({
       isPasswordMatch: true,
       loginVerifyCode: ''
     });
-    // Clear phoneNumber from localStorage as well when resetting the form
-    localStorage.removeItem('phoneNumber');
   },
 
   save: async () => {
     const { phoneNumber, password } = get();
+
     try {
       const formData = new FormData();
       formData.append('username', phoneNumber);
@@ -101,7 +112,6 @@ export const useLoginStore = create<LoginState>((set, get) => ({
       const { token } = response.data.data;
 
       // Save token to localStorage and sessionStorage
-      localStorage.setItem('token', token);
       sessionStorage.setItem('token', token);
 
       set({ success: true, error: false });

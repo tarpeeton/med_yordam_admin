@@ -1,4 +1,8 @@
 import { create } from 'zustand';
+import axios from 'axios'
+
+
+
 
 interface SecurityState {
   oldPassword: string;
@@ -12,7 +16,7 @@ interface SecurityState {
   setNewPassword: (newPassword: string) => void;
   setRepeatPassword: (repeatPassword: string) => void;
   resetForm: () => void;
-  save: () => Promise<void>;
+  save: () => Promise<boolean>;
 }
 
 export const useSecurityStore = create<SecurityState>((set, get) => ({
@@ -52,19 +56,21 @@ export const useSecurityStore = create<SecurityState>((set, get) => ({
     });
   },
 
-  save: async () => {
+  save: async (): Promise<boolean> => {
     const { oldPassword, newPassword, isPasswordMatch } = get();
+    const token = sessionStorage.getItem("token");
+
     if (!isPasswordMatch || !oldPassword || !newPassword) {
       set({ error: true, success: false });
-      return;
+      return false;
     }
 
     try {
-      // Simulate API call
-      // Example: await axios.post('/api/change-password', { oldPassword, newPassword });
-      set({ success: true, error: false });
+
+      await axios.put('https://medyordam.result-me.uz/api/user/password', { oldPassword, newPassword } , {headers: {Authorization: `Bearer ${token}`}});
+      return true
     } catch (err) {
-      set({ error: true, success: false });
+      return false
     }
   },
 }));
