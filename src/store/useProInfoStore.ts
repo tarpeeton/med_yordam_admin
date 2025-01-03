@@ -7,6 +7,16 @@ import { useProfileStore } from '@/store/profileStore';
 export type Language = "ru" | "uz" | "en";
 
 
+
+
+
+
+
+
+
+
+
+
 interface Specialty {
   id: number;
   name: multiLang;
@@ -21,13 +31,9 @@ interface LanguageSkill {
 }
 
 interface Achievement {
-  id: number | null;
-  name: {
-    ru: string[];  // Russian language array
-    uz: string[];  // Uzbek language array
-    en: string[];  // English language array
-  }
-  
+    ru: string[];  
+    uz: string[]; 
+    en: string[];  
 }
 
 interface Education {
@@ -39,21 +45,6 @@ interface Education {
   direction?: string
 }
 
-
-const normalizeAchievements = (rawAchievements: Achievement[] | undefined): Achievement[] => {
-  if (!Array.isArray(rawAchievements)) {
-    console.error("rawAchievements is not an array:", rawAchievements);
-    return [];
-  }
-  return rawAchievements.map((achievement) => ({
-    id: achievement.id,
-    name: {
-      ru: achievement.name.ru.filter((item) => item.trim() !== ""),
-      uz: achievement.name.uz.filter((item) => item.trim() !== ""),
-      en: achievement.name.en.filter((item) => item.trim() !== ""),
-    },
-  }));
-};
 
 
 
@@ -88,8 +79,6 @@ interface ProInfoState {
 
   // Achievement methods
   addAchievement: () => void;
-  updateAchievementField: (id: number | null, lang: Language, value: string) => void;
-  removeAchievement: (id: number) => void;
 
   // Education methods
   addEducation: () => void;
@@ -101,7 +90,7 @@ interface ProInfoState {
     value: string
   ) => void;
   removeEducation: (id: number) => void;
-
+  updateAchievementField: (index: number, lang: Language, value: string) => void;
   // Work experience methods
   addWorkExperience: () => void;
   updateWorkExperienceField: (
@@ -123,7 +112,7 @@ interface ProInfoState {
   save: () => void;
   fetchSpecialties: () => Promise<void>;
   fetchLanguage: () => Promise<void>;
-  setAllData: (workExperiences: WorkExperience[], educations: Education[], languages: LanguageSkill[], specialties: Specialty[] , achievements: Achievement[]) => void
+  setAllData: (workExperiences: WorkExperience[], educations: Education[], languages: LanguageSkill[], specialties: Specialty[]) => void
 }
 
 
@@ -134,7 +123,7 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
   specialties: [],
   languages: [],
   achievements: [
-    { id: 1, name: {ru: ["a"] , uz: ["a"] , en: ["a"]} },
+    { ru:[""] , uz: [""] , en: [""] },
   ],
   educations: [
     {
@@ -179,37 +168,35 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
       ),
     }));
   },
+
+
   addAchievement: () => {
     set((state) => ({
       achievements: [
         ...state.achievements,
-        { id: state.achievements.length + 1, name: { ru: [""], uz: [""] ,  en: [""] } },
+        { ru:[""] , uz: [""] , en: [""] },
       ],
     }));
   },
 
-updateAchievementField: (id: number | null, lang: Language, value: string) => {
-  set((state) => ({
-    achievements: state.achievements.map((achievement) =>
-      achievement.id === id
-        ? {
-            ...achievement,
-            name: {
-              ...achievement.name,
-              [lang]: [value], // Ensure `value` is wrapped in an array
-            },
-          }
-        : achievement
-    ),
-  }));
-},
 
-
-  removeAchievement: (id) => {
+  updateAchievementField: (index: number, lang: Language, value: string) => {
     set((state) => ({
-      achievements: state.achievements.filter((achievement) => achievement.id !== id),
+      achievements: state.achievements.map((achievement, i) =>
+        i === index
+          ? {
+              ...achievement,
+              [lang]: achievement[lang].map((_, idx) => (idx === 0 ? value : _)),
+            }
+          : achievement
+      ),
     }));
   },
+
+ 
+
+
+
   addEducation: () => {
     set((state) => ({
       educations: [
@@ -377,8 +364,7 @@ updateAchievementField: (id: number | null, lang: Language, value: string) => {
       // =========
       // Achievements
       // =========
-      // const achievementsArray = state.achievements;
-      const achievementsTransformed = normalizeAchievements(state.achievements);
+     
   
       // =========
       // Education
@@ -445,7 +431,7 @@ updateAchievementField: (id: number | null, lang: Language, value: string) => {
       // =========
       const response = await axios.put("https://medyordam.result-me.uz/api/doctor", {
         id,
-        achievement: achievementsTransformed,
+        achievement: state.achievements,
         education: educationTransformed,
         speciality: specialitiesSelected,
         language: languagesForUpdate,
@@ -512,16 +498,17 @@ updateAchievementField: (id: number | null, lang: Language, value: string) => {
     educations: Education[],
     languages: LanguageSkill[],
     specialties: Specialty[],
-    achievements: Achievement[]
   ) => {
-    const normalizedAchievements = normalizeAchievements(achievements);
-  
+    console.log("Work Experiences:", workExperiences);
+    console.log("Educations:", educations);
+    console.log("Languages:", languages);
+    console.log("Specialties:", specialties);
+    
     set({
       workExperiences,
       educations,
       languages,
       specialties,
-      achievements: normalizedAchievements,
     });
   },
   

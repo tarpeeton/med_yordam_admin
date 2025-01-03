@@ -191,7 +191,7 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
 
     useRegisterLinks.getState().setAll(res.data.data.contact.phone, res.data.data.contact.instagram, res.data.data.contact.telegram, res.data.data.contact.facebook, res.data.data.contact.youtube);
 
-    useProInfoStore.getState().setAllData(res.data.data.experience , res.data.data.education , res.data.data.language , res.data.data.speciality , res.data.data.achievement);
+    useProInfoStore.getState().setAllData(res.data.data.experience , res.data.data.education , res.data.data.language , res.data.data.speciality );
   }
   
   

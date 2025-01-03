@@ -3,7 +3,7 @@ import { FC, useState, useEffect } from 'react';
 
 import { IoIosArrowDown } from "react-icons/io";
 import { FaCheck } from "react-icons/fa6";
-import { useProInfoStore } from '@/store/useProInfoStore';
+import { Language, useProInfoStore } from '@/store/useProInfoStore';
 import { IoGlobeOutline } from "react-icons/io5";
 import { GoPencil } from "react-icons/go";
 import { MdOutlineDateRange } from "react-icons/md";
@@ -85,8 +85,11 @@ const DashboardProInfo: FC<ILinksProps> = ({ selectedInputLang }) => {
     fetchLanguage()
   }, [locale])
 
-
-
+  const handleInputChange = (lang: Language, index: number, value: string) => {
+    updateAchievementField(index, lang, value);
+  };
+  
+  
   return (
 
     <div className='mt-[25px] 2xl:mt-[37px]'>
@@ -152,39 +155,31 @@ const DashboardProInfo: FC<ILinksProps> = ({ selectedInputLang }) => {
                 {selectedInputLang === 'ru' ? 'Достижения' : selectedInputLang === 'uz' ? 'Yutug`lar' : 'Achievements'}
               </h1>
               <div className='mt-[15px] grid grid-cols-1 2xl:grid-cols-2 gap-[15px]'>
-                {achievements.length === 0 && (
-                  <div>
-                       {achievements?.map((achievement, index) => (
-                    <div key={index} className="relative w-full">
+                  {achievements.map((achievement, index) => (
+                    <div key={index} className='relative w-full'>
                       <input
-                        value={achievement.name[selectedInputLang]}
-                        onChange={(e) => {
-                          if (achievement.id !== null) {
-                            updateAchievementField(
-                              achievement?.id as number,
-                              selectedInputLang,
-                              e.target.value
-                            );
-                          }
-                        }}
+                        value={achievement[selectedInputLang]}
+                        onChange={(e) =>
+                          updateAchievementField(
+                            index,
+                            selectedInputLang,
+                            e.target.value
+                          )
+                        }
                         placeholder={
-                          selectedInputLang === 'ru'
-                            ? 'Достижение'
-                            : selectedInputLang === 'uz'
-                              ? 'Yutug`lar'
-                              : 'Achievements'
-  
+                          selectedInputLang === "ru"
+                            ? "Достижение"
+                            : selectedInputLang === "uz"
+                              ? "Yutuqlar"
+                              : "Achievements"
                         }
                         className="w-full text-[#747474] rounded-[12px] focus:outline-none focus:ring-1 focus:ring-ring py-[18px] pl-[40px] px-[15px] bg-[#F8F8F8]"
-  
                       />
                       <GoPencil className="absolute text-[#747474] left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
                     </div>
                   ))}
-                  </div>
-                
-                )}
-               
+
+
               </div>
               <button onClick={handleAddAchievement} className='mt-[15px]  w-full 2xl:w-[220px]  rounded-[12px] border border-[#0129E3] text-[15px] 2xl:text-[16px] text-[#0129E3] font-medium h-[50px]'>
                 {selectedInputLang === 'ru' ? ' Добавить' : selectedInputLang === 'uz' ? ' Qo`shish' : 'Add'}
