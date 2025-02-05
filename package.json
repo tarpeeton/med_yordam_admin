@@ -6,12 +6,14 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prepare": "husky install"
   },
   "dependencies": {
     "dayjs": "^1.11.13",
     "flowbite": "^2.5.2",
     "gsap": "^3.12.5",
+    "husk": "^0.5.3",
     "js-cookie": "^3.0.5",
     "next": "^14.2.14",
     "next-intl": "^3.20.0",
@@ -43,5 +45,10 @@
     "tailwindcss": "^3.4.1",
     "typescript": "^5",
     "uuid": "^11.0.3"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --write"
+    ]
   }
 }
