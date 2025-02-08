@@ -1,14 +1,6 @@
 {
-	"Links": {
-	  "about": "О нас",
-	  "service": "Услуги",
-	  "project": "Проекты",
-	  "seminar": "Семинары и тренинги",
-	  "blog": "Блог",
-	  "contact": "Контакты"
-	},
-	"Buttons": {
-		"assatsionADD": "Вступить в ассоциацию",
-		"partnerADD": "Стать партнером"
-	}
-  }
+  "Header": {
+    "showMap": "Поиск по карте"
+  },
+  "register": "Регистрация"
+}

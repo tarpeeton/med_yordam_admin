@@ -1,41 +1,40 @@
-import { create } from "zustand";
-import axios from 'axios'
-
+import { create } from 'zustand';
+import axios from 'axios';
 
 import { multiLang } from '@/interface/multiLang';
 import { useProfileStore } from '@/store/profileStore';
 
-// Define the structure for an address entry
+export interface AddressDay {
+  id?: string;
+  dayOfWeek: string;
+  from: string;
+  to: string;
+}
+
 export interface AddressEntry {
-  id: string;
+  id?: string;
   address: multiLang;
   clinicName: string;
-  days: { dayOfWeek: string; from: string; to: string }[]; // Array to store day and time
+  days: AddressDay[];
   price: string;
   landmark: string;
   location: { latitude: number; longitude: number };
   addressLink?: string;
-  orientir: multiLang
+  orientir: multiLang;
 }
 
-// Define the store structure
 interface AddressState {
-  mapData: AddressEntry[]; // Array of address entries
-  addAddress: (entry: AddressEntry) => void; // Function to add a new address
-  updateAddress: (id: string, updatedData: Partial<AddressEntry>) => void; // Function to update an existing address by ID
-  deleteAddress: (id: string) => void; // Function to delete an address by ID
+  mapData: AddressEntry[];
+  addAddress: (entry: AddressEntry) => void;
+  updateAddress: (index: number, updatedData: Partial<AddressEntry>) => void;
+  deleteAddress: (id: string) => void;
   save: () => Promise<boolean>;
-  setAllData: (data: AddressEntry[]) => void
+  setAllData: (data: AddressEntry[]) => void;
 }
 
+export const useAddressStore = create<AddressState>((set, get) => ({
+  mapData: [],
 
-
-
-// Create the store
-export const useAddressStore = create<AddressState>((set , get) => ({
-  mapData: [], 
-
-  // Add a new address
   addAddress: (entry) =>
     set((state) => ({
       mapData: [
@@ -43,157 +42,178 @@ export const useAddressStore = create<AddressState>((set , get) => ({
         {
           ...entry,
           address: {
-            ru: entry.address.ru || "",
-            uz: entry.address.uz || "",
-            en: entry.address.en || "",
+            ru: entry.address.ru || '',
+            uz: entry.address.uz || '',
+            en: entry.address.en || '',
           },
           orientir: {
-            ru: entry.orientir.ru || "",
-            uz: entry.orientir.uz || "",
-            en: entry.orientir.en || "",
+            ru: entry.orientir.ru || '',
+            uz: entry.orientir.uz || '',
+            en: entry.orientir.en || '',
           },
         },
       ],
     })),
 
-  // Update an existing address by ID
-  updateAddress: (id, updatedData) =>
+  updateAddress: (index, updatedData: Partial<AddressEntry>) =>
     set((state) => ({
-      mapData: state.mapData.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              ...updatedData,
-              address: updatedData.address
-                ? {
-                    ru: updatedData.address.ru || item.address.ru,
-                    uz: updatedData.address.uz || item.address.uz,
-                    en: updatedData.address.en || item.address.en,
-                  }
-                : item.address,
-              orientir: updatedData.orientir
-                ? {
-                    ru: updatedData.orientir.ru || item.orientir.ru,
-                    uz: updatedData.orientir.uz || item.orientir.uz,
-                    en: updatedData.orientir.en || item.orientir.en,
-                  }
-                : item.orientir,
-            }
-          : item
-      ),
+      mapData: state.mapData.map((item, idx) => {
+        if (idx !== index) return item;
+
+        return {
+          ...item,
+          ...updatedData,
+          address: updatedData.address
+            ? {
+                ru: updatedData.address.ru || item.address.ru,
+                uz: updatedData.address.uz || item.address.uz,
+                en: updatedData.address.en || item.address.en,
+              }
+            : item.address,
+          orientir: updatedData.orientir
+            ? {
+                ru: updatedData.orientir.ru || item.orientir.ru,
+                uz: updatedData.orientir.uz || item.orientir.uz,
+                en: updatedData.orientir.en || item.orientir.en,
+              }
+            : item.orientir,
+          days: updatedData.days
+            ? updatedData.days.map((updDay, i) => {
+                const originalDay = item.days[i];
+                return {
+                  ...originalDay,
+                  ...updDay,
+                  ...(updDay.id || originalDay?.id
+                    ? { id: updDay.id || originalDay?.id }
+                    : {}),
+                };
+              })
+            : item.days,
+        };
+      }),
     })),
 
+  deleteAddress: (id: string) => {
+    // Hozirgi state dan o'chiriladigan elementni topamiz
+    const state = get();
+    const itemToDelete = state.mapData.find(
+      (item: AddressEntry) => item.id === id
+    );
+    if (!itemToDelete) return; // Agar topilmasa, hech narsa qilmaymiz
 
-  // Delete an address by ID
-  deleteAddress: (id) =>
-    set((state) => ({
-      mapData: state.mapData.filter((item) => item.id !== id),
-    })),
+    // mapData dan elementni olib tashlaymiz
+    set({
+      mapData: state.mapData.filter((item: AddressEntry) => item.id !== id),
+    });
 
+    // Doktor id sini olish (masalan, useProfileStore dan)
+    const doctorId = useProfileStore.getState().id;
 
+    // Yuboriladigan payload – bu yerda o'chirilayotgan elementning id sini receptionTime ichiga joylaymiz
+    const payload = {
+      id: doctorId, // Doktor id
+      receptionTime: [{ id: itemToDelete.id }], // O'chirilayotgan manzilning id-si
+    };
 
-    save: async (): Promise<boolean> => {
-      try {
-        const mapData = get().mapData; // Get all address entries from the state
-        const {id} = useProfileStore.getState()
-        
-         const token = sessionStorage.getItem("token");
+    // Serverga yuborish uchun axios.put chaqiruvi
+    axios
+      .put('https://medyordam.result-me.uz/api/doctor', payload, {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((response) => {
+        console.log('Deletion successful:', response.data);
+      })
+      .catch((error) => {
+        console.error('Error deleting address:', error);
+      });
+  },
 
+  save: async (): Promise<boolean> => {
+    try {
+      const mapData = get().mapData;
+      const { id } = useProfileStore.getState();
+      const token = sessionStorage.getItem('token');
 
-         
-        if (mapData.length === 0) {
-          throw new Error("No addresses to save");
-        }
-    
-        // Transform mapData to match the required API format
-        const receptionTime = mapData.map((entry) => {
-          const baseEntry = {
-            dayOfWeek: entry.days[0]?.dayOfWeek?.toUpperCase() || "", // Map days to uppercase
-            from: entry.days[0]?.from || "", // Use the first day's from time
-            to: entry.days[0]?.to || "", // Use the first day's to time
-            address: {
-              uz: entry.address.uz,
-              ru: entry.address.ru,
-              en: entry.address.en,
-            },
-            addressLink: entry.addressLink || "",
-            clinicName: entry.clinicName || "",
-            orientir: {
-              uz: entry.orientir.uz,
-              ru: entry.orientir.ru,
-              en: entry.orientir.en,
-            },
-            price: entry.price || "",
-            latitude: entry.location.latitude,
-            longitude: entry.location.longitude,
-          };
-        
-          // Add the `id` field only if it exists
-          if (entry.id.length < 8) {
-            return { ...baseEntry, id: entry.id };
-          }
-        
-          // Return without `id` field if `id` does not exist
-          return baseEntry;
-        });
-        
-    
-        // API request
-        const response = await axios.put(
-          "https://medyordam.result-me.uz/api/doctor",
-          { id ,  receptionTime }, // Send receptionTime as the payload
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-    
-        console.log("Save successful:", response.data);
-    
-        return true; // Indicate success
-      } catch (error) {
-        console.error("Error saving addresses:", error);
-        return false; // Indicate failure
+      if (mapData.length === 0) {
+        throw new Error('No addresses to save');
       }
-    },
 
+      const receptionTime = mapData.map((entry) => ({
+        ...(entry.id ? { id: entry.id } : {}),
+        days: entry.days.map((day) => ({
+          ...(day.id ? { id: day.id } : {}),
 
-    setAllData: (data: any[]) => {
-      const formattedData: AddressEntry[] = data.map((item) => ({
-        id: item.id.toString(), // IDni string ko'rinishida saqlash
+          dayOfWeek: day.dayOfWeek.toUpperCase(),
+          from: day.from,
+          to: day.to,
+        })),
         address: {
-          uz: item.address?.uz || "",
-          ru: item.address?.ru || "",
-          en: item.address?.en || "",
+          uz: entry.address.uz,
+          ru: entry.address.ru,
+          en: entry.address.en,
         },
-        clinicName: item.clinicName || "",
-        days: [
-          {
-            dayOfWeek: item.dayOfWeek || "",
-            from: item.from || "",
-            to: item.to || "",
-          },
-        ],
-        price: item.price?.toString() || "", // Narxni string ko'rinishida saqlash
-        landmark: item.orientir?.ru || "", // Orientirni rus tilida olish
-        location: {
-          latitude: item.latitude,
-          longitude: item.longitude,
-        },
-        addressLink: item.addressLink || "",
+        addressLink: entry.addressLink || '',
+        clinicName: entry.clinicName || '',
         orientir: {
-          uz: item.orientir?.uz || "",
-          ru: item.orientir?.ru || "",
-          en: item.orientir?.en || "",
+          uz: entry.orientir.uz,
+          ru: entry.orientir.ru,
+          en: entry.orientir.en,
         },
+        price: entry.price || '',
+        latitude: entry.location.latitude,
+        longitude: entry.location.longitude,
       }));
-    
-      set({ mapData: formattedData });
-      console.log("Formatted Data:", formattedData);
+
+      await axios.put(
+        'https://medyordam.result-me.uz/api/doctor',
+        { id, receptionTime },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      return true;
+    } catch (error) {
+      console.error('Error saving addresses:', error);
+      return false;
     }
-    
-    
-    
+  },
+
+  setAllData: (data: any[]) => {
+    const formattedData: AddressEntry[] = data.map((item) => ({
+      id: item.id.toString(),
+      address: {
+        uz: item.address?.uz || '',
+        ru: item.address?.ru || '',
+        en: item.address?.en || '',
+      },
+      clinicName: item.clinicName || '',
+      days: item.days.map((day: any) => ({
+        id: day.id,
+        dayOfWeek: day.dayOfWeek || '',
+        from: day.from || '',
+        to: day.to || '',
+      })),
+      price: item.price?.toString() || '',
+      landmark: item.orientir?.ru || '',
+      location: {
+        latitude: item.latitude || 0,
+        longitude: item.longitude || 0,
+      },
+      addressLink: item.addressLink || '',
+      orientir: {
+        uz: item.orientir?.uz || '',
+        ru: item.orientir?.ru || '',
+        en: item.orientir?.en || '',
+      },
+    }));
+
+    set({ mapData: formattedData });
+  },
 }));

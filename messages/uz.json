@@ -1,14 +1,6 @@
 {
-	"Links": {
-	  "about": "Biz haqimizda",
-	  "service": "Xizmatlarimiz",
-	  "project": "Loyihalarimiz",
-	  "seminar": "Seminarlar va treninglar",
-	  "blog": "Blog",
-	  "contact": "Kontaktlar"
-	},
-	"Buttons": {
-		"assatsionADD": "Assotsiatsiyaga qo'shilish",
-		"partnerADD": "Hamkor bo'lish"
-	}
-  }
+  "Header": {
+    "showMap": "Xaritada izlash"
+  },
+  "register": "Ro'yhatdan o'tish"
+}

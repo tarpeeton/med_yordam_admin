@@ -7,8 +7,6 @@ import { useServiceStore } from '@/store/createServiceStore';
 import { useAddressStore } from '@/store/createAddressStore';
 import { AddressEntry } from '@/store/createAddressStore';
 
-
-
 const transformAchievements = (data: {
   ru: string[];
   uz: string[];
@@ -29,7 +27,7 @@ interface ServerResponse {
   surname: multiLang;
   patronymic: multiLang;
   exp: number;
-  gender: "MALE" | "FEMALE";
+  gender: 'MALE' | 'FEMALE';
   city: {
     id: number;
     name: multiLang;
@@ -61,15 +59,15 @@ interface ProfileState {
   exp: number | null;
   image: File | null | string;
   contactId: null | number;
-  selectedLang: "ru" | "uz" | "en";
+  selectedLang: 'ru' | 'uz' | 'en';
   setName: (name: multiLang) => void;
   setSurname: (surname: multiLang) => void;
   setPatronymic: (patronymic: multiLang) => void;
   setPhone: (phone: string) => void;
-  photo: null | ServerResponse["photo"];
+  photo: null | ServerResponse['photo'];
   setGender: (gender: multiLang) => void;
   setImage: (image: File | null) => void;
-  setLang: (lang: "ru" | "uz" | "en") => void;
+  setLang: (lang: 'ru' | 'uz' | 'en') => void;
   setStage: (exp: number) => void;
   setProfile: (data: ServerResponse) => void;
   setSuccess: (success: boolean) => void;
@@ -79,18 +77,18 @@ interface ProfileState {
 
 export const useProfileStore = create<ProfileState>((set, get) => ({
   id: 0,
-  name: { ru: "", uz: "", en: "" },
-  surname: { ru: "", uz: "", en: "" },
-  patronymic: { ru: "", uz: "", en: "" },
-  slug: "",
-  phone: "",
+  name: { ru: '', uz: '', en: '' },
+  surname: { ru: '', uz: '', en: '' },
+  patronymic: { ru: '', uz: '', en: '' },
+  slug: '',
+  phone: '',
   contactId: null,
   success: false,
   photo: null,
   exp: null,
-  gender: { ru: "Мужчина", uz: "Erkak", en: "Male" },
+  gender: { ru: 'Мужчина', uz: 'Erkak', en: 'Male' },
   image: null,
-  selectedLang: "ru",
+  selectedLang: 'ru',
   setName: (name) => set({ name }),
   setSurname: (surname) => set({ surname }),
   setPatronymic: (patronymic) => set({ patronymic }),
@@ -119,45 +117,49 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
       image: data.photo?.url || null,
       photo: data?.photo || null,
       gender: {
-        ru: data.gender === "MALE" ? "Мужчина" : "Женщина",
-        uz: data.gender === "MALE" ? "Erkak" : "Ayol",
-        en: data.gender === "MALE" ? "Male" : "Female",
+        ru: data.gender === 'MALE' ? 'Мужчина' : 'Женщина',
+        uz: data.gender === 'MALE' ? 'Erkak' : 'Ayol',
+        en: data.gender === 'MALE' ? 'Male' : 'Female',
       },
     });
   },
 
   saveProfile: async (): Promise<boolean> => {
-    const { id, name, surname, patronymic, phone, exp, gender, image , photo } = get();
-    const token = sessionStorage.getItem("token");
-  
+    const { id, name, surname, patronymic, phone, exp, gender, image, photo } =
+      get();
+    const token = sessionStorage.getItem('token');
+
     if (!exp) {
-      toastr.error("Experience date is required.");
+      toastr.error('Experience date is required.');
       return false; // Возвращаем false при ошибке
     }
 
-    if(photo?.id) {
+    if (photo?.id) {
       const formData = new FormData();
       if (image instanceof File) {
-        formData.append("new-photo", image); // photo kaliti bilan yuboriladi
+        formData.append('new-photo', image); // photo kaliti bilan yuboriladi
       }
-      await axios.put(`https://medyordam.result-me.uz/api/photo/${photo.id}`, formData, {
-        headers: {Authorization: `Bearer ${token}`},
-      });
-      return true
+      await axios.put(
+        `https://medyordam.result-me.uz/api/photo/${photo.id}`,
+        formData,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      return true;
     }
 
-
     const genderEnum = gender.en.toUpperCase();
-  
+
     try {
       // Form-data yaratish
       const formData = new FormData();
-  
+
       // Rasmni qo'shish
       if (image instanceof File) {
-        formData.append("photo", image); // photo kaliti bilan yuboriladi
+        formData.append('photo', image); // photo kaliti bilan yuboriladi
       }
-  
+
       // JSON ma'lumotlarni qo'shish
       const profileJson = JSON.stringify({
         id: id > 0 ? id : undefined, // Faqat yangilash uchun id
@@ -167,58 +169,66 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
         exp,
         phone,
         gender: genderEnum,
-        ...(id === 0 && { cityId: 13 }), // Faqat yangi profil uchun cityId
+        ...(id === 0 && { cityId: 1 }), // Faqat yangi profil uchun cityId
       });
-      formData.append("json", profileJson); // json kaliti bilan yuboriladi
-  
-      const endpoint = "https://medyordam.result-me.uz/api/doctor";
+      formData.append('json', profileJson); // json kaliti bilan yuboriladi
+
+      const endpoint = 'https://medyordam.result-me.uz/api/doctor';
       const headers = {
         Authorization: `Bearer ${token}`,
       };
-  
+
       // POST so'rov yuborish
       const response = await axios.post(endpoint, formData, { headers });
-  
+
       set({ success: true });
       const updatedProfile: ServerResponse = response.data.data;
-      localStorage.setItem("slug", updatedProfile.slug);
+      localStorage.setItem('slug', updatedProfile.slug);
       get().setProfile(updatedProfile);
-  
+
       return true; // Muvaffaqiyat
     } catch (error) {
-      console.error("Error saving profile:", error);
+      console.error('Error saving profile:', error);
       return false; // Xatolik
     }
   },
-  
-  
 
-
-
-  getAllDataWithSlug: async (slug) => {
+  getAllDataWithSlug: async (slug: string) => {
     try {
-      const response = await axios.get(`https://medyordam.result-me.uz/api/doctor/${slug}`, {
-        headers: { "Accept-Language": "" },
-      });
-
-      const data = response.data.data;
-      get().setProfile(data);
-
-      const { phone, instagram, telegram, facebook, youtube } = data.contact;
-      useRegisterLinks.getState().setAll(phone, instagram, telegram, facebook, youtube);
-
-      useProInfoStore.getState().setAllData(
-        data.experience,
-        data.education,
-        data.language,
-        data.speciality,
-        transformAchievements(data.achievement)
+      // API орқали маълумот олиш
+      const response = await axios.get(
+        `https://medyordam.result-me.uz/api/doctor/${slug}`,
+        {
+          headers: { 'Accept-Language': '' }, // Зарур ҳолда тил қўшиш мумкин
+        }
       );
+      console.log(response, 'SSS');
 
+      const data = response.data.data; // Қайтарилган маълумот
+      get().setProfile(data); // Профилни setProfile билан янгилаш
+      useAddressStore.getState().setAllData(data.receptionTime);
+
+      // Контакт маълумотлари
+      const { phone, instagram, telegram, facebook, youtube } = data.contact;
+      useRegisterLinks
+        .getState()
+        .setAll(phone, instagram, telegram, facebook, youtube);
+
+      // Маълумотларни бошқа state га ўтказиш
+      useProInfoStore
+        .getState()
+        .setAllData(
+          data.experience,
+          data.education,
+          data.language,
+          data.speciality,
+          transformAchievements(data.achievement)
+        );
+      // Қийматлар рўйхати
       useServiceStore.getState().setServicesFromOtherStore(data.priceList);
-       useAddressStore.getState().setAllData(data.receptionTime as AddressEntry[]);
+      // Reception Time маълумотларини қайта ишлаш
     } catch (error) {
-      console.error("Error loading profile data:", error);
+      console.error('Error loading profile data:', error);
     }
   },
 }));

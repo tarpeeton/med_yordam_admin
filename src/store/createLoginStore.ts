@@ -1,14 +1,5 @@
 import { create } from 'zustand';
-import axios from 'axios'
-
-// Helper function to get the stored phoneNumber from localStorage
-const getPersistedPhoneNumber = () => {
-  if (typeof window !== 'undefined') {
-    const storedPhoneNumber = localStorage.getItem('phoneNumber');
-    return storedPhoneNumber ? JSON.parse(storedPhoneNumber) : '';
-  }
-  return '';
-};
+import axios from 'axios';
 
 interface LoginState {
   phoneNumber: string;
@@ -30,47 +21,46 @@ interface LoginState {
 }
 
 export const useLoginStore = create<LoginState>((set, get) => ({
-  phoneNumber: '',  
+  phoneNumber: '',
   password: '',
   repeatPassword: '',
   loginVerifyCode: '',
   success: false,
   error: false,
-  buttonDisabled: true,  // Initial button state is disabled
+  buttonDisabled: true, // Initial button state is disabled
   isPasswordMatch: true,
-  
+
   setPhoneNumber: (phoneNumber) => {
     // Remove all non-digit characters except the leading +
     let sanitized = phoneNumber.replace(/[^\d+]/g, '');
-    
+
     // Automatically add a + if it's missing
     if (!sanitized.startsWith('+')) {
       sanitized = '+' + sanitized;
     }
-  
+
     // Ensure no extra spaces and digits-only format
     sanitized = sanitized.replace(/\s+/g, ''); // Remove all spaces
-  
+
     // Validate the phone number format
     const isValidPhoneNumber = /^[+]\d+$/.test(sanitized); // Must start with + and have only digits after
-    
+
     set({
       phoneNumber: sanitized,
       buttonDisabled: !isValidPhoneNumber, // Disable button if the phone number is invalid
     });
-  
+
     // Save to localStorage if valid
     if (isValidPhoneNumber) {
       localStorage.setItem('phoneNumber', sanitized); // Save sanitized number
     }
   },
-  
 
   setLoginCode: (loginVerifyCode) => {
     const isValidCode = /^[0-9]{6}$/.test(loginVerifyCode); // Validate 6-digit code
-    set({ 
-      loginVerifyCode, 
-      buttonDisabled: !isValidCode  // Disable button if the code is invalid
+    set({
+      loginVerifyCode,
+      buttonDisabled: !isValidCode, // Disable button if the code is invalid
     });
   },
 
@@ -92,7 +82,7 @@ export const useLoginStore = create<LoginState>((set, get) => ({
       password: '',
       repeatPassword: '',
       isPasswordMatch: true,
-      loginVerifyCode: ''
+      loginVerifyCode: '',
     });
   },
 
@@ -104,11 +94,15 @@ export const useLoginStore = create<LoginState>((set, get) => ({
       formData.append('username', phoneNumber);
       formData.append('password', password);
 
-      const response = await axios.post('https://medyordam.result-me.uz/api/auth/login', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await axios.post(
+        'https://medyordam.result-me.uz/api/auth/login',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
       const { token } = response.data.data;
 
       // Save token to localStorage and sessionStorage

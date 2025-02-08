@@ -1,97 +1,87 @@
-"use client"
-import { FC, useState } from "react";
-import { RxHamburgerMenu } from "react-icons/rx";
-import { SlLocationPin } from "react-icons/sl";
-import { RiArrowDownSLine } from "react-icons/ri";
-import { useLocale } from 'next-intl';
-import { Link } from '@/i18n/routing';
+'use client';
+import { FC, useState } from 'react';
+import { SlLocationPin } from 'react-icons/sl';
+import { RiArrowDownSLine } from 'react-icons/ri';
+import { useLocale, useTranslations } from 'next-intl';
 import LanguageSwitcher from '@/components/Header/LanguageSwither';
 import MobileMenu from '@/components/Header/MobileMenu';
-import LogoDefault from '../../public/menu/Logo.svg'
+import LogoDefault from '../../public/menu/Logo.svg';
 import { usePathname } from 'next/navigation';
-
-
-
-
-
-
-
-
-
-
+import Image from 'next/image';
+import { Link } from '@/i18n/routing';
+import { RxHamburgerMenu } from 'react-icons/rx';
 
 const Header: FC = () => {
-  const locale = useLocale()
-  const [menu, setMenu] = useState(false)
-  const pathname = usePathname();
-  const SwitcherMenuMobile = () => setMenu(!menu)
+  const locale = useLocale() as 'ru' | 'uz' | 'en';
+  const t = useTranslations();
+  const [menu, setMenu] = useState(false);
+  const SwitcherMenuMobile = () => setMenu(!menu);
 
-
-
+  const Links = [
+    {
+      title: { ru: 'Врачи', uz: 'Shifokorlar', en: 'Doctors' },
+      slug: '/doctors',
+    },
+    {
+      title: { ru: 'Клиники', uz: 'Klinikalar', en: 'Clinics' },
+      slug: '/clinick',
+    },
+    {
+      title: { ru: 'Услуги', uz: 'Xizmatlar', en: 'Services' },
+      slug: '/services',
+    },
+  ];
 
   return (
-    <header >
-      <div className='flex flex-row justify-between items-center h-[59px] px-[16px] slg:px-[20px] 2xl:px-[60px] 3xl:px-[100px]'>
-        <button className='flex flex-row items-center flex-grow-[1]'>
-          <SlLocationPin className='mr-[4px] mdl:mr-[8px] text-[#0129E3] w-[16px] h-[16px] ' />
-          <p className='text-[15px] slg:text-[16px] '>
-            {locale === 'ru' ? 'Ташкент' : locale === 'uz' ? 'Toshkent' : 'Tashkent'}
-          </p>
-          <p className='ml-[8px] w-[16px] h-[16px] '>
-            <RiArrowDownSLine className='w-full h-full text-[#747474]' />
-          </p>
-        </button>
-        {/* LANGUAGE SWITCHER */}
-        <LanguageSwitcher />
-
-        {/* MENU */}
-        <button onClick={SwitcherMenuMobile} className='w-[24px] h-[24px]  mdl:hidden'>
-          <RxHamburgerMenu className='text-[#000000] w-full h-full' />
-          {menu && <MobileMenu closeMenu={SwitcherMenuMobile} />}
-        </button>
-      </div>
-
-      <div className='px-[16px] slg:px-[20px] 2xl:px-[60px] 3xl:px-[100px]'>
-        <div className='h-[79px] px-[20px] mdl:flex items-center justify-between flex-row flex-nowrap hidden'>
-          <div>
-            <img src={LogoDefault.src} alt="" width={300} height={90} className='w-full h-full object-cover' />
-          </div>
-          <div className='flex flex-row gap-[8px] mdl:w-[50%] slg:w-[40%]'>
-            <button className='bg-white py-[17px] w-[50%] rounded-tl-[20px] rounded-bl-[20px] flex items-center justify-center text-[16px] '>
-              {locale === 'ru' ? " О проекте" : locale === 'uz' ? 'Loyiha haqida' : locale === 'en' ? 'About the project' : "About the project"}
-            </button>
-            <Link
-              href={
-                pathname === `/${locale}/register` ? "/login" : "/register"
-              }
-              className="bg-white py-[17px] w-[50%] rounded-tr-[20px] rounded-br-[20px] flex items-center justify-center text-[16px] text-[#0129E3]"
-            >
-              {pathname === `/${locale}/register`
-                ? locale === "ru"
-                  ? "Войти"
-                  : locale === "uz"
-                    ? "Kirish"
-                    : "Login"
-                : locale === "ru"
-                  ? "Регистрация"
-                  : locale === "uz"
-                    ? "Ro'yhatdan o'tish"
-                    : "Register"}
-            </Link>
-          </div>
+    <header>
+      <div className="flex h-20 flex-row items-center justify-between px-4 mdl:px-5 2xl:h-[97px] 4xl:px-24">
+        <div>
+          <Image
+            src={LogoDefault}
+            alt="Med Yordam Logo"
+            width={300}
+            height={100}
+            quality={100}
+            className="h-10 w-52"
+          />
         </div>
+        <div className="hidden flex-row gap-5 3xl:flex">
+          {Links.map((links) => (
+            <Link
+              key={links.slug}
+              href={`${links.slug}`}
+              className={`flex h-12 w-32 items-center justify-center rounded-[10px] border border-[#E8E8E8] font-medium text-[#050B2B] transition-all duration-100 hover:bg-MyBlue hover:text-white`}
+            >
+              {links.title[locale]}
+            </Link>
+          ))}
+        </div>
+        <div className="hidden flex-row gap-5 3xl:flex">
+          <Link
+            href="/searchmap"
+            className="flex h-12 items-center justify-center rounded-full border border-MyBlue px-6 font-bold text-MyBlue transition-all duration-100 hover:bg-MyBlue hover:text-white"
+          >
+            {t('Header.showMap')}
+          </Link>
+          <LanguageSwitcher />
+          <Link
+            href="/searchmap"
+            className="flex h-12 w-52 items-center justify-center rounded-full border bg-MyBlue px-6 font-bold text-white transition-all duration-150 hover:border hover:border-MyBlue hover:bg-white hover:text-MyBlue"
+          >
+            {t('register')}
+          </Link>
+        </div>
+        <button
+          onClick={() => SwitcherMenuMobile()}
+          className="h-10 3xl:hidden"
+        >
+          <RxHamburgerMenu className="h-6 w-6 text-[#050B2B]" />
+        </button>
+
+        {menu && <MobileMenu closeMenu={() => SwitcherMenuMobile()} />}
       </div>
-
-
-
     </header>
-  )
-}
-
-
-
-
-
-
+  );
+};
 
 export default Header;
