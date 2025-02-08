@@ -5,7 +5,7 @@ import { useRegisterLinks } from '@/store/createLinksStore';
 import { Achievement, useProInfoStore } from '@/store/useProInfoStore';
 import { useServiceStore } from '@/store/createServiceStore';
 import { useAddressStore } from '@/store/createAddressStore';
-import { AddressEntry } from '@/store/createAddressStore';
+import { useUploadFiles } from './createFilesStore';
 
 const transformAchievements = (data: {
   ru: string[];
@@ -162,23 +162,22 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
 
       // JSON ma'lumotlarni qo'shish
       const profileJson = JSON.stringify({
-        id: id > 0 ? id : undefined, // Faqat yangilash uchun id
+        id: id > 0 ? id : undefined,
         name,
         surname,
         patronymic,
         exp,
         phone,
         gender: genderEnum,
-        ...(id === 0 && { cityId: 1 }), // Faqat yangi profil uchun cityId
+        ...(id === 0 && { cityId: 1 }),
       });
-      formData.append('json', profileJson); // json kaliti bilan yuboriladi
+      formData.append('json', profileJson);
 
       const endpoint = 'https://medyordam.result-me.uz/api/doctor';
       const headers = {
         Authorization: `Bearer ${token}`,
       };
 
-      // POST so'rov yuborish
       const response = await axios.post(endpoint, formData, { headers });
 
       set({ success: true });
@@ -195,26 +194,24 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
 
   getAllDataWithSlug: async (slug: string) => {
     try {
-      // API орқали маълумот олиш
       const response = await axios.get(
         `https://medyordam.result-me.uz/api/doctor/${slug}`,
         {
-          headers: { 'Accept-Language': '' }, // Зарур ҳолда тил қўшиш мумкин
+          headers: { 'Accept-Language': '' },
         }
       );
-      console.log(response, 'SSS');
 
-      const data = response.data.data; // Қайтарилган маълумот
-      get().setProfile(data); // Профилни setProfile билан янгилаш
+      const data = response.data.data;
+      get().setProfile(data);
       useAddressStore.getState().setAllData(data.receptionTime);
 
-      // Контакт маълумотлари
       const { phone, instagram, telegram, facebook, youtube } = data.contact;
       useRegisterLinks
         .getState()
         .setAll(phone, instagram, telegram, facebook, youtube);
 
-      // Маълумотларни бошқа state га ўтказиш
+      useUploadFiles.getState().setDocuments(data.documents);
+
       useProInfoStore
         .getState()
         .setAllData(
@@ -224,9 +221,7 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
           data.speciality,
           transformAchievements(data.achievement)
         );
-      // Қийматлар рўйхати
       useServiceStore.getState().setServicesFromOtherStore(data.priceList);
-      // Reception Time маълумотларини қайта ишлаш
     } catch (error) {
       console.error('Error loading profile data:', error);
     }

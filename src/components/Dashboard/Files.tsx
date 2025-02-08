@@ -4,23 +4,29 @@ import { useUploadFiles } from '@/store/createFilesStore';
 import { MdOutlineAttachFile } from 'react-icons/md';
 import { MoonLoader } from 'react-spinners';
 import { IoCloseOutline } from 'react-icons/io5';
+import React from 'react';
 
 interface IFileProps {
   selectedInputLang: 'ru' | 'uz' | 'en';
 }
 
+interface DocumentType {
+  id: string;
+  file: File | null;
+  status: 'idle' | 'uploading' | 'success' | 'error';
+  previewUrl?: string;
+  url?: string;
+}
+
 const DashboardFiles = ({ selectedInputLang }: IFileProps) => {
-  // FILES
   const { files, addFiles } = useUploadFiles();
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files) {
-      addFiles(files);
+    const filesList = event.target.files;
+    if (filesList) {
+      addFiles(filesList);
     }
   };
-
-  // DOCUMENTS
 
   const {
     documents,
@@ -30,28 +36,27 @@ const DashboardFiles = ({ selectedInputLang }: IFileProps) => {
     saveDocuments,
   } = useDocumentStore();
 
-  // Handle File Upload
   const handleFileChange = (id: string, file: File | null) => {
     if (!file) return;
-    const previewUrl = URL.createObjectURL(file); // Create a preview URL
-    updateDocument(id, { file, status: 'uploading' });
-
-    // Simulate file upload delay
+    const previewUrl = URL.createObjectURL(file);
+    updateDocument(id, {
+      file,
+      status: 'uploading',
+      previewUrl,
+    } as Partial<DocumentType>);
     setTimeout(() => {
-      updateDocument(id, { status: 'success' });
-      URL.revokeObjectURL(previewUrl); // Clean up preview URL
+      updateDocument(id, { status: 'success' } as Partial<DocumentType>);
+      URL.revokeObjectURL(previewUrl);
     }, 600);
   };
 
-  // Handle File Removal
   const handleFileRemoval = (id: string) => {
-    updateDocument(id, { file: null, status: 'idle' });
+    updateDocument(id, { file: null, status: 'idle' } as Partial<DocumentType>);
   };
 
   return (
     <div>
       <div className="rounded-bl-[18px] rounded-br-[18px] bg-white px-[15px] py-[25px] 2xl:px-[25px] 2xl:py-[37px]">
-        {/* LITCENCE */}
         <div>
           <h1 className="mb-[12px] text-[17px] font-medium 2xl:pb-[15px] 2xl:text-[20px]">
             {selectedInputLang === 'ru'
@@ -70,6 +75,12 @@ const DashboardFiles = ({ selectedInputLang }: IFileProps) => {
                   <div className="flex h-full items-center justify-center">
                     <MoonLoader size={30} color="#0129E3" />
                   </div>
+                ) : file.status === 'success' && file.url ? (
+                  <img
+                    src={file.url}
+                    alt={file.name}
+                    className="h-full w-full rounded-[8px] object-cover"
+                  />
                 ) : file.previewUrl ? (
                   <img
                     src={file.previewUrl}
@@ -89,45 +100,41 @@ const DashboardFiles = ({ selectedInputLang }: IFileProps) => {
               />
               <div className="flex w-[50%] flex-col items-center justify-center">
                 <MdOutlineAttachFile className="h-[20px] w-[20px] rotate-45 text-[#0129E3] 2xl:h-[30px] 2xl:w-[30px]" />
-                <div>
-                  <p className="text-[15px] font-medium text-[#0129E3] 2xl:text-[16px] 2xl:leading-[20px]">
-                    {selectedInputLang === 'ru'
-                      ? ' Прикрепить изображение'
-                      : selectedInputLang === 'uz'
-                        ? 'Rasm qo`shish'
-                        : 'Attach Image'}
-                  </p>
-                </div>
+                <p className="text-[15px] font-medium text-[#0129E3] 2xl:text-[16px] 2xl:leading-[20px]">
+                  {selectedInputLang === 'ru'
+                    ? 'Прикрепить изображение'
+                    : selectedInputLang === 'uz'
+                      ? 'Rasm qo`shish'
+                      : 'Attach Image'}
+                </p>
               </div>
             </button>
           </div>
         </div>
-        {/* DOCUMENT */}
         <div className="mt-[25px] 2xl:mt-[60px]">
           <h2 className="mb-[12px] text-[17px] font-medium 2xl:pb-[15px] 2xl:text-[20px]">
             {selectedInputLang === 'ru'
-              ? ' Другие документы'
+              ? 'Другие документы'
               : selectedInputLang === 'uz'
                 ? 'Boshqa xujjatlar'
                 : 'Other documents'}
           </h2>
           <div className="flex flex-col gap-[25px] 2xl:gap-[15px]">
             <div className="grid grid-cols-1 gap-[20px] 2xl:grid-cols-6">
-              {documents.map((doc) => (
+              {documents.map((doc: DocumentType) => (
                 <div
                   key={doc.id}
                   className="flex flex-col items-start gap-[12px] 2xl:flex-row 2xl:gap-[20px]"
                 >
-                  {/* File Upload Area */}
                   <div className="relative flex h-[145px] w-[145px] items-center justify-center rounded-[16px] bg-[#F8F8F8] 2xl:h-[200px] 2xl:min-w-[200px]">
                     {doc.status === 'uploading' ? (
                       <div className="flex h-full items-center justify-center">
                         <MoonLoader size={30} color="#0129E3" />
                       </div>
-                    ) : doc.file ? (
+                    ) : doc.file || doc.previewUrl ? (
                       <img
-                        src={URL.createObjectURL(doc.file)}
-                        alt={doc.file.name}
+                        src={doc.previewUrl || URL.createObjectURL(doc.file!)}
+                        alt={doc.file ? doc.file.name : 'Документ'}
                         className="h-full w-full rounded-[16px] object-cover"
                       />
                     ) : (
@@ -146,7 +153,6 @@ const DashboardFiles = ({ selectedInputLang }: IFileProps) => {
                       }
                       className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
                     />
-                    {/* Remove Button */}
                     <div
                       onClick={() => handleFileRemoval(doc.id)}
                       className="absolute right-[10px] top-[10px] z-[99] flex h-[30px] w-[30px] cursor-pointer items-center justify-center rounded-full bg-[#050B2B80] bg-opacity-50"
@@ -157,14 +163,13 @@ const DashboardFiles = ({ selectedInputLang }: IFileProps) => {
                 </div>
               ))}
             </div>
-
             <button
               onClick={addDocument}
               className="mt-[15px] h-[50px] w-full rounded-[12px] border border-[#0129E3] text-[15px] font-medium text-[#0129E3] 2xl:w-[220px] 2xl:text-[16px]"
             >
               {selectedInputLang === 'ru'
                 ? 'Добавить документ'
-                : selectedInputLang == 'uz'
+                : selectedInputLang === 'uz'
                   ? "Xujjat qo'shish"
                   : 'Add document'}
             </button>
