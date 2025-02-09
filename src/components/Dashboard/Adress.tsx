@@ -1,34 +1,16 @@
 'use client';
 import YandexMap from '@/components/Dashboard/YandexMap';
 import { useAddressStore } from '@/store/createAddressStore';
-import { FC } from 'react';
 import { GoPencil } from 'react-icons/go';
 import { IoClose } from 'react-icons/io5';
+import { ILangTopProps } from '@/interface/langtopProps';
+import { DAYS } from '@/constants/days';
+import SaveButton from '@/ui/saveButton';
+import { useLocale } from 'next-intl';
+import toastr from 'toastr';
 
-interface IAddressProps {
-  selectedInputLang: 'ru' | 'uz' | 'en';
-}
-
-const daysOfWeek = [
-  { key: 'MONDAY', label: { ru: 'Понедельник', uz: 'Dushanba', en: 'Monday' } },
-  { key: 'TUESDAY', label: { ru: 'Вторник', uz: 'Seshanba', en: 'Tuesday' } },
-  {
-    key: 'WEDNESDAY',
-    label: { ru: 'Среда', uz: 'Chorshanba', en: 'Wednesday' },
-  },
-  {
-    key: 'THURSDAY',
-    label: { ru: 'Четверг', uz: 'Payshanba', en: 'Thursday' },
-  },
-  { key: 'FRIDAY', label: { ru: 'Пятница', uz: 'Juma', en: 'Friday' } },
-  { key: 'SATURDAY', label: { ru: 'Суббота', uz: 'Shanba', en: 'Saturday' } },
-  {
-    key: 'SUNDAY',
-    label: { ru: 'Воскресенье', uz: 'Yakshanba', en: 'Sunday' },
-  },
-];
-
-const DashboardAddress: FC<IAddressProps> = ({ selectedInputLang }) => {
+const DashboardAddress = ({ selectedInputLang }: ILangTopProps) => {
+  const locale = useLocale();
   const { mapData, addAddress, updateAddress, deleteAddress, save } =
     useAddressStore();
 
@@ -36,7 +18,7 @@ const DashboardAddress: FC<IAddressProps> = ({ selectedInputLang }) => {
     addAddress({
       clinicName: '',
       address: { ru: '', uz: '', en: '' },
-      days: daysOfWeek.map(({ key }) => ({
+      days: DAYS.map(({ key }) => ({
         dayOfWeek: key,
         from: '',
         to: '',
@@ -47,6 +29,24 @@ const DashboardAddress: FC<IAddressProps> = ({ selectedInputLang }) => {
       addressLink: '',
       orientir: { ru: '', uz: '', en: '' },
     });
+  };
+
+  const SaveChanges = async () => {
+    const success = await save();
+    const message =
+      locale === 'ru'
+        ? success
+          ? 'успешно сохранён!'
+          : 'Ошибка при сохранении'
+        : locale === 'uz'
+          ? success
+            ? 'muvaffaqiyatli saqlandi!'
+            : 'Saqlashda xatolik yuz berdi.'
+          : success
+            ? 'saved successfully!'
+            : 'Error saving profile.';
+
+    toastr[success ? 'success' : 'error'](message);
   };
 
   return (
@@ -215,16 +215,10 @@ const DashboardAddress: FC<IAddressProps> = ({ selectedInputLang }) => {
 
       {/* Save changes button */}
       <div className="mt-[25px] flex w-full items-center 2xl:w-[100%] 2xl:justify-end">
-        <button
-          onClick={save}
-          className="w-full rounded-[12px] bg-[#0129E3] py-[20px] text-center font-medium text-white 2xl:w-[245px]"
-        >
-          {selectedInputLang === 'ru'
-            ? 'Сохранить изменения'
-            : selectedInputLang === 'uz'
-              ? "O'zgarishlarni saqlash"
-              : 'Save changes'}
-        </button>
+        <SaveButton
+          selectedInputLang={selectedInputLang}
+          onClick={SaveChanges}
+        />
       </div>
     </div>
   );

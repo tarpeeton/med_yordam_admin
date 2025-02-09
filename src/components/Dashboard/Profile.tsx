@@ -4,12 +4,9 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useProfileStore } from '@/store/profileStore';
 import 'flowbite';
-import 'dayjs/locale/ru'; // если нужна локализация (подставьте нужную локаль)
-import ruLocale from 'antd/es/date-picker/locale/ru_RU';
-import enLocale from 'antd/es/date-picker/locale/en_US';
+import 'dayjs/locale/ru';
 
 import toastr from 'toastr';
-import 'toastr/build/toastr.min.css';
 
 import { BsGenderMale } from 'react-icons/bs';
 import { PiGenderFemale } from 'react-icons/pi';
@@ -19,12 +16,10 @@ import { GoPencil } from 'react-icons/go';
 import { TbPhone } from 'react-icons/tb';
 import { MdOutlineDateRange } from 'react-icons/md';
 import { useLocale } from 'next-intl';
+import { ILangTopProps } from '@/interface/langtopProps';
+import SaveButton from '@/ui/saveButton';
 
-interface IProfileProps {
-  selectedInputLang: 'ru' | 'uz' | 'en';
-}
-
-const Profile = ({ selectedInputLang }: IProfileProps) => {
+const Profile = ({ selectedInputLang }: ILangTopProps) => {
   const {
     setName,
     name,
@@ -114,6 +109,9 @@ const Profile = ({ selectedInputLang }: IProfileProps) => {
               alt="Profile Preview"
               width={1000}
               height={950}
+              loading="lazy"
+              layout="responsive"
+              quality={75}
               className="h-full w-full rounded-[20px] object-cover"
             />
             <button className="absolute right-[20px] top-[20px] z-10 flex h-[40px] w-[40px] items-center justify-center rounded-full bg-[#050B2B80] bg-opacity-[50%] text-center text-white 2xl:h-[45px] 2xl:w-[45px]">
@@ -274,16 +272,10 @@ const Profile = ({ selectedInputLang }: IProfileProps) => {
         </div>
         {/* BUTTON SAVE */}
         <div className="mt-[25px] flex w-full items-center 2xl:order-[3] 2xl:w-[100%] 2xl:justify-end">
-          <button
+          <SaveButton
+            selectedInputLang={selectedInputLang}
             onClick={SaveChanges}
-            className="w-full rounded-[12px] bg-[#0129E3] py-[20px] text-center font-medium text-white 2xl:w-[245px]"
-          >
-            {selectedInputLang === 'ru'
-              ? 'Сохранить изменения'
-              : selectedInputLang === 'uz'
-                ? 'Ozgartirishlarni saqlash'
-                : 'Save changes'}
-          </button>
+          />
         </div>
       </div>
     </div>

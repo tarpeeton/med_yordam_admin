@@ -1,19 +1,25 @@
-"use client"
-import { FC, useState } from 'react';
-import { TfiKey } from "react-icons/tfi";
+'use client';
+import { useState } from 'react';
+import { TfiKey } from 'react-icons/tfi';
 import { useSecurityStore } from '@/store/createSeucurity';
-import toastr from "toastr";
-import "toastr/build/toastr.min.css";
+import toastr from 'toastr';
 import { useLocale } from 'next-intl';
 
-interface ISecurityProps {
-  selectedInputLang: "ru" | "uz" | "en";
-}
+import { ILangTopProps } from '@/interface/langtopProps';
+import SaveButton from '@/ui/saveButton';
 
-
-const DashboardSecurity: FC<ISecurityProps> = ({ selectedInputLang }) => {
-  const { setNewPassword, save, setOldPassword, setRepeatPassword, newPassword, repeatPassword, oldPassword, success, error, isPasswordMatch, } = useSecurityStore()
-  const locale = useLocale()
+const DashboardSecurity = ({ selectedInputLang }: ILangTopProps) => {
+  const {
+    setNewPassword,
+    save,
+    setOldPassword,
+    setRepeatPassword,
+    newPassword,
+    repeatPassword,
+    oldPassword,
+    isPasswordMatch,
+  } = useSecurityStore();
+  const locale = useLocale();
 
   const [isFocused, setIsFocused] = useState({
     oldPassword: false,
@@ -25,37 +31,32 @@ const DashboardSecurity: FC<ISecurityProps> = ({ selectedInputLang }) => {
     setIsFocused((prev) => ({ ...prev, [field]: focused }));
   };
 
-
   const SaveChanges = async () => {
     const success = await save();
     const message =
-      locale === "ru"
+      locale === 'ru'
         ? success
-          ? "успешно изменён!"
-          : "Текущий пароль не совпадает!"
-        : locale === "uz"
+          ? 'успешно изменён!'
+          : 'Текущий пароль не совпадает!'
+        : locale === 'uz'
           ? success
-            ? "muvaffaqiyatli ozgartirildi!"
-            : "Hozirgi parol mos emas!"
+            ? 'muvaffaqiyatli ozgartirildi!'
+            : 'Hozirgi parol mos emas!'
           : success
-            ? "Password changed successfully!"
-            : "The current password does not match!";
+            ? 'Password changed successfully!'
+            : 'The current password does not match!';
 
-    toastr[success ? "success" : "error"](message);
-  }
-
-
+    toastr[success ? 'success' : 'error'](message);
+  };
 
   return (
     <div>
-
-      <div className='w-full'>
-        <form className='flex rounded-bl-[18px] rounded-br-[18px] bg-white py-[25px] 2xl:px-[25px] 2xl:py-[37px]  flex-col gap-[15px] slg:gap-[20px] p-[15px] '>
-
+      <div className="w-full">
+        <form className="flex flex-col gap-[15px] rounded-bl-[18px] rounded-br-[18px] bg-white p-[15px] py-[25px] slg:gap-[20px] 2xl:px-[25px] 2xl:py-[37px]">
           <div className="relative w-full cursor-pointer">
             <input
-              id='oldPassword'
-              type='password'
+              id="oldPassword"
+              type="password"
               value={oldPassword}
               onChange={(e) => setOldPassword(e.target.value)}
               onFocus={() => handleFocus('oldPassword', true)}
@@ -64,19 +65,25 @@ const DashboardSecurity: FC<ISecurityProps> = ({ selectedInputLang }) => {
             />
             <label
               onClick={() => handleFocus('oldPassword', true)}
-              className={`absolute  pointer-events-none left-[25px] flex items-center gap-[10px] transition-all ${isFocused['oldPassword'] || oldPassword ? "top-3 text-xs text-gray-500" : "top-[26px] text-base text-gray-400"
-                }`}
+              className={`pointer-events-none absolute left-[25px] flex items-center gap-[10px] transition-all ${
+                isFocused['oldPassword'] || oldPassword
+                  ? 'top-3 text-xs text-gray-500'
+                  : 'top-[26px] text-base text-gray-400'
+              }`}
             >
               <TfiKey />
 
-
-              {selectedInputLang === 'ru' ? "Текущий пароль" : selectedInputLang === 'uz' ? "Hozirgi parol" : "Current password"}
+              {selectedInputLang === 'ru'
+                ? 'Текущий пароль'
+                : selectedInputLang === 'uz'
+                  ? 'Hozirgi parol'
+                  : 'Current password'}
             </label>
           </div>
           <div className="relative w-full cursor-pointer">
             <input
-              id='newPassword'
-              type='password'
+              id="newPassword"
+              type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               onFocus={() => handleFocus('newPassword', true)}
@@ -85,25 +92,25 @@ const DashboardSecurity: FC<ISecurityProps> = ({ selectedInputLang }) => {
             />
             <label
               onClick={() => handleFocus('newPassword', true)}
-              className={`absolute  pointer-events-none left-[25px] flex items-center gap-[10px] transition-all ${isFocused['newPassword'] || newPassword ? "top-3 text-xs text-gray-500" : "top-[26px] text-base text-gray-400"
-                }`}
+              className={`pointer-events-none absolute left-[25px] flex items-center gap-[10px] transition-all ${
+                isFocused['newPassword'] || newPassword
+                  ? 'top-3 text-xs text-gray-500'
+                  : 'top-[26px] text-base text-gray-400'
+              }`}
             >
               <TfiKey />
 
-              {
-                selectedInputLang === 'ru'
-                  ? "Новый пароль"
-                  : selectedInputLang === 'uz'
-                    ? "Yangi parol"
-                    : "New password"
-              }
-
+              {selectedInputLang === 'ru'
+                ? 'Новый пароль'
+                : selectedInputLang === 'uz'
+                  ? 'Yangi parol'
+                  : 'New password'}
             </label>
           </div>
           <div className="relative w-full cursor-pointer">
             <input
-              id='repeatPassword'
-              type='password'
+              id="repeatPassword"
+              type="password"
               value={repeatPassword}
               onChange={(e) => setRepeatPassword(e.target.value)}
               onFocus={() => handleFocus('repeatPassword', true)}
@@ -112,37 +119,40 @@ const DashboardSecurity: FC<ISecurityProps> = ({ selectedInputLang }) => {
             />
             <label
               onClick={() => handleFocus('repeatPassword', true)}
-              className={`absolute  pointer-events-none left-[25px] flex items-center gap-[10px] transition-all ${isFocused['repeatPassword'] || repeatPassword ? "top-3 text-xs text-gray-500" : "top-[26px] text-base text-gray-400"
-                }`}
+              className={`pointer-events-none absolute left-[25px] flex items-center gap-[10px] transition-all ${
+                isFocused['repeatPassword'] || repeatPassword
+                  ? 'top-3 text-xs text-gray-500'
+                  : 'top-[26px] text-base text-gray-400'
+              }`}
             >
               <TfiKey />
 
               {selectedInputLang === 'ru'
-                ? "Повторите пароль"
+                ? 'Повторите пароль'
                 : selectedInputLang === 'uz'
-                  ? "Parolni takrorlang"
-                  : "Repeat password"}
+                  ? 'Parolni takrorlang'
+                  : 'Repeat password'}
             </label>
           </div>
           {!isPasswordMatch && (
-            <p className='text-[#D60C0C] font-medium slg:text-[16px] 2xl:text-[17px] text-[15px]'>
+            <p className="text-[15px] font-medium text-[#D60C0C] slg:text-[16px] 2xl:text-[17px]">
               {selectedInputLang === 'ru'
-                ? "пароли не совпадают"
+                ? 'пароли не совпадают'
                 : selectedInputLang === 'uz'
-                  ? "parolalar bir xil emas"
-                  : "passwords do not match"}
+                  ? 'parolalar bir xil emas'
+                  : 'passwords do not match'}
             </p>
           )}
         </form>
-        <div className='2xl:order-[3] mt-[25px] w-full 2xl:w-[100%] flex items-center 2xl:justify-end'>
-          <button onClick={SaveChanges} className='bg-[#0129E3] 2xl:w-[235px] py-[20px] w-full rounded-[12px] font-medium text-center text-white'>
-            {selectedInputLang === 'ru' ? 'Сохранить изменения' : selectedInputLang === 'uz' ? 'Ozgartirishlarni saqlash' : 'Save changes'}
-          </button>
+        <div className="mt-[25px] flex w-full items-center 2xl:order-[3] 2xl:w-[100%] 2xl:justify-end">
+          <SaveButton
+            selectedInputLang={selectedInputLang}
+            onClick={SaveChanges}
+          />
         </div>
       </div>
-
     </div>
-  )
-}
+  );
+};
 
-export default DashboardSecurity
+export default DashboardSecurity;

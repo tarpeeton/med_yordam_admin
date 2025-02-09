@@ -1,9 +1,9 @@
 'use client';
-
 import { useState, useEffect } from 'react';
 import { useLocale } from 'next-intl';
 import { GrFormPrevious } from 'react-icons/gr';
-import { IoIosArrowDown } from 'react-icons/io';
+import { IoIosArrowDown, IoMdNotificationsOutline } from 'react-icons/io';
+import 'toastr/build/toastr.min.css';
 import Profile from '@/components/Dashboard/Profile';
 import DashboardLinks from '@/components/Dashboard/Links';
 import DashboardProInfo from '@/components/Dashboard/ProInfo';
@@ -12,7 +12,6 @@ import DashboardSecurity from '@/components/Dashboard/Password';
 import DashboardFiles from '@/components/Dashboard/Files';
 import DashboardAddress from '@/components/Dashboard/Adress';
 import ApplicationMessage from '@/components/Dashboard/Application';
-import { IoMdNotificationsOutline } from 'react-icons/io';
 
 interface SelectedInterface {
   ru: string;

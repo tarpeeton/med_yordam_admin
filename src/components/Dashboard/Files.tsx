@@ -5,10 +5,8 @@ import { MdOutlineAttachFile } from 'react-icons/md';
 import { MoonLoader } from 'react-spinners';
 import { IoCloseOutline } from 'react-icons/io5';
 import React from 'react';
-
-interface IFileProps {
-  selectedInputLang: 'ru' | 'uz' | 'en';
-}
+import { ILangTopProps } from '@/interface/langtopProps';
+import SaveButton from '@/ui/saveButton';
 
 interface DocumentType {
   id: string;
@@ -18,7 +16,7 @@ interface DocumentType {
   url?: string;
 }
 
-const DashboardFiles = ({ selectedInputLang }: IFileProps) => {
+const DashboardFiles = ({ selectedInputLang }: ILangTopProps) => {
   const { files, addFiles } = useUploadFiles();
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -177,16 +175,10 @@ const DashboardFiles = ({ selectedInputLang }: IFileProps) => {
         </div>
       </div>
       <div className="mt-[25px] flex w-full items-center 2xl:w-[100%] 2xl:justify-end">
-        <button
+        <SaveButton
+          selectedInputLang={selectedInputLang}
           onClick={saveDocuments}
-          className="w-full rounded-[12px] bg-[#0129E3] py-[20px] text-center font-medium text-white 2xl:w-[245px]"
-        >
-          {selectedInputLang === 'ru'
-            ? 'Сохранить изменения'
-            : selectedInputLang === 'uz'
-              ? 'Ozgartirishlarni saqlash'
-              : 'Save changes'}
-        </button>
+        />
       </div>
     </div>
   );

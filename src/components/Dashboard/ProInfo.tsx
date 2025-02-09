@@ -1,26 +1,21 @@
-"use client";
+'use client';
 import { FC, useState, useEffect } from 'react';
 
-import { IoIosArrowDown } from "react-icons/io";
-import { FaCheck } from "react-icons/fa6";
-import { Language, useProInfoStore } from '@/store/useProInfoStore';
-import { IoGlobeOutline } from "react-icons/io5";
-import { GoPencil } from "react-icons/go";
-import { MdOutlineDateRange } from "react-icons/md";
-import { FaPlus } from "react-icons/fa6";
-import { IoClose } from "react-icons/io5";
+import { IoIosArrowDown } from 'react-icons/io';
+import { FaCheck } from 'react-icons/fa6';
+import { useProInfoStore } from '@/store/useProInfoStore';
+import { IoGlobeOutline } from 'react-icons/io5';
+import { GoPencil } from 'react-icons/go';
+import { MdOutlineDateRange } from 'react-icons/md';
+import { FaPlus } from 'react-icons/fa6';
+import { IoClose } from 'react-icons/io5';
 import { useLocale } from 'next-intl';
+import { ILangTopProps } from '@/interface/langtopProps';
+import SaveButton from '@/ui/saveButton';
 
-import toastr from "toastr";
-import "toastr/build/toastr.min.css";
+import toastr from 'toastr';
 
-interface ILinksProps {
-  selectedInputLang: "ru" | "uz" | "en";
-}
-
-
-
-const DashboardProInfo: FC<ILinksProps> = ({ selectedInputLang }) => {
+const DashboardProInfo: FC<ILangTopProps> = ({ selectedInputLang }) => {
   const locale = useLocale();
 
   const {
@@ -42,83 +37,81 @@ const DashboardProInfo: FC<ILinksProps> = ({ selectedInputLang }) => {
     fetchSpecialties,
     addPositionToWorkExperience,
     updatePositionInWorkExperience,
-    success,
     fetchLanguage,
   } = useProInfoStore();
 
-  // --- Локальные стейты для дропдаунов ---
   const [openSpecialization, setOpenSpecialization] = useState(false);
   const [openLanguage, setOpenLanguage] = useState(false);
-  // Подсчёт выбранных специальностей / языков
-  const selectedCount = specialties.filter(s => s.selected).length;
-  const selectedLanguages = languages.filter(l => l.selected).length;
-  // Функция для создания нового достижения:
+  const selectedCount = specialties.filter((s) => s.selected).length;
+  const selectedLanguages = languages.filter((l) => l.selected).length;
   const handleAddAchievement = () => {
     addAchievement();
   };
 
-  const handleSave =  async () => {
+  const handleSave = async () => {
     const success = await save();
     if (success) {
       const successMessage =
         locale === 'ru'
-          ? "успешно сохранён!"
+          ? 'успешно сохранён!'
           : locale === 'uz'
-            ? "muvaffaqiyatli saqlandi!"
-            : "saved successfully!";
+            ? 'muvaffaqiyatli saqlandi!'
+            : 'saved successfully!';
 
       toastr.success(successMessage);
     } else {
       const errorMessage =
         locale === 'ru'
-          ? "Ошибка при сохранении"
+          ? 'Ошибка при сохранении'
           : locale === 'uz'
-            ? "Saqlashda xatolik yuz berdi."
-            : "Error saving profile.";
+            ? 'Saqlashda xatolik yuz berdi.'
+            : 'Error saving profile.';
 
       toastr.error(errorMessage);
     }
   };
 
-
-  
   useEffect(() => {
-    fetchSpecialties()
-    fetchLanguage()
-  }, [locale])
+    fetchSpecialties();
+    fetchLanguage();
+  }, [locale]);
 
-
-
-
-
- 
-  
-  
   return (
-
-    <div className='mt-[25px] 2xl:mt-[37px]'>
-      <div className='flex flex-col 2xl:flex-row 2xl:gap-[2%] 2xl:flex-wrap'>
+    <div className="mt-[25px] 2xl:mt-[37px]">
+      <div className="flex flex-col 2xl:flex-row 2xl:flex-wrap 2xl:gap-[2%]">
         {/* inputs */}
-        <div className='flex flex-col mt-[20px] 2xl:mt-0 rounded-[18px] gap-[15px] 2xl:gap-[60px] p-[15px] 2xl:py-[37px] 2xl:px-[25px] bg-white w-full'>
-          <div className='flex flex-col gap-[12px] 2xl:flex-row 2xl:gap-[1%]'>
-            <div className='relative flex flex-col 2xl:w-[49%]'>
+        <div className="mt-[20px] flex w-full flex-col gap-[15px] rounded-[18px] bg-white p-[15px] 2xl:mt-0 2xl:gap-[60px] 2xl:px-[25px] 2xl:py-[37px]">
+          <div className="flex flex-col gap-[12px] 2xl:flex-row 2xl:gap-[1%]">
+            <div className="relative flex flex-col 2xl:w-[49%]">
               <button
-                type='button'
+                type="button"
                 onClick={() => setOpenSpecialization((prev) => !prev)}
-                className='w-full text-left text-[#747474] rounded-[12px] focus:outline-none focus:ring-1 focus:ring-ring py-[18px] px-[15px] bg-[#F8F8F8] flex items-center justify-between'
-
+                className="focus:ring-ring flex w-full items-center justify-between rounded-[12px] bg-[#F8F8F8] px-[15px] py-[18px] text-left text-[#747474] focus:outline-none focus:ring-1"
               >
                 <div className="flex items-center pl-[25px] 2xl:pl-[25px]">
-                  <GoPencil className="absolute text-[#747474] left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-                  {selectedInputLang === 'ru' ? 'Специальность' : selectedInputLang === 'uz' ? 'Muttaxasislik' : 'Speciality'}
+                  <GoPencil className="text-muted-foreground absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#747474]" />
+                  {selectedInputLang === 'ru'
+                    ? 'Специальность'
+                    : selectedInputLang === 'uz'
+                      ? 'Muttaxasislik'
+                      : 'Speciality'}
                   {selectedCount > 0 ? `(${selectedCount})` : ''}
                 </div>
-                <IoIosArrowDown className={`w-4 h-4 ml-2 transition-transform ${openSpecialization ? 'rotate-180' : ''}`} />
+                <IoIosArrowDown
+                  className={`ml-2 h-4 w-4 transition-transform ${openSpecialization ? 'rotate-180' : ''}`}
+                />
               </button>
               {openSpecialization && (
-                <div onMouseLeave={() => setOpenSpecialization(false)} className='w-full absolute z-[222] top-[70px] 2xl:top-[80px] bg-white  p-[10px] rounded-[12px] shadow-xl 2xl:max-h-[420px]  2xl:h-[420px] overflow-y-auto'>
+                <div
+                  onMouseLeave={() => setOpenSpecialization(false)}
+                  className="absolute top-[70px] z-[222] w-full overflow-y-auto rounded-[12px] bg-white p-[10px] shadow-xl 2xl:top-[80px] 2xl:h-[420px] 2xl:max-h-[420px]"
+                >
                   {specialties.map((item, index) => (
-                    <button onClick={() => toggleSpecialty(item.id)} key={index} className='flex rounded-[12px] hover:bg-[#F8F8F8]  w-full flex-row items-center  text-[15px] 2xl:text-[16px] text-[#747474] flex-nowrap justify-between py-[20px] px-[24px]'>
+                    <button
+                      onClick={() => toggleSpecialty(item.id)}
+                      key={index}
+                      className="flex w-full flex-row flex-nowrap items-center justify-between rounded-[12px] px-[24px] py-[20px] text-[15px] text-[#747474] hover:bg-[#F8F8F8] 2xl:text-[16px]"
+                    >
                       {item.name[selectedInputLang]}
                       {item.selected && <FaCheck className="h-4 w-4" />}
                     </button>
@@ -126,24 +119,36 @@ const DashboardProInfo: FC<ILinksProps> = ({ selectedInputLang }) => {
                 </div>
               )}
             </div>
-            <div className='relative flex flex-col 2xl:w-[49%]'>
+            <div className="relative flex flex-col 2xl:w-[49%]">
               <button
-                type='button'
+                type="button"
                 onClick={() => setOpenLanguage((prev) => !prev)}
-                className='w-full text-left text-[#747474] rounded-[12px] focus:outline-none focus:ring-1 focus:ring-ring py-[18px] px-[15px] bg-[#F8F8F8] flex items-center justify-between'
-
+                className="focus:ring-ring flex w-full items-center justify-between rounded-[12px] bg-[#F8F8F8] px-[15px] py-[18px] text-left text-[#747474] focus:outline-none focus:ring-1"
               >
                 <div className="flex items-center pl-[25px] 2xl:pl-[25px]">
-                  <IoGlobeOutline className="absolute text-[#747474] left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-                  {selectedInputLang === 'ru' ? 'Языки    ' : selectedInputLang === 'uz' ? 'Til ' : 'Languages'}
+                  <IoGlobeOutline className="text-muted-foreground absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#747474]" />
+                  {selectedInputLang === 'ru'
+                    ? 'Языки    '
+                    : selectedInputLang === 'uz'
+                      ? 'Til '
+                      : 'Languages'}
                   {selectedLanguages > 0 ? `(${selectedLanguages})` : ''}
                 </div>
-                <IoIosArrowDown className={`w-4 h-4 ml-2 transition-transform ${openLanguage ? 'rotate-180' : ''}`} />
+                <IoIosArrowDown
+                  className={`ml-2 h-4 w-4 transition-transform ${openLanguage ? 'rotate-180' : ''}`}
+                />
               </button>
               {openLanguage && (
-                <div onMouseLeave={() => setOpenLanguage(false)} className='w-full absolute z-[100] top-[80px] bg-white p-[10px] rounded-[12px] shadow-xl '>
+                <div
+                  onMouseLeave={() => setOpenLanguage(false)}
+                  className="absolute top-[80px] z-[100] w-full rounded-[12px] bg-white p-[10px] shadow-xl"
+                >
                   {languages.map((item, index) => (
-                    <button onClick={() => toggleLanguage(item.id)} key={index} className='flex rounded-[12px] hover:bg-[#F8F8F8]  w-full flex-row items-center  text-[15px] 2xl:text-[16px] text-[#747474] flex-nowrap justify-between py-[20px] px-[24px]'>
+                    <button
+                      onClick={() => toggleLanguage(item.id)}
+                      key={index}
+                      className="flex w-full flex-row flex-nowrap items-center justify-between rounded-[12px] px-[24px] py-[20px] text-[15px] text-[#747474] hover:bg-[#F8F8F8] 2xl:text-[16px]"
+                    >
                       {item.value}
                       {item.selected && <FaCheck className="h-4 w-4" />}
                     </button>
@@ -153,53 +158,68 @@ const DashboardProInfo: FC<ILinksProps> = ({ selectedInputLang }) => {
             </div>
           </div>
           {/* DOSTIJENYA */}
-          <div className='flex flex-col '>
-            <div className='relative '>
-              <h1 className='text-[#000000] text-[17px] 2xl:text-[20px] font-medium '>
-                {selectedInputLang === 'ru' ? 'Достижения' : selectedInputLang === 'uz' ? 'Yutug`lar' : 'Achievements'}
+          <div className="flex flex-col">
+            <div className="relative">
+              <h1 className="text-[17px] font-medium text-[#000000] 2xl:text-[20px]">
+                {selectedInputLang === 'ru'
+                  ? 'Достижения'
+                  : selectedInputLang === 'uz'
+                    ? 'Yutug`lar'
+                    : 'Achievements'}
               </h1>
-              <div className='mt-[15px] grid grid-cols-1 2xl:grid-cols-2 gap-[15px]'>
-                  {achievements.map((achievement, index) => (
-                    <div key={index} className='relative w-full'>
-                      <input
-                        value={achievement[selectedInputLang]?.[0] || ''}
-                        onChange={(e) =>
-                          updateAchievementField(
-                            index,
-                            selectedInputLang,
-                            e.target.value
-                          )
-                        }
-                        placeholder={
-                          selectedInputLang === "ru"
-                            ? "Достижение"
-                            : selectedInputLang === "uz"
-                              ? "Yutuqlar"
-                              : "Achievements"
-                        }
-                        className="w-full text-[#747474] rounded-[12px] focus:outline-none focus:ring-1 focus:ring-ring py-[18px] pl-[40px] px-[15px] bg-[#F8F8F8]"
-                      />
-                      <GoPencil className="absolute text-[#747474] left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-                    </div>
-                  ))}
-
-
+              <div className="mt-[15px] grid grid-cols-1 gap-[15px] 2xl:grid-cols-2">
+                {achievements.map((achievement, index) => (
+                  <div key={index} className="relative w-full">
+                    <input
+                      value={achievement[selectedInputLang]?.[0] || ''}
+                      onChange={(e) =>
+                        updateAchievementField(
+                          index,
+                          selectedInputLang,
+                          e.target.value
+                        )
+                      }
+                      placeholder={
+                        selectedInputLang === 'ru'
+                          ? 'Достижение'
+                          : selectedInputLang === 'uz'
+                            ? 'Yutuqlar'
+                            : 'Achievements'
+                      }
+                      className="focus:ring-ring w-full rounded-[12px] bg-[#F8F8F8] px-[15px] py-[18px] pl-[40px] text-[#747474] focus:outline-none focus:ring-1"
+                    />
+                    <GoPencil className="text-muted-foreground absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#747474]" />
+                  </div>
+                ))}
               </div>
-              <button onClick={handleAddAchievement} className='mt-[15px]  w-full 2xl:w-[220px]  rounded-[12px] border border-[#0129E3] text-[15px] 2xl:text-[16px] text-[#0129E3] font-medium h-[50px]'>
-                {selectedInputLang === 'ru' ? ' Добавить' : selectedInputLang === 'uz' ? ' Qo`shish' : 'Add'}
+              <button
+                onClick={handleAddAchievement}
+                className="mt-[15px] h-[50px] w-full rounded-[12px] border border-[#0129E3] text-[15px] font-medium text-[#0129E3] 2xl:w-[220px] 2xl:text-[16px]"
+              >
+                {selectedInputLang === 'ru'
+                  ? ' Добавить'
+                  : selectedInputLang === 'uz'
+                    ? ' Qo`shish'
+                    : 'Add'}
               </button>
             </div>
           </div>
           {/* Образование */}
-          <div className='flex flex-col '>
-            <div className='relative '>
-              <h1 className='text-[#000000] text-[17px] 2xl:text-[20px] font-medium '>
-                {selectedInputLang === 'ru' ? 'Образование' : selectedInputLang === 'uz' ? 'Ta`lim' : 'Education'}
-
+          <div className="flex flex-col">
+            <div className="relative">
+              <h1 className="text-[17px] font-medium text-[#000000] 2xl:text-[20px]">
+                {selectedInputLang === 'ru'
+                  ? 'Образование'
+                  : selectedInputLang === 'uz'
+                    ? 'Ta`lim'
+                    : 'Education'}
               </h1>
-              <div className='mt-[15px] w-full  flex flex-col gap-[12px] 2xl:gap-[15px]'>
+              <div className="mt-[15px] flex w-full flex-col gap-[12px] 2xl:gap-[15px]">
                 {educations?.map((education) => (
-                  <div key={education.id} className='grid grid-cols-1 2xl:grid-cols-2 gap-[12px] 2xl:gap-[15px] w-full'>
+                  <div
+                    key={education.id}
+                    className="grid w-full grid-cols-1 gap-[12px] 2xl:grid-cols-2 2xl:gap-[15px]"
+                  >
                     {/* Education Name */}
                     <div className="relative">
                       <input
@@ -207,23 +227,21 @@ const DashboardProInfo: FC<ILinksProps> = ({ selectedInputLang }) => {
                         onChange={(e) =>
                           updateEducationField(
                             education.id,
-                            "name",
+                            'name',
                             selectedInputLang,
                             e.target.value
                           )
                         }
                         placeholder={
-                          selectedInputLang === "ru"
-                            ? "Название образования"
-                            : selectedInputLang === "uz"
-                              ? "Oquv dargohi nomi"
-                              : "Education Name"
-
+                          selectedInputLang === 'ru'
+                            ? 'Название образования'
+                            : selectedInputLang === 'uz'
+                              ? 'Oquv dargohi nomi'
+                              : 'Education Name'
                         }
-                        className="w-full text-[#747474] rounded-[12px] focus:outline-none focus:ring-1 focus:ring-ring py-[18px] pl-[40px] px-[15px] bg-[#F8F8F8]"
-
+                        className="focus:ring-ring w-full rounded-[12px] bg-[#F8F8F8] px-[15px] py-[18px] pl-[40px] text-[#747474] focus:outline-none focus:ring-1"
                       />
-                      <GoPencil className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500" />
+                      <GoPencil className="absolute left-2 top-1/2 -translate-y-1/2 transform text-gray-500" />
                     </div>
                     {/* Education Direction */}
                     <div className="relative">
@@ -232,22 +250,21 @@ const DashboardProInfo: FC<ILinksProps> = ({ selectedInputLang }) => {
                         onChange={(e) =>
                           updateEducationField(
                             education.id,
-                            "faculty",
+                            'faculty',
                             selectedInputLang,
                             e.target.value
                           )
                         }
                         placeholder={
-                          selectedInputLang === "ru"
-                            ? "Направление"
-                            : selectedInputLang === "uz"
+                          selectedInputLang === 'ru'
+                            ? 'Направление'
+                            : selectedInputLang === 'uz'
                               ? "Yo'nalish"
-                              : "Direction"
+                              : 'Direction'
                         }
-
-                        className="w-full text-[#747474] rounded-[12px] focus:outline-none focus:ring-1 focus:ring-ring py-[18px] pl-[40px] px-[15px] bg-[#F8F8F8]"
+                        className="focus:ring-ring w-full rounded-[12px] bg-[#F8F8F8] px-[15px] py-[18px] pl-[40px] text-[#747474] focus:outline-none focus:ring-1"
                       />
-                      <GoPencil className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500" />
+                      <GoPencil className="absolute left-2 top-1/2 -translate-y-1/2 transform text-gray-500" />
                     </div>
                     <div className="relative">
                       {/* Start Year */}
@@ -257,16 +274,21 @@ const DashboardProInfo: FC<ILinksProps> = ({ selectedInputLang }) => {
                         onChange={(e) =>
                           updateEducationField(
                             education?.id,
-                            "fromYear",
+                            'fromYear',
                             null,
                             e.target.value
                           )
                         }
-
-                        placeholder={selectedInputLang === "ru" ? "Год начала" : selectedInputLang === "uz" ? "Boshlanish yili" : "Start year"}
-                        className="w-full text-[#747474] rounded-[12px] focus:outline-none focus:ring-1 focus:ring-ring py-[18px] pl-[40px] px-[15px] bg-[#F8F8F8]"
+                        placeholder={
+                          selectedInputLang === 'ru'
+                            ? 'Год начала'
+                            : selectedInputLang === 'uz'
+                              ? 'Boshlanish yili'
+                              : 'Start year'
+                        }
+                        className="focus:ring-ring w-full rounded-[12px] bg-[#F8F8F8] px-[15px] py-[18px] pl-[40px] text-[#747474] focus:outline-none focus:ring-1"
                       />
-                      <GoPencil className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500" />
+                      <GoPencil className="absolute left-2 top-1/2 -translate-y-1/2 transform text-gray-500" />
                     </div>
 
                     <div className="relative">
@@ -277,164 +299,215 @@ const DashboardProInfo: FC<ILinksProps> = ({ selectedInputLang }) => {
                         onChange={(e) =>
                           updateEducationField(
                             education.id,
-                            "toYear",
+                            'toYear',
                             null,
                             e.target.value
                           )
-
                         }
                         placeholder={
-                          selectedInputLang === "ru"
-                            ? "Год окончания"
-                            : selectedInputLang === "uz"
-                              ? "Tugatilgan yili"
-                              : "End year"
+                          selectedInputLang === 'ru'
+                            ? 'Год окончания'
+                            : selectedInputLang === 'uz'
+                              ? 'Tugatilgan yili'
+                              : 'End year'
                         }
-                        className="w-full text-[#747474] rounded-[12px] focus:outline-none focus:ring-1 focus:ring-ring py-[18px] pl-[40px] px-[15px] bg-[#F8F8F8]"
-
+                        className="focus:ring-ring w-full rounded-[12px] bg-[#F8F8F8] px-[15px] py-[18px] pl-[40px] text-[#747474] focus:outline-none focus:ring-1"
                       />
-                      <GoPencil className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500" />
+                      <GoPencil className="absolute left-2 top-1/2 -translate-y-1/2 transform text-gray-500" />
                     </div>
                   </div>
                 ))}
               </div>
-              <button onClick={addEducation} className='mt-[15px]  w-full 2xl:w-[220px]  rounded-[12px] border border-[#0129E3] text-[15px] 2xl:text-[16px] text-[#0129E3] font-medium h-[50px]'>
-                {selectedInputLang === 'ru' ? ' Добавить' : selectedInputLang === 'uz' ? ' Qo`shish' : 'Add'}
+              <button
+                onClick={addEducation}
+                className="mt-[15px] h-[50px] w-full rounded-[12px] border border-[#0129E3] text-[15px] font-medium text-[#0129E3] 2xl:w-[220px] 2xl:text-[16px]"
+              >
+                {selectedInputLang === 'ru'
+                  ? ' Добавить'
+                  : selectedInputLang === 'uz'
+                    ? ' Qo`shish'
+                    : 'Add'}
               </button>
             </div>
           </div>
           {/* Work Experience Section */}
           <div className="flex flex-col">
-            <h1 className='text-[#000000] text-[17px] 2xl:text-[20px] font-medium'>
-              {selectedInputLang === 'ru' ? "Опыт работы" : selectedInputLang === 'uz' ? "Ish tajribasi" : "Work Experience"}
+            <h1 className="text-[17px] font-medium text-[#000000] 2xl:text-[20px]">
+              {selectedInputLang === 'ru'
+                ? 'Опыт работы'
+                : selectedInputLang === 'uz'
+                  ? 'Ish tajribasi'
+                  : 'Work Experience'}
             </h1>
-            <div className='mt-[15px] flex flex-col gap-[15px]'>
-              {workExperiences?.map((experience , index) => (
-                <div key={experience.id as number} className='  rounded-[12px]'>
-                  <div className='grid grid-cols-1 2xl:grid-cols-4 gap-[12px]'>
-                    <div className='relative'>
+            <div className="mt-[15px] flex flex-col gap-[15px]">
+              {workExperiences?.map((experience, index) => (
+                <div key={experience.id as number} className="rounded-[12px]">
+                  <div className="grid grid-cols-1 gap-[12px] 2xl:grid-cols-4">
+                    <div className="relative">
                       <input
                         type="text"
                         value={experience?.name[selectedInputLang]}
                         onChange={(e) =>
                           updateWorkExperienceFieldByIndex(
                             index,
-                            "name", // Поле для обновления
+                            'name', // Поле для обновления
                             selectedInputLang, // Язык (например, 'ru', 'uz', 'en')
                             e.target.value // Новое значение
                           )
                         }
                         placeholder={
-                          selectedInputLang === 'ru' ? 'Название клиники' :
-                            selectedInputLang === 'uz' ? 'Klinika nomi' :
-                              'Clinic Name'
+                          selectedInputLang === 'ru'
+                            ? 'Название клиники'
+                            : selectedInputLang === 'uz'
+                              ? 'Klinika nomi'
+                              : 'Clinic Name'
                         }
                         className="AdminInput"
                       />
-                      <GoPencil className="absolute text-[#747474] left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+                      <GoPencil className="text-muted-foreground absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#747474]" />
                     </div>
-                    <div className='relative'>
+                    <div className="relative">
                       <input
                         type="text"
                         value={experience.city[selectedInputLang]}
                         onChange={(e) =>
                           updateWorkExperienceFieldByIndex(
                             index,
-                            "city", // Поле для обновления
+                            'city', // Поле для обновления
                             selectedInputLang, // Язык (например, 'ru', 'uz', 'en')
                             e.target.value // Новое значение
                           )
                         }
                         placeholder={
-                          selectedInputLang === 'ru' ? 'Город' :
-                            selectedInputLang === 'uz' ? 'Shahar' :
-                              'City'
+                          selectedInputLang === 'ru'
+                            ? 'Город'
+                            : selectedInputLang === 'uz'
+                              ? 'Shahar'
+                              : 'City'
                         }
                         className="AdminInput"
                       />
-                      <GoPencil className="absolute text-[#747474] left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+                      <GoPencil className="text-muted-foreground absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#747474]" />
                     </div>
-                    <div className='relative'>
+                    <div className="relative">
                       <input
                         type="text"
                         value={experience.fromYear}
                         onChange={(e) =>
                           updateWorkExperienceFieldByIndex(
                             index,
-                            "fromYear", // Поле для обновления
+                            'fromYear', // Поле для обновления
                             null, // Язык (например, 'ru', 'uz', 'en')
                             e.target.value // Новое значение
                           )
                         }
-                        placeholder={selectedInputLang === 'ru' ? "Год начала" : selectedInputLang === 'uz' ? "Boshlanish yili" : "Start year"}
+                        placeholder={
+                          selectedInputLang === 'ru'
+                            ? 'Год начала'
+                            : selectedInputLang === 'uz'
+                              ? 'Boshlanish yili'
+                              : 'Start year'
+                        }
                         className="AdminInput"
                       />
-                      <MdOutlineDateRange className="absolute text-[#747474] left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+                      <MdOutlineDateRange className="text-muted-foreground absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#747474]" />
                     </div>
-                    <div className='relative'>
-                      <MdOutlineDateRange className="absolute text-[#747474] left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+                    <div className="relative">
+                      <MdOutlineDateRange className="text-muted-foreground absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#747474]" />
                       <input
                         type="text"
                         value={experience.toYear}
                         onChange={(e) =>
                           updateWorkExperienceFieldByIndex(
                             index,
-                            "toYear", 
-                            null, 
-                            e.target.value 
+                            'toYear',
+                            null,
+                            e.target.value
                           )
                         }
-                        placeholder={selectedInputLang === 'ru' ? "Год окончания" : selectedInputLang === 'uz' ? "Tugatilgan yili" : "End year"}
+                        placeholder={
+                          selectedInputLang === 'ru'
+                            ? 'Год окончания'
+                            : selectedInputLang === 'uz'
+                              ? 'Tugatilgan yili'
+                              : 'End year'
+                        }
                         className="AdminInput"
                       />
                     </div>
                   </div>
-                  <div className='rounded-[12px] bg-[#F8F8F8] flex flex-col 2xl:flex-row items-center justify-between w-full mt-[15px] 2xl:mt-[12px] p-[7px] 2xl:p-[14px]'>
-                    <div className='grid grid-cols-2 2xl:grid-cols-6 gap-[10px]'>
-                      {experience.position[selectedInputLang]?.map((item, index) => (
-                        <div
-                          key={index}
-                          className='relative flex items-center bg-[#0129E3] rounded-[8px] text-white px-[15px] py-[8px]'>
-                          <input
-                            value={item}
-                            onChange={(e) => {
-                              updatePositionInWorkExperience(experience.id as number, index, selectedInputLang, e.target.value);
-
-                            }}
-                            className="bg-transparent text-white focus:outline-none w-full"
-                          />
-                          <button
-                            onClick={() => removePositionFromWorkExperience(experience.id as number, index)}
-                            className="ml-[5px] text-white">
-                            <IoClose />
-                          </button>
-                        </div>
-                      ))}
-
+                  <div className="mt-[15px] flex w-full flex-col items-center justify-between rounded-[12px] bg-[#F8F8F8] p-[7px] 2xl:mt-[12px] 2xl:flex-row 2xl:p-[14px]">
+                    <div className="grid grid-cols-2 gap-[10px] 2xl:grid-cols-6">
+                      {experience.position[selectedInputLang]?.map(
+                        (item, index) => (
+                          <div
+                            key={index}
+                            className="relative flex items-center rounded-[8px] bg-[#0129E3] px-[15px] py-[8px] text-white"
+                          >
+                            <input
+                              value={item}
+                              onChange={(e) => {
+                                updatePositionInWorkExperience(
+                                  experience.id as number,
+                                  index,
+                                  selectedInputLang,
+                                  e.target.value
+                                );
+                              }}
+                              className="w-full bg-transparent text-white focus:outline-none"
+                            />
+                            <button
+                              onClick={() =>
+                                removePositionFromWorkExperience(
+                                  experience.id as number,
+                                  index
+                                )
+                              }
+                              className="ml-[5px] text-white"
+                            >
+                              <IoClose />
+                            </button>
+                          </div>
+                        )
+                      )}
                     </div>
-                    <button className='text-[#0129E3] mt-[25px] 2xl:mt-0 w-[20px] h-[20px]'>
-                      <FaPlus onClick={() => addPositionToWorkExperience(experience.id as number, selectedInputLang)} className='w-full h-full' />
+                    <button className="mt-[25px] h-[20px] w-[20px] text-[#0129E3] 2xl:mt-0">
+                      <FaPlus
+                        onClick={() =>
+                          addPositionToWorkExperience(
+                            experience.id as number,
+                            selectedInputLang
+                          )
+                        }
+                        className="h-full w-full"
+                      />
                     </button>
                   </div>
                 </div>
               ))}
-              <button onClick={addWorkExperience} className='mt-[15px]  w-full 2xl:w-[220px]  rounded-[12px] border border-[#0129E3] text-[15px] 2xl:text-[16px] text-[#0129E3] font-medium h-[50px]'>
-                {selectedInputLang === 'ru' ? ' Добавить' : selectedInputLang === 'uz' ? ' Qo`shish' : 'Add'}
+              <button
+                onClick={addWorkExperience}
+                className="mt-[15px] h-[50px] w-full rounded-[12px] border border-[#0129E3] text-[15px] font-medium text-[#0129E3] 2xl:w-[220px] 2xl:text-[16px]"
+              >
+                {selectedInputLang === 'ru'
+                  ? ' Добавить'
+                  : selectedInputLang === 'uz'
+                    ? ' Qo`shish'
+                    : 'Add'}
               </button>
             </div>
           </div>
         </div>
         {/* BUTTON SAVE */}
-        <div className='2xl:order-[3] mt-[25px] w-full 2xl:w-[100%] flex items-center 2xl:justify-end'>
-          <button onClick={handleSave} className='bg-[#0129E3] 2xl:w-[235px] py-[20px] w-full rounded-[12px] font-medium text-center text-white'>
-            {selectedInputLang === 'ru' ? 'Сохранить' : selectedInputLang === 'uz' ? 'Saqlash' : 'Save'}
-          </button>
+        <div className="mt-[25px] flex w-full items-center 2xl:order-[3] 2xl:w-[100%] 2xl:justify-end">
+          <SaveButton
+            selectedInputLang={selectedInputLang}
+            onClick={handleSave}
+          />
         </div>
       </div>
     </div>
-
-  )
-
-}
+  );
+};
 
 export default DashboardProInfo;
