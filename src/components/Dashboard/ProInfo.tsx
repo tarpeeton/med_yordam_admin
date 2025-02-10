@@ -30,6 +30,8 @@ const DashboardProInfo: FC<ILangTopProps> = ({ selectedInputLang }) => {
     updateEducationField,
     save,
     addEducation,
+    updateQuote,
+    quote,
     addWorkExperience,
     updateWorkExperienceFieldByIndex,
     workExperiences,
@@ -497,7 +499,35 @@ const DashboardProInfo: FC<ILangTopProps> = ({ selectedInputLang }) => {
               </button>
             </div>
           </div>
+
+          {/* SITATA */}
+          <div className="flex flex-col gap-[12px] 2xl:gap-[15px]">
+            <h1 className="text-[17px] font-medium text-[#000000] 2xl:text-[20px]">
+              {selectedInputLang === 'ru'
+                ? 'Цитата'
+                : selectedInputLang === 'uz'
+                  ? 'Iqtibos'
+                  : 'Quote'}
+            </h1>
+            <div className="relative w-full">
+              <textarea
+                value={quote[selectedInputLang] || ''}
+                onChange={(e) => updateQuote(selectedInputLang, e.target.value)}
+                maxLength={250}
+                placeholder={
+                  selectedInputLang === 'ru'
+                    ? 'Цитата '
+                    : selectedInputLang === 'uz'
+                      ? 'Iqtibos'
+                      : 'Quote'
+                }
+                className="focus:ring-ring w-full rounded-[12px] bg-[#F8F8F8] px-[15px] py-[18px] pl-[40px] text-[#747474] focus:outline-none focus:ring-1 2xl:h-[150px]"
+              />
+              <GoPencil className="text-muted-foreground absolute left-3 top-[31px] h-5 w-5 -translate-y-1/2 text-[#747474] 2xl:top-[30px]" />
+            </div>
+          </div>
         </div>
+
         {/* BUTTON SAVE */}
         <div className="mt-[25px] flex w-full items-center 2xl:order-[3] 2xl:w-[100%] 2xl:justify-end">
           <SaveButton

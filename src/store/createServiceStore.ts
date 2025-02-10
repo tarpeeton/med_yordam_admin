@@ -1,5 +1,5 @@
-import { create } from "zustand";
-import axios from "axios";
+import { create } from 'zustand';
+import axios from 'axios';
 import { multiLang } from '@/interface/multiLang';
 import { useProfileStore } from '@/store/profileStore';
 
@@ -9,12 +9,38 @@ interface Service {
   price: number;
 }
 
+interface IPromotions {
+  id: string;
+  address: {
+    ru: string;
+    uz: string;
+    en: string;
+  };
+  phone: string;
+  title: {
+    ru: string;
+    uz: string;
+    en: string;
+  };
+  discountPercentage: number;
+  description: {
+    ru: string;
+    uz: string;
+    en: string;
+  };
+  imageUrl: string;
+  imageFile?: File;
+}
+
 interface ServiceStoreType {
   services: Service[];
   newService: Service;
+  newPromotion: IPromotions;
+  promotions: IPromotions[];
   setNewServiceName: (lang: keyof multiLang, value: string) => void;
   setNewServicePrice: (price: number) => void;
   addService: () => void;
+  addPromotion: () => void;
   setServicesFromOtherStore: (priceList: Service[]) => void;
   updateServiceFieldByIndex: (
     index: number,
@@ -22,24 +48,72 @@ interface ServiceStoreType {
     lang: keyof multiLang | null,
     value: string | number
   ) => void;
+  updatePromotionFieldByIndex: (
+    index: number,
+    field: keyof IPromotions,
+    lang: keyof multiLang | null,
+    value: string | number | File
+  ) => void;
   deleteServiceByIndex: (index: number) => Promise<boolean>;
   save: () => Promise<boolean>;
 }
 
-
-
 export const useServiceStore = create<ServiceStoreType>((set, get) => ({
   services: [
     {
-      
-      name: { ru: "", uz: "", en: "" },
+      name: { ru: '', uz: '', en: '' },
       price: 0,
     },
   ],
   newService: {
-
-    name: { ru: "", uz: "", en: "" },
+    name: { ru: '', uz: '', en: '' },
     price: 0,
+  },
+  promotions: [
+    {
+      id: '1',
+      address: {
+        ru: '',
+        uz: '',
+        en: '',
+      },
+      phone: '',
+      title: {
+        ru: '',
+        uz: '',
+        en: '',
+      },
+      discountPercentage: 20,
+      description: {
+        ru: '',
+        uz: '',
+        en: '',
+      },
+      imageUrl: 'https://example.com/image.jpg',
+      imageFile: undefined,
+    },
+  ],
+  newPromotion: {
+    id: '1',
+    address: {
+      ru: '',
+      uz: '',
+      en: '',
+    },
+    phone: '',
+    title: {
+      ru: '',
+      uz: '',
+      en: '',
+    },
+    discountPercentage: 20,
+    description: {
+      ru: '',
+      uz: '',
+      en: '',
+    },
+    imageUrl: 'https://example.com/image.jpg',
+    imageFile: undefined,
   },
 
   setNewServiceName: (lang, value) => {
@@ -47,6 +121,22 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
       newService: {
         ...state.newService,
         name: { ...state.newService.name, [lang]: value },
+      },
+    }));
+  },
+
+  addPromotion: () => {
+    set((state) => ({
+      promotions: [...state.promotions, state.newPromotion],
+      newPromotion: {
+        id: '',
+        title: { ru: '', uz: '', en: '' },
+        description: { ru: '', uz: '', en: '' },
+        discountPercentage: 0,
+        imageUrl: '',
+        imageFile: undefined,
+        address: { ru: '', uz: '', en: '' },
+        phone: '',
       },
     }));
   },
@@ -60,7 +150,7 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
   addService: () => {
     set((state) => ({
       services: [...state.services, state.newService],
-      newService: { name: { ru: "", uz: "", en: "" }, price: 0 },
+      newService: { name: { ru: '', uz: '', en: '' }, price: 0 },
     }));
   },
 
@@ -79,14 +169,36 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
     }));
   },
 
-  deleteServiceByIndex:async (index): Promise<boolean> => {
+  updatePromotionFieldByIndex: (
+    index,
+    field: keyof IPromotions,
+    lang: keyof multiLang | null,
+    value: string | number | File
+  ) => {
+    set((state) => ({
+      promotions: state.promotions.map((promotion, i) =>
+        i === index
+          ? {
+              ...promotion,
+              [field]: lang
+                ? { ...(promotion[field] as multiLang), [lang]: value }
+                : value instanceof File
+                  ? { ...promotion, imageFile: value }
+                  : value,
+            }
+          : promotion
+      ),
+    }));
+  },
+
+  deleteServiceByIndex: async (index): Promise<boolean> => {
     const state = get();
     const { services } = state;
     const serviceToDelete = services[index];
     if (serviceToDelete?.id) {
       try {
         const { id: profileId } = useProfileStore.getState();
-        const token = sessionStorage.getItem("token");
+        const token = sessionStorage.getItem('token');
 
         const payload = {
           id: profileId,
@@ -99,10 +211,10 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
           ],
         };
 
-       await axios.put("https://medyordam.result-me.uz/api/doctor", payload, {
+        await axios.put('https://medyordam.result-me.uz/api/doctor', payload, {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
         });
 
@@ -110,29 +222,25 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
           services: state.services.filter((_, i) => i !== index),
         }));
 
-        return true
+        return true;
       } catch (error) {
-        console.error("Failed to delete service:", error);
-        return false
+        console.error('Failed to delete service:', error);
+        return false;
       }
     } else {
       set((state) => ({
         services: state.services.filter((_, i) => i !== index),
       }));
-      return true
+      return true;
     }
   },
-
-
-
-
 
   //  SAVE CHANGES
   save: async (): Promise<boolean> => {
     try {
       const { services } = get();
       const { id } = useProfileStore.getState();
-      const token = sessionStorage.getItem("token");
+      const token = sessionStorage.getItem('token');
 
       if (!services.length) {
         return false;
@@ -157,12 +265,12 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
 
       // Выполняем запрос
       const response = await axios.put(
-        "https://medyordam.result-me.uz/api/doctor",
+        'https://medyordam.result-me.uz/api/doctor',
         { id, priceList },
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
         }
       );
@@ -177,19 +285,12 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
         });
       }
 
-      return true
+      return true;
     } catch (error) {
-      console.error("Failed to save services", error);
-      return false
+      console.error('Failed to save services', error);
+      return false;
     }
   },
-
-
-
-
-
-
-
 
   setServicesFromOtherStore: (priceList: Service[]) => {
     const transformedServices = priceList.map((item) => ({
@@ -200,7 +301,4 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
 
     set({ services: transformedServices });
   },
-
-
-
 }));

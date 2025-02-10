@@ -131,13 +131,13 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
 
     if (!exp) {
       toastr.error('Experience date is required.');
-      return false; // Возвращаем false при ошибке
+      return false;
     }
 
     if (photo?.id) {
       const formData = new FormData();
       if (image instanceof File) {
-        formData.append('new-photo', image); // photo kaliti bilan yuboriladi
+        formData.append('new-photo', image);
       }
       await axios.put(
         `https://medyordam.result-me.uz/api/photo/${photo.id}`,
@@ -152,15 +152,12 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
     const genderEnum = gender.en.toUpperCase();
 
     try {
-      // Form-data yaratish
       const formData = new FormData();
 
-      // Rasmni qo'shish
       if (image instanceof File) {
-        formData.append('photo', image); // photo kaliti bilan yuboriladi
+        formData.append('photo', image);
       }
 
-      // JSON ma'lumotlarni qo'shish
       const profileJson = JSON.stringify({
         id: id > 0 ? id : undefined,
         name,
@@ -203,14 +200,14 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
 
       const data = response.data.data;
       get().setProfile(data);
+      useUploadFiles.getState().setDocuments(data.documents);
+
       useAddressStore.getState().setAllData(data.receptionTime);
 
       const { phone, instagram, telegram, facebook, youtube } = data.contact;
       useRegisterLinks
         .getState()
         .setAll(phone, instagram, telegram, facebook, youtube);
-
-      useUploadFiles.getState().setDocuments(data.documents);
 
       useProInfoStore
         .getState()
@@ -219,7 +216,8 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
           data.education,
           data.language,
           data.speciality,
-          transformAchievements(data.achievement)
+          transformAchievements(data.achievement),
+          data.quote
         );
       useServiceStore.getState().setServicesFromOtherStore(data.priceList);
     } catch (error) {

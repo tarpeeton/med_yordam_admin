@@ -2,24 +2,31 @@ import { create } from 'zustand';
 import axios from 'axios';
 import { useProfileStore } from './profileStore';
 
-interface DocumentData {
-  id: number;
-  url: string;
-}
+export type FileUploadType = 'DOCUMENT' | 'LICENSE';
 
 export interface UploadFile {
   id: string;
   backendId?: number;
   name?: string;
-  type?: string;
+  type?: FileUploadType;
   status: 'uploading' | 'success' | 'error';
   previewUrl?: string;
   url?: string;
 }
 
+interface DocumentData {
+  id: number;
+  type: FileUploadType;
+  file: {
+    id: number;
+    url: string;
+  };
+}
+
 interface UploadFilesState {
   files: UploadFile[];
-  addFiles: (files: FileList) => void;
+  addFiles: (files: FileList, fileType?: FileUploadType) => void;
+  updateFile: (id: string, file: File) => void;
   updateFileStatus: (
     id: string,
     status: 'uploading' | 'success' | 'error'
@@ -27,26 +34,30 @@ interface UploadFilesState {
   updateFileWithDocumentData: (tempId: string, document: DocumentData) => void;
   resetFiles: () => void;
   setDocuments: (documents: DocumentData[]) => void;
+  deleteFile: (backendId: number) => Promise<void>;
 }
 
 export const useUploadFiles = create<UploadFilesState>((set, get) => ({
   files: [],
-  addFiles: async (files) => {
+  addFiles: (files, fileType = 'DOCUMENT') => {
     const { id: doctorId } = useProfileStore.getState();
     const token = sessionStorage.getItem('token');
+
     const newFiles: UploadFile[] = Array.from(files).map((file) => {
       const fileId = crypto.randomUUID();
       return {
         id: fileId,
         name: file.name,
-        type: file.type,
+        type: fileType,
         status: 'uploading',
         previewUrl: file.type.startsWith('image/')
           ? URL.createObjectURL(file)
           : undefined,
       };
     });
+
     set((state) => ({ files: [...state.files, ...newFiles] }));
+
     newFiles.forEach((fileObj) => {
       setTimeout(async () => {
         try {
@@ -54,10 +65,19 @@ export const useUploadFiles = create<UploadFilesState>((set, get) => ({
             (f) => f.name === fileObj.name
           );
           const file = files[fileIndex];
+
           const formData = new FormData();
           formData.append('file', file);
+
+          const additionalData = {
+            doctorId: doctorId,
+            type: fileObj.type || 'DOCUMENT',
+          };
+
+          formData.append('json', JSON.stringify(additionalData));
+
           const response = await axios.post(
-            `https://medyordam.result-me.uz/api/doctor/file-upload/${doctorId}`,
+            'https://medyordam.result-me.uz/api/doctor/file-upload',
             formData,
             {
               headers: {
@@ -66,7 +86,8 @@ export const useUploadFiles = create<UploadFilesState>((set, get) => ({
               },
             }
           );
-          const document: DocumentData = response.data;
+
+          const document: DocumentData = response.data.documents;
           get().updateFileWithDocumentData(fileObj.id, document);
         } catch (error) {
           console.error('File upload error:', error);
@@ -75,6 +96,46 @@ export const useUploadFiles = create<UploadFilesState>((set, get) => ({
       }, 600);
     });
   },
+
+  updateFile: async (id, file) => {
+    const token = sessionStorage.getItem('token');
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await axios.put(
+        `https://medyordam.result-me.uz/api/file/${id}`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: token ? `Bearer ${token}` : '',
+          },
+        }
+      );
+
+      const updatedFile: UploadFile = {
+        id: id.toString(),
+        name: file.name,
+        status: 'success',
+        url: response.data.data.url, // Используем URL из ответа
+      };
+
+      set((state) => ({
+        files: state.files.map((f) =>
+          f.id === id ? { ...f, ...updatedFile } : f
+        ),
+      }));
+    } catch (error) {
+      console.error('File update error:', error);
+      set((state) => ({
+        files: state.files.map((f) =>
+          f.id === id ? { ...f, status: 'error' } : f
+        ),
+      }));
+    }
+  },
+
   updateFileStatus: (id, status) => {
     set((state) => ({
       files: state.files.map((file) =>
@@ -82,6 +143,7 @@ export const useUploadFiles = create<UploadFilesState>((set, get) => ({
       ),
     }));
   },
+
   updateFileWithDocumentData: (tempId, document) => {
     set((state) => ({
       files: state.files.map((file) =>
@@ -90,23 +152,47 @@ export const useUploadFiles = create<UploadFilesState>((set, get) => ({
               ...file,
               status: 'success',
               backendId: document.id,
-              url: document.url,
+              url: document.file.url,
             }
           : file
       ),
     }));
   },
+
   resetFiles: () => {
     set({ files: [] });
   },
+
   setDocuments: (documents) => {
     const mappedFiles: UploadFile[] = documents.map((doc) => ({
       id: doc.id.toString(),
       backendId: doc.id,
       status: 'success',
-      url: doc.url,
-      name: doc.url.split('/').pop()?.replace(/^\d+-/, '') || '',
+      url: doc.file.url,
+      name: doc.file.url.split('/').pop()?.replace(/^\d+-/, '') || '',
+      type: doc.type as FileUploadType,
     }));
     set({ files: mappedFiles });
+  },
+
+  deleteFile: async (backendId) => {
+    try {
+      await axios.delete(
+        `https://medyordam.result-me.uz/api/doctor/file-deleted/${backendId}`,
+        {
+          headers: {
+            Authorization: sessionStorage.getItem('token')
+              ? `Bearer ${sessionStorage.getItem('token')}`
+              : '',
+          },
+        }
+      );
+
+      set((state) => ({
+        files: state.files.filter((file) => file.backendId !== backendId),
+      }));
+    } catch (error) {
+      console.error('File delete error:', error);
+    }
   },
 }));

@@ -1,10 +1,9 @@
 interface ButtonProps {
   onClick: () => void;
   selectedInputLang: 'ru' | 'uz' | 'en';
-  className?: string;
 }
 
-const SaveButton = ({ onClick, selectedInputLang, className }: ButtonProps) => {
+const SaveButton = ({ onClick, selectedInputLang }: ButtonProps) => {
   const getButtonText = () => {
     switch (selectedInputLang) {
       case 'ru':
@@ -19,7 +18,7 @@ const SaveButton = ({ onClick, selectedInputLang, className }: ButtonProps) => {
   return (
     <button
       onClick={onClick}
-      className={`w-full rounded-[12px] bg-[#0129E3] py-[20px] text-center font-medium text-white 2xl:w-[245px] ${className || ''}`}
+      className={`rounded-[12px] bg-[#0129E3] py-[18px] text-center font-medium text-white 2xl:w-[256px]`}
     >
       {getButtonText()}
     </button>

@@ -1,12 +1,10 @@
-import axios from 'axios'
+import axios from 'axios';
 import { multiLang } from '@/interface/multiLang';
 // Zustand store
-import { create } from "zustand";
+import { create } from 'zustand';
 import { useProfileStore } from '@/store/profileStore';
 
-export type Language = "ru" | "uz" | "en";
-
-
+export type Language = 'ru' | 'uz' | 'en';
 
 interface Specialty {
   id: number;
@@ -22,9 +20,9 @@ interface LanguageSkill {
 }
 
 export interface Achievement {
-    ru: string[];  
-    uz: string[]; 
-    en: string[];  
+  ru: string[];
+  uz: string[];
+  en: string[];
 }
 
 interface Education {
@@ -33,12 +31,14 @@ interface Education {
   faculty: multiLang;
   fromYear: string;
   toYear: string;
-  direction?: string
+  direction?: string;
 }
 
-
-
-
+interface Quote {
+  ru: string;
+  uz: string;
+  en: string;
+}
 
 interface WorkExperience {
   id: number | null;
@@ -57,6 +57,7 @@ interface ProInfoState {
   specialties: Specialty[];
   languages: LanguageSkill[];
   achievements: Achievement[];
+  quote: Quote;
   educations: Education[];
   workExperiences: WorkExperience[];
   success: boolean;
@@ -75,12 +76,17 @@ interface ProInfoState {
   setSuccess: (success: boolean) => void;
   updateEducationField: (
     id: number | null,
-    field: "name" | "faculty" | "fromYear" | "toYear",
+    field: 'name' | 'faculty' | 'fromYear' | 'toYear',
     lang: Language | null,
     value: string
   ) => void;
   removeEducation: (id: number) => void;
-  updateAchievementField: (index: number, lang: Language, value: string) => void;
+  updateAchievementField: (
+    index: number,
+    lang: Language,
+    value: string
+  ) => void;
+  updateQuote: (lang: Language, value: string) => void;
   // Work experience methods
   addWorkExperience: () => void;
   updateWorkExperienceFieldByIndex: (
@@ -102,11 +108,15 @@ interface ProInfoState {
   save: () => Promise<boolean>;
   fetchSpecialties: () => Promise<void>;
   fetchLanguage: () => Promise<void>;
-  setAllData: (workExperiences: WorkExperience[], educations: Education[], languages: LanguageSkill[], specialties: Specialty[], achievements: Achievement[]) => void
+  setAllData: (
+    workExperiences: WorkExperience[],
+    educations: Education[],
+    languages: LanguageSkill[],
+    specialties: Specialty[],
+    achievements: Achievement[],
+    quote: Quote
+  ) => void;
 }
-
-
-
 
 export const useProInfoStore = create<ProInfoState>((set, get) => ({
   success: false,
@@ -115,54 +125,33 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
   selectedUserSpecialties: [],
   selectedUserLanguages: [],
   specialtiesFinished: false,
-  achievements: [
-    { ru:[""] , uz: [""] , en: [""] },
-  ],
+  quote: { ru: '', uz: '', en: '' },
+  achievements: [{ ru: [''], uz: [''], en: [''] }],
   educations: [
     {
       id: 1,
-      name: { ru: "Университет", uz: "Universitet", en: "University" },
-      faculty: { ru: "Информатика", uz: "Informatika", en: "Computer Science" },
-      fromYear: "2015",
-      toYear: "2019",
+      name: { ru: 'Университет', uz: 'Universitet', en: 'University' },
+      faculty: { ru: 'Информатика', uz: 'Informatika', en: 'Computer Science' },
+      fromYear: '2015',
+      toYear: '2019',
     },
   ],
   workExperiences: [
     {
       id: null,
-      name: { ru: "Компания X", uz: "Kompaniya X", en: "Company X" },
-      city: { ru: "Москва", uz: "Moskva", en: "Moscow" },
-      fromYear: "2020",
-      toYear: "2023",
+      name: { ru: 'Компания X', uz: 'Kompaniya X', en: 'Company X' },
+      city: { ru: 'Москва', uz: 'Moskva', en: 'Moscow' },
+      fromYear: '2020',
+      toYear: '2023',
       position: {
-        ru: ["Разработчик"],
-        uz: ["Dasturchi"],
-        en: ["Developer"],
-    },
+        ru: ['Разработчик'],
+        uz: ['Dasturchi'],
+        en: ['Developer'],
+      },
     },
   ],
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   setSuccess: (success) => set({ success }),
-
 
   toggleSpecialty: (id) => {
     set((state) => ({
@@ -174,10 +163,12 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
     }));
   },
 
+  updateQuote: (lang, value) => {
+    set((state) => ({
+      quote: { ...state.quote, [lang]: value },
+    }));
+  },
 
- 
-
-  
   toggleLanguage: (id) => {
     set((state) => ({
       languages: state.languages.map((language) =>
@@ -199,16 +190,11 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
     set({ specialties: updatedSpecialties });
   },
 
-
   addAchievement: () => {
     set((state) => ({
-      achievements: [
-        ...state.achievements,
-        { ru:[""] , uz: [""] , en: [""] },
-      ],
+      achievements: [...state.achievements, { ru: [''], uz: [''], en: [''] }],
     }));
   },
-
 
   updateAchievementField: (index: number, lang: Language, value: string) => {
     set((state) => ({
@@ -216,16 +202,14 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
         i === index
           ? {
               ...achievement,
-              [lang]: achievement[lang].map((_, idx) => (idx === 0 ? value : _)),
+              [lang]: achievement[lang].map((_, idx) =>
+                idx === 0 ? value : _
+              ),
             }
           : achievement
       ),
     }));
   },
-
- 
-
-
 
   addEducation: () => {
     set((state) => ({
@@ -233,20 +217,18 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
         ...state.educations,
         {
           id: null,
-          name: { ru: "", uz: "", en: "" },
-          faculty: { ru: "", uz: "", en: "" },
-          fromYear: "",
-          toYear: "",
+          name: { ru: '', uz: '', en: '' },
+          faculty: { ru: '', uz: '', en: '' },
+          fromYear: '',
+          toYear: '',
         },
       ],
     }));
   },
 
-
-
   updateEducationField: (
     id: number | null,
-    field: "name" | "faculty" | "fromYear" | "toYear",
+    field: 'name' | 'faculty' | 'fromYear' | 'toYear',
     lang: Language | null,
     value: string
   ) => {
@@ -276,21 +258,26 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
         ...state.workExperiences,
         {
           id: null,
-          name: { ru: "", uz: "", en: "" },
-          city: { ru: "", uz: "", en: "" },
-          fromYear: "",
-          toYear: "",
+          name: { ru: '', uz: '', en: '' },
+          city: { ru: '', uz: '', en: '' },
+          fromYear: '',
+          toYear: '',
           position: {
-            ru: [""],
-            uz: [""],
-            en: [""],
+            ru: [''],
+            uz: [''],
+            en: [''],
           },
         },
       ],
     }));
   },
 
-  updateWorkExperienceFieldByIndex: (index: number, field: keyof WorkExperience, lang: Language | null, value: string | number) => {
+  updateWorkExperienceFieldByIndex: (
+    index: number,
+    field: keyof WorkExperience,
+    lang: Language | null,
+    value: string | number
+  ) => {
     set((state) => ({
       workExperiences: state.workExperiences.map((experience, idx) =>
         idx === index
@@ -305,7 +292,7 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
     }));
   },
 
-  addPositionToWorkExperience: (id , lng) => {
+  addPositionToWorkExperience: (id, lng) => {
     set((state) => ({
       workExperiences: state.workExperiences.map((experience) =>
         experience.id === id
@@ -313,9 +300,9 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
               ...experience,
               position: {
                 ...experience.position,
-                ru: [...experience.position.ru, ""],
-                uz: [...experience.position.uz, ""],
-                en: [...experience.position.en, ""],
+                ru: [...experience.position.ru, ''],
+                uz: [...experience.position.uz, ''],
+                en: [...experience.position.en, ''],
               },
             }
           : experience
@@ -325,24 +312,24 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
 
   updatePositionInWorkExperience: (id, positionIndex, lang, value) => {
     set((state) => ({
-        workExperiences: state.workExperiences.map((experience) => {
-            if (experience.id === id) {
-                return {
-                    ...experience,
-                    position: {
-                        ...experience.position,
-                        [lang]: experience.position[lang].map((position, index) =>
-                            index === positionIndex
-                                ? value // Bu yerda faqat string qiymatini saqlaymiz
-                                : position
-                        ),
-                    },
-                };
-            }
-            return experience;
-        }),
+      workExperiences: state.workExperiences.map((experience) => {
+        if (experience.id === id) {
+          return {
+            ...experience,
+            position: {
+              ...experience.position,
+              [lang]: experience.position[lang].map((position, index) =>
+                index === positionIndex
+                  ? value // Bu yerda faqat string qiymatini saqlaymiz
+                  : position
+              ),
+            },
+          };
+        }
+        return experience;
+      }),
     }));
-},
+  },
 
   removePositionFromWorkExperience: (id, positionIndex) => {
     set((state) => ({
@@ -350,9 +337,11 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
         experience.id === id
           ? {
               ...experience,
-              position: { 
+              position: {
                 ...experience.position,
-                ru: experience.position.ru.filter((_, index) => index !== positionIndex),
+                ru: experience.position.ru.filter(
+                  (_, index) => index !== positionIndex
+                ),
               },
             }
           : experience
@@ -362,68 +351,75 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
 
   removeWorkExperience: (id) => {
     set((state) => ({
-      workExperiences: state.workExperiences.filter((experience) => experience.id !== id),
+      workExperiences: state.workExperiences.filter(
+        (experience) => experience.id !== id
+      ),
     }));
   },
 
-
-
-
   fetchSpecialties: async () => {
     try {
-      const response = await axios.get("https://medyordam.result-me.uz/api/speciality", {
-        headers: { 'Accept-Language': "" },
-      });
-  
+      const response = await axios.get(
+        'https://medyordam.result-me.uz/api/speciality',
+        {
+          headers: { 'Accept-Language': '' },
+        }
+      );
+
       const currentSelectedIds = get().selectedUserSpecialties;
-  
-      const specialties = response.data.data.map((specialty: { id: number; name: multiLang; active: boolean }) => ({
-        ...specialty,
-        selected: currentSelectedIds.includes(specialty.id), // Check if the specialty ID is in the selected list
-      }));
-  
+
+      const specialties = response.data.data.map(
+        (specialty: { id: number; name: multiLang; active: boolean }) => ({
+          ...specialty,
+          selected: currentSelectedIds.includes(specialty.id), // Check if the specialty ID is in the selected list
+        })
+      );
+
       set({ specialties });
     } catch (error) {
-      console.error("Error fetching specialties:", error);
+      console.error('Error fetching specialties:', error);
     }
   },
-  
 
   fetchLanguage: async () => {
     try {
-      const response = await axios.get("https://medyordam.result-me.uz/api/language" );
+      const response = await axios.get(
+        'https://medyordam.result-me.uz/api/language'
+      );
       const currentSelectedIds = get().selectedUserLanguages;
 
-      const languages = response.data.data.map((language: { id: number; name: multiLang; active: boolean }) => ({
-        ...language,
-        selected: currentSelectedIds.includes(language.id), // Check if the specialty ID is in the selected list
-      }));
+      const languages = response.data.data.map(
+        (language: { id: number; name: multiLang; active: boolean }) => ({
+          ...language,
+          selected: currentSelectedIds.includes(language.id), // Check if the specialty ID is in the selected list
+        })
+      );
       set({ languages });
     } catch (error) {
-      console.error("Error fetching specialties:", error);
+      console.error('Error fetching specialties:', error);
     }
   },
-
-  
-
-
-
-
 
   save: async (): Promise<boolean> => {
     const state = get();
     const { id } = useProfileStore.getState();
-    const token = sessionStorage.getItem("token");
+    const token = sessionStorage.getItem('token');
     try {
       // =========
       // Achievements Transformation
       // =========
       const achievementsTransformed = {
-        uz: state.achievements.map((achievement) => achievement.uz[0]).filter(Boolean),
-        ru: state.achievements.map((achievement) => achievement.ru[0]).filter(Boolean),
-        en: state.achievements.map((achievement) => achievement.en[0]).filter(Boolean),
+        uz: state.achievements
+          .map((achievement) => achievement.uz[0])
+          .filter(Boolean),
+        ru: state.achievements
+          .map((achievement) => achievement.ru[0])
+          .filter(Boolean),
+        en: state.achievements
+          .map((achievement) => achievement.en[0])
+          .filter(Boolean),
       };
-  
+
       // =========
       // Education Transformation
       // =========
@@ -442,7 +438,7 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
         fromYear: Number(education.fromYear),
         toYear: Number(education.toYear),
       }));
-  
+
       // =========
       // Work Experience Transformation
       // =========
@@ -466,18 +462,18 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
         fromYear: Number(experience.fromYear),
         toYear: Number(experience.toYear),
       }));
-  
+
       // =========
       // Specialities and Languages
       // =========
       const specialitiesSelected = state.specialties
         .filter((specialty) => specialty.selected)
         .map((specialty) => specialty.id);
-  
+
       const languagesSelected = state.languages
         .filter((language) => language.selected)
         .map((language) => language.id);
-  
+
       // =========
       // Payload Formation
       // =========
@@ -488,52 +484,42 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
         speciality: specialitiesSelected,
         language: languagesSelected,
         experience: experienceTransformed,
+        quote: state.quote,
       };
-  
+
       // =========
       // API Call
       // =========
-      const response = await axios.put(
-        "https://medyordam.result-me.uz/api/doctor",
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, 
-            "Content-Type": "application/json", 
-          },
-        }
-      );
-      
-  
-     return true
+      await axios.put('https://medyordam.result-me.uz/api/doctor', payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      return true;
     } catch (error) {
-      console.error("Error saving data:", error);
+      console.error('Error saving data:', error);
       set({ success: false });
-      return false
+      return false;
     }
   },
-  
 
-
-
-  
-
-  setAllData: (workExperiences, educations, languages, specialties, achievements) => {
-   
-  
+  setAllData: (
+    workExperiences,
+    educations,
+    languages,
+    specialties,
+    achievements,
+    quote
+  ) => {
     set({
       workExperiences,
       educations,
       selectedUserLanguages: languages.map((item) => item.id),
       achievements,
       selectedUserSpecialties: specialties.map((item) => item.id),
+      quote: quote,
     });
   },
-  
-
-  
-
- 
-   
-  
-}))
+}));
