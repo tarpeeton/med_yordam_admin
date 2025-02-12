@@ -17,7 +17,6 @@ const DashboardServices = ({ selectedInputLang }: ILangTopProps) => {
   const locale = useLocale();
   const {
     serviceCategories,
-    services,
     fetchServiceCategories,
     save,
     promotions,

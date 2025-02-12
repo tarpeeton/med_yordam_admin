@@ -104,25 +104,20 @@ interface ServiceStoreType {
   ) => void;
   save: () => Promise<boolean>;
 
-  /*** --- Services --- ***/
-  // Глобальное хранилище услуг (если нужно)
   services: Service[];
   newService: Service;
   selectedServiceCategory: ServiceCategory | null;
   selectedService: Service | null;
-  // Хранение услуг по категориям
   servicesByCategory: { [key: number]: Service[] };
   fetchServicesByCategory: (categoryId: number) => Promise<void>;
   setSelectedServiceCategory: (category: ServiceCategory | null) => void;
   setSelectedService: (service: Service | null) => void;
-  addService: () => void;
   deleteServiceByIndex: (index: number) => Promise<boolean>;
   updateServiceFieldByIndex: (
     index: number,
     field: keyof Service,
     value: string | number
   ) => void;
-  saveServices: () => Promise<boolean>;
   setAllService: (serviceList: BackendService[]) => void;
 
   /*** --- Service List --- ***/
@@ -140,6 +135,7 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
   /*** --- Promotions --- ***/
   serviceCategories: [],
   serviceList: [],
+  services: [],
   promotions: [
     {
       address: { ru: '', uz: '', en: '' },
@@ -258,13 +254,10 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
     set({ promotions: transformedPromotions });
   },
 
-  /*** --- Services --- ***/
-  services: [],
   newService: {
     name: { ru: '', uz: '', en: '' },
     price: 0,
   },
-  // Инициализируем пустой объект для услуг по категориям
   servicesByCategory: {},
   selectedServiceCategory: null,
   selectedService: null,
@@ -302,15 +295,6 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
   },
   setSelectedService: (service: Service | null) => {
     set({ selectedService: service });
-  },
-  addService: () => {
-    set((state) => ({
-      services: [...state.services, state.newService],
-      newService: {
-        name: { ru: '', uz: '', en: '' },
-        price: 0,
-      },
-    }));
   },
   updateServiceFieldByIndex: (index, field, value) => {
     set((state) => ({
@@ -351,44 +335,7 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
       return true;
     }
   },
-  saveServices: async (): Promise<boolean> => {
-    try {
-      const { services, selectedServiceCategory } = get();
-      if (!selectedServiceCategory) {
-        console.error('No service category selected.');
-        return false;
-      }
-      const token = sessionStorage.getItem('token');
-      const payload = {
-        categoryId: selectedServiceCategory.id,
-        serviceList: services,
-      };
-      const response = await axios.put(
-        'https://medyordam.result-me.uz/api/service',
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-      if (response.data.data.serviceList) {
-        const backendServices: BackendService[] =
-          response.data.data.serviceList;
-        const transformedServices: Service[] = backendServices.map((s) => ({
-          id: s.id,
-          name: s.service.name,
-          price: s.price,
-        }));
-        set({ services: transformedServices });
-      }
-      return true;
-    } catch (error) {
-      console.error('Failed to save services', error);
-      return false;
-    }
-  },
+
   setAllService: (serviceList: BackendService[]) => {
     const transformedServices: Service[] = serviceList.map((s) => ({
       id: s.id,
@@ -398,17 +345,54 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
     set({ services: transformedServices });
   },
 
-  /*** --- Service List --- ***/
   addServiceList: () => {
     set((state) => ({
       serviceList: [...state.serviceList, { service: {} }],
     }));
   },
-  deleteServiceListByIndex: (index: number) => {
-    set((state) => ({
-      serviceList: state.serviceList.filter((_, i) => i !== index),
-    }));
+  deleteServiceListByIndex: async (index: number): Promise<boolean> => {
+    const state = get();
+    const serviceItem = state.serviceList[index];
+
+    // Если у элемента есть id (который будет использован для удаления на сервере)
+    if (serviceItem && serviceItem.id) {
+      try {
+        const { id: doctorId } = useProfileStore.getState();
+        const token = sessionStorage.getItem('token');
+        const payload = {
+          id: doctorId,
+          serviceList: [
+            {
+              id: serviceItem.id,
+            },
+          ],
+        };
+
+        await axios.put('https://medyordam.result-me.uz/api/doctor', payload, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        // Удаляем элемент из состояния после успешного ответа от сервера
+        set((state) => ({
+          serviceList: state.serviceList.filter((_, i) => i !== index),
+        }));
+        return true;
+      } catch (error) {
+        console.error('Failed to delete service list item:', error);
+        return false;
+      }
+    } else {
+      // Если id отсутствует, удаляем локально без запроса к серверу
+      set((state) => ({
+        serviceList: state.serviceList.filter((_, i) => i !== index),
+      }));
+      return true;
+    }
   },
+
   updateServiceListFieldByIndex: (index: number, field, value) => {
     set((state) => ({
       serviceList: state.serviceList.map((item, i) => {
@@ -496,11 +480,24 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
         })
       );
 
-      // Преобразование списка сервисов (serviceList)
-      const transformedServiceList = serviceList.map((item) => ({
-        service: { id: item.service?.id },
-        price: item.price,
-      }));
+      const transformedServiceList = serviceList.map((item) => {
+        const transformedItem: SelectedServiceItem = {
+          id: item?.id,
+          service: {
+            id: item.service?.id,
+            ...(item.service?.categoryId && {
+              categoryId: item.service.categoryId,
+            }),
+          },
+          price: item.price,
+        };
+
+        if (item.id) {
+          transformedItem.id = item.id;
+        }
+
+        return transformedItem;
+      });
 
       const payload = {
         id,
@@ -521,17 +518,36 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
 
       if (response.data.data.promotionList) {
         set({
-          promotions: response.data.data.promotionList.map((promo: any) => ({
-            id: promo.id,
-            address: promo.address,
-            phone: promo.phone,
-            title: promo.title,
-            discountPercentage: promo.percent,
-            description: promo.description,
-            imageUrl: promo.photo && promo.photo.url ? promo.photo.url : '',
-            imageFile: undefined,
-            photoId: promo.photo ? promo.photo.id : undefined,
-          })),
+          promotions: response.data.data.promotionList.map(
+            (promo: BackendPromotion) => ({
+              id: promo.id.toString(),
+              address: promo.address,
+              phone: promo.phone,
+              title: promo.title,
+              discountPercentage: promo.percent,
+              description: promo.description,
+              imageUrl: promo.photo && promo.photo.url ? promo.photo.url : '',
+              imageFile: undefined,
+              photoId: promo.photo ? promo.photo.id : undefined,
+            })
+          ),
+        });
+      }
+
+      if (response.data.data.serviceList) {
+        set({
+          serviceList: response.data.data.serviceList.map(
+            (item: BackendService) => ({
+              id: item.id,
+              service: {
+                id: item.service.id,
+                categoryId: item.service.categoryId,
+                slug: item.service.slug,
+                name: item.service.name,
+              },
+              price: item.price,
+            })
+          ),
         });
       }
 

@@ -182,7 +182,7 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
       localStorage.setItem('slug', updatedProfile.slug);
       get().setProfile(updatedProfile);
 
-      return true;
+      return true; // Muvaffaqiyat
     } catch (error) {
       console.error('Error saving profile:', error);
       return false;

@@ -4,6 +4,21 @@ import axios from 'axios';
 import { multiLang } from '@/interface/multiLang';
 import { useProfileStore } from '@/store/profileStore';
 
+function generateYandexMapsWhatshereLink(
+  lat: number,
+  lon: number,
+  zoom = 16
+): string {
+  return `
+    https://yandex.uz/maps/
+    ?ll=${lon}%2C${lat}
+    &mode=whatshere
+    &whatshere[point]=${lon}%2C${lat}
+    &whatshere[zoom]=${zoom}
+    &z=${zoom}
+  `.replace(/\s+/g, '');
+}
+
 export interface AddressDay {
   id?: string;
   dayOfWeek: string;
@@ -59,24 +74,38 @@ export const useAddressStore = create<AddressState>((set, get) => ({
     set((state) => ({
       mapData: state.mapData.map((item, idx) => {
         if (idx !== index) return item;
-
+        const newLat = updatedData.location?.latitude ?? item.location.latitude;
+        const newLon =
+          updatedData.location?.longitude ?? item.location.longitude;
+        const newLink =
+          newLat && newLon
+            ? generateYandexMapsWhatshereLink(newLat, newLon)
+            : '';
         return {
           ...item,
           ...updatedData,
+          location: {
+            latitude: newLat,
+            longitude: newLon,
+          },
+
+          addressLink: updatedData.addressLink ?? newLink,
           address: updatedData.address
             ? {
-                ru: updatedData.address.ru || item.address.ru,
-                uz: updatedData.address.uz || item.address.uz,
-                en: updatedData.address.en || item.address.en,
+                ru: updatedData.address.ru ?? item.address.ru,
+                uz: updatedData.address.uz ?? item.address.uz,
+                en: updatedData.address.en ?? item.address.en,
               }
             : item.address,
+
           orientir: updatedData.orientir
             ? {
-                ru: updatedData.orientir.ru || item.orientir.ru,
-                uz: updatedData.orientir.uz || item.orientir.uz,
-                en: updatedData.orientir.en || item.orientir.en,
+                ru: updatedData.orientir.ru ?? item.orientir.ru,
+                uz: updatedData.orientir.uz ?? item.orientir.uz,
+                en: updatedData.orientir.en ?? item.orientir.en,
               }
             : item.orientir,
+
           days: updatedData.days
             ? updatedData.days.map((updDay, i) => {
                 const originalDay = item.days[i];
@@ -136,11 +165,11 @@ export const useAddressStore = create<AddressState>((set, get) => ({
         throw new Error('No addresses to save');
       }
 
+      // Готовим данные для отправки на бэкенд
       const receptionTime = mapData.map((entry) => ({
         ...(entry.id ? { id: entry.id } : {}),
         days: entry.days.map((day) => ({
           ...(day.id ? { id: day.id } : {}),
-
           dayOfWeek: day.dayOfWeek.toUpperCase(),
           from: day.from,
           to: day.to,
@@ -162,9 +191,13 @@ export const useAddressStore = create<AddressState>((set, get) => ({
         longitude: entry.location.longitude,
       }));
 
-      await axios.put(
+      // Отправляем PUT-запрос на сервер
+      const response = await axios.put(
         'https://medyordam.result-me.uz/api/doctor',
-        { id, receptionTime },
+        {
+          id,
+          receptionTime,
+        },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -172,6 +205,11 @@ export const useAddressStore = create<AddressState>((set, get) => ({
           },
         }
       );
+
+      // Если сервер вернул обновлённый массив receptionTime — сохраняем его локально
+      if (response.data?.data?.receptionTime) {
+        get().setAllData(response.data.data.receptionTime);
+      }
 
       return true;
     } catch (error) {
