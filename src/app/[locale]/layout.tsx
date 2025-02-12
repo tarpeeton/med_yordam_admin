@@ -41,7 +41,6 @@ export default async function LocaleLayout({
         />
         <link rel="icon" href="/favicon-96x96.png" sizes="96x96" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-        <link rel="manifest" href="/favicon/site.webmanifest" />
         <meta name="theme-color" content="#ffffff" />
 
         <meta property="og:title" content="Med Yordam" />

@@ -145,10 +145,12 @@ const DashboardSecurity = ({ selectedInputLang }: ILangTopProps) => {
           )}
         </form>
         <div className="mt-[25px] flex w-full items-center 2xl:order-[3] 2xl:w-[100%] 2xl:justify-end">
-          <SaveButton
-            selectedInputLang={selectedInputLang}
-            onClick={SaveChanges}
-          />
+          <div className="2xl:w-64">
+            <SaveButton
+              selectedInputLang={selectedInputLang}
+              onClick={SaveChanges}
+            />
+          </div>
         </div>
       </div>
     </div>

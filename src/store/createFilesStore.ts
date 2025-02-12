@@ -118,7 +118,7 @@ export const useUploadFiles = create<UploadFilesState>((set, get) => ({
         id: id.toString(),
         name: file.name,
         status: 'success',
-        url: response.data.data.url, // Используем URL из ответа
+        url: response.data.data.url,
       };
 
       set((state) => ({

@@ -94,28 +94,23 @@ export const useAddressStore = create<AddressState>((set, get) => ({
     })),
 
   deleteAddress: (id: string) => {
-    // Hozirgi state dan o'chiriladigan elementni topamiz
     const state = get();
     const itemToDelete = state.mapData.find(
       (item: AddressEntry) => item.id === id
     );
-    if (!itemToDelete) return; // Agar topilmasa, hech narsa qilmaymiz
+    if (!itemToDelete) return;
 
-    // mapData dan elementni olib tashlaymiz
     set({
       mapData: state.mapData.filter((item: AddressEntry) => item.id !== id),
     });
 
-    // Doktor id sini olish (masalan, useProfileStore dan)
     const doctorId = useProfileStore.getState().id;
 
-    // Yuboriladigan payload – bu yerda o'chirilayotgan elementning id sini receptionTime ichiga joylaymiz
     const payload = {
-      id: doctorId, // Doktor id
-      receptionTime: [{ id: itemToDelete.id }], // O'chirilayotgan manzilning id-si
+      id: doctorId,
+      receptionTime: [{ id: itemToDelete.id }],
     };
 
-    // Serverga yuborish uchun axios.put chaqiruvi
     axios
       .put('https://medyordam.result-me.uz/api/doctor', payload, {
         headers: {

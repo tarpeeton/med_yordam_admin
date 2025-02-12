@@ -182,10 +182,10 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
       localStorage.setItem('slug', updatedProfile.slug);
       get().setProfile(updatedProfile);
 
-      return true; // Muvaffaqiyat
+      return true;
     } catch (error) {
       console.error('Error saving profile:', error);
-      return false; // Xatolik
+      return false;
     }
   },
 
@@ -201,7 +201,8 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
       const data = response.data.data;
       get().setProfile(data);
       useUploadFiles.getState().setDocuments(data.documents);
-
+      useServiceStore.getState().setAllPromotion(data.promotionList);
+      useServiceStore.getState().setAllServiceList(data.serviceList);
       useAddressStore.getState().setAllData(data.receptionTime);
 
       const { phone, instagram, telegram, facebook, youtube } = data.contact;
@@ -219,7 +220,6 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
           transformAchievements(data.achievement),
           data.quote
         );
-      useServiceStore.getState().setServicesFromOtherStore(data.priceList);
     } catch (error) {
       console.error('Error loading profile data:', error);
     }

@@ -18,7 +18,7 @@ const SaveButton = ({ onClick, selectedInputLang }: ButtonProps) => {
   return (
     <button
       onClick={onClick}
-      className={`rounded-[12px] bg-[#0129E3] py-[18px] text-center font-medium text-white 2xl:w-[256px]`}
+      className={`w-full rounded-[12px] bg-[#0129E3] py-[18px] text-center font-medium text-white`}
     >
       {getButtonText()}
     </button>

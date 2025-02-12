@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 interface YandexMapProps {
   location: { latitude: number; longitude: number };
   onLocationChange: (coords: { latitude: number; longitude: number }) => void;
-  controls?: string[]; // Ixtiyoriy controls
+  controls?: string[];
 }
 
 const YandexMap: React.FC<YandexMapProps> = ({
@@ -100,11 +100,7 @@ const YandexMap: React.FC<YandexMapProps> = ({
   }, [location, mapInstance]);
 
   return (
-    <div
-      ref={mapRef}
-      id="yandex-map"
-      className="h-[250px] overflow-hidden 2xl:h-[400px]"
-    />
+    <div ref={mapRef} className="h-[250px] overflow-hidden 2xl:h-[400px]" />
   );
 };
 

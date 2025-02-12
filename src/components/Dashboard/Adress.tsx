@@ -151,43 +151,54 @@ const DashboardAddress = ({ selectedInputLang }: ILangTopProps) => {
               <GoPencil className="text-muted-foreground absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#0129E3]" />
             </div>
 
-            {entry.days.map((dayEntry, dayIndex) => (
-              <div key={`${entry.id}-${dayIndex}`} className="relative">
-                <div className="grid grid-cols-3 items-center gap-4">
-                  {/* From Time */}
-                  {dayEntry.dayOfWeek}
-                  <div className="relative">
-                    <input
-                      type="time"
-                      value={dayEntry.from}
-                      onChange={(e) =>
-                        updateAddress(index, {
-                          days: entry.days.map((d, i) =>
-                            i === dayIndex ? { ...d, from: e.target.value } : d
-                          ),
-                        })
-                      }
-                      className="focus:ring-ring w-full rounded-[12px] bg-[#F8F8F8] px-[10px] py-[17px] text-[#747474] focus:outline-none focus:ring-1"
-                    />
-                  </div>
-                  {/* To Time */}
-                  <div className="relative">
-                    <input
-                      type="time"
-                      value={dayEntry.to}
-                      onChange={(e) =>
-                        updateAddress(index, {
-                          days: entry.days.map((d, i) =>
-                            i === dayIndex ? { ...d, to: e.target.value } : d
-                          ),
-                        })
-                      }
-                      className="focus:ring-ring w-full rounded-[12px] bg-[#F8F8F8] px-[10px] py-[17px] text-[#747474] focus:outline-none focus:ring-1"
-                    />
+            {entry.days.map((dayEntry, dayIndex) => {
+              const dayLabel = DAYS.find(
+                (day) => day.key === dayEntry.dayOfWeek
+              )?.label[selectedInputLang];
+
+              return (
+                <div key={`${entry.id}-${dayIndex}`} className="relative">
+                  <div className="grid grid-cols-3 items-center gap-4">
+                    {/* From Time */}
+                    <p className="text-base font-medium 2xl:text-xl">
+                      {dayLabel}
+                    </p>
+
+                    <div className="relative">
+                      <input
+                        type="time"
+                        value={dayEntry.from}
+                        onChange={(e) =>
+                          updateAddress(index, {
+                            days: entry.days.map((d, i) =>
+                              i === dayIndex
+                                ? { ...d, from: e.target.value }
+                                : d
+                            ),
+                          })
+                        }
+                        className="focus:ring-ring w-full rounded-[12px] bg-[#F8F8F8] px-[10px] py-[17px] text-[#747474] focus:outline-none focus:ring-1"
+                      />
+                    </div>
+                    {/* To Time */}
+                    <div className="relative">
+                      <input
+                        type="time"
+                        value={dayEntry.to}
+                        onChange={(e) =>
+                          updateAddress(index, {
+                            days: entry.days.map((d, i) =>
+                              i === dayIndex ? { ...d, to: e.target.value } : d
+                            ),
+                          })
+                        }
+                        className="focus:ring-ring w-full rounded-[12px] bg-[#F8F8F8] px-[10px] py-[17px] text-[#747474] focus:outline-none focus:ring-1"
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
             {/* Map */}
             <div className="relative col-span-full w-full">
               <YandexMap
@@ -215,10 +226,12 @@ const DashboardAddress = ({ selectedInputLang }: ILangTopProps) => {
 
       {/* Save changes button */}
       <div className="mt-[25px] flex w-full items-center 2xl:w-[100%] 2xl:justify-end">
-        <SaveButton
-          selectedInputLang={selectedInputLang}
-          onClick={SaveChanges}
-        />
+        <div className="2xl:w-64">
+          <SaveButton
+            selectedInputLang={selectedInputLang}
+            onClick={SaveChanges}
+          />
+        </div>
       </div>
     </div>
   );

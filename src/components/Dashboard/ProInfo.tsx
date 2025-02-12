@@ -1,5 +1,6 @@
 'use client';
-import { FC, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import toastr from 'toastr';
 
 import { IoIosArrowDown } from 'react-icons/io';
 import { FaCheck } from 'react-icons/fa6';
@@ -13,9 +14,7 @@ import { useLocale } from 'next-intl';
 import { ILangTopProps } from '@/interface/langtopProps';
 import SaveButton from '@/ui/saveButton';
 
-import toastr from 'toastr';
-
-const DashboardProInfo: FC<ILangTopProps> = ({ selectedInputLang }) => {
+const DashboardProInfo = ({ selectedInputLang }: ILangTopProps) => {
   const locale = useLocale();
 
   const {
@@ -530,10 +529,12 @@ const DashboardProInfo: FC<ILangTopProps> = ({ selectedInputLang }) => {
 
         {/* BUTTON SAVE */}
         <div className="mt-[25px] flex w-full items-center 2xl:order-[3] 2xl:w-[100%] 2xl:justify-end">
-          <SaveButton
-            selectedInputLang={selectedInputLang}
-            onClick={handleSave}
-          />
+          <div className="2xl:w-64">
+            <SaveButton
+              selectedInputLang={selectedInputLang}
+              onClick={handleSave}
+            />
+          </div>
         </div>
       </div>
     </div>

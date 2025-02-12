@@ -1,7 +1,6 @@
 'use client';
 import { useUploadFiles } from '@/store/createFilesStore';
 import { MdOutlineAttachFile } from 'react-icons/md';
-import { MoonLoader } from 'react-spinners';
 import { IoCloseOutline } from 'react-icons/io5';
 import React from 'react';
 import { ILangTopProps } from '@/interface/langtopProps';
@@ -53,6 +52,7 @@ const DashboardFiles = ({ selectedInputLang }: ILangTopProps) => {
                     <img
                       src={file.previewUrl}
                       alt="Preview"
+                      loading="lazy"
                       className="h-full w-full rounded-[8px] object-cover"
                     />
                   ) : (
@@ -60,6 +60,7 @@ const DashboardFiles = ({ selectedInputLang }: ILangTopProps) => {
                       <img
                         src={file.url || file.previewUrl}
                         alt={file.name}
+                        loading="lazy"
                         className="h-full w-full rounded-[8px] object-cover"
                       />
                       <input
@@ -129,6 +130,7 @@ const DashboardFiles = ({ selectedInputLang }: ILangTopProps) => {
                     <img
                       src={file.url || file.previewUrl}
                       alt={file.name}
+                      loading="lazy"
                       className="h-full w-full rounded-[8px] object-cover"
                     />
                     <input
