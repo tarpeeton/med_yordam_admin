@@ -17,21 +17,6 @@ const Header: FC = () => {
   const [menu, setMenu] = useState(false);
   const SwitcherMenuMobile = () => setMenu(!menu);
 
-  const Links = [
-    {
-      title: { ru: 'Врачи', uz: 'Shifokorlar', en: 'Doctors' },
-      slug: '/doctors',
-    },
-    {
-      title: { ru: 'Клиники', uz: 'Klinikalar', en: 'Clinics' },
-      slug: '/clinick',
-    },
-    {
-      title: { ru: 'Услуги', uz: 'Xizmatlar', en: 'Services' },
-      slug: '/services',
-    },
-  ];
-
   return (
     <header>
       <div className="flex h-20 flex-row items-center justify-between px-4 mdl:px-5 2xl:h-[97px] 4xl:px-24">
@@ -46,26 +31,15 @@ const Header: FC = () => {
           />
         </div>
         <div className="hidden flex-row gap-5 3xl:flex">
-          {Links.map((links) => (
-            <Link
-              key={links.slug}
-              href={`${links.slug}`}
-              className={`flex h-12 w-32 items-center justify-center rounded-[10px] border border-[#E8E8E8] font-medium text-[#050B2B] transition-all duration-100 hover:bg-MyBlue hover:text-white`}
-            >
-              {links.title[locale]}
-            </Link>
-          ))}
-        </div>
-        <div className="hidden flex-row gap-5 3xl:flex">
-          <Link
+          {/* <Link
             href="/searchmap"
             className="flex h-12 items-center justify-center rounded-full border border-MyBlue px-6 font-bold text-MyBlue transition-all duration-100 hover:bg-MyBlue hover:text-white"
           >
             {t('Header.showMap')}
-          </Link>
+          </Link> */}
           <LanguageSwitcher />
           <Link
-            href="/searchmap"
+            href="/logout"
             className="flex h-12 w-52 items-center justify-center rounded-full border bg-MyBlue px-6 font-bold text-white transition-all duration-150 hover:border hover:border-MyBlue hover:bg-white hover:text-MyBlue"
           >
             {t('register')}

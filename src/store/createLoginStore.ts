@@ -103,6 +103,7 @@ export const useLoginStore = create<LoginState>((set, get) => ({
         {
           headers: {
             'Content-Type': 'multipart/form-data',
+            'Accept-Language': 'ru',
           },
         }
       );

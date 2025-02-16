@@ -1,22 +1,22 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import 'flowbite';
 import 'dayjs/locale/ru';
-import { MdOutlineAttachFile } from 'react-icons/md';
-
-import toastr from 'toastr';
-
+import { MdOutlineAttachFile, MdOutlineDateRange } from 'react-icons/md';
 import { BiSolidPencil } from 'react-icons/bi';
 import { GoPencil } from 'react-icons/go';
 import { TbPhone } from 'react-icons/tb';
-import { MdOutlineDateRange } from 'react-icons/md';
 import { useLocale } from 'next-intl';
+import InputMask from 'react-input-mask';
+import toastr from 'toastr';
+
 import SaveButton from '@/ui/saveButton';
 import { useClinicProfileStore } from '@/store/clinick/profile';
+import { ILangTopProps } from '@/interface/langtopProps';
 
-export const Profile = () => {
+export const Profile = ({ selectedInputLang }: ILangTopProps) => {
   const locale = useLocale() as 'ru' | 'uz' | 'en';
 
   const {
@@ -26,10 +26,11 @@ export const Profile = () => {
     experience,
     phone,
     phone2,
-    workStart,
-    workEnd,
+    workFrom,
+    workTo,
     logo,
     photo,
+    getclinickWithslug,
   } = useClinicProfileStore();
 
   const photoInputRef = useRef<HTMLInputElement | null>(null);
@@ -58,6 +59,15 @@ export const Profile = () => {
     }
   };
 
+  // FETCH CLINICK readAsDataURL
+
+  useEffect(() => {
+    const slug = localStorage.getItem('slug');
+    if (slug) {
+      getclinickWithslug(slug);
+    }
+  }, []);
+
   const logoInputRef = useRef<HTMLInputElement | null>(null);
   const [selectedLogoFile, setSelectedLogoFile] = useState<File | null>(null);
   const [previewLogo, setPreviewLogo] = useState<string>('');
@@ -71,7 +81,6 @@ export const Profile = () => {
     if (file) {
       setSelectedLogoFile(file);
 
-      // Локальное превью
       const reader = new FileReader();
       reader.onload = () => {
         if (reader.result) {
@@ -105,7 +114,7 @@ export const Profile = () => {
   return (
     <div className="mt-[25px] 2xl:mt-[37px]">
       <div className="flex flex-col 2xl:flex-row 2xl:flex-wrap 2xl:gap-[2%]">
-        {/* Блок для PHOTO (аватар) */}
+        {/* PHOTO (avatar) bo'limi */}
         <div className="relative h-[264px] w-full overflow-hidden bg-white p-[4px] slg:h-[300px] 2xl:h-[350px] 2xl:w-[38%]">
           <label
             htmlFor="photo-input"
@@ -115,9 +124,13 @@ export const Profile = () => {
               src={
                 photo instanceof File
                   ? URL.createObjectURL(photo)
-                  : typeof photo === 'string'
-                    ? photo
-                    : previewPhoto
+                  : typeof photo === 'object' &&
+                      photo !== null &&
+                      'url' in photo
+                    ? photo.url
+                    : typeof photo === 'string'
+                      ? photo
+                      : previewPhoto
               }
               alt="Profile Preview"
               width={1000}
@@ -150,9 +163,9 @@ export const Profile = () => {
               value={name}
               onChange={(e) => setFormData({ name: e.target.value })}
               placeholder={
-                locale === 'ru'
+                selectedInputLang === 'ru'
                   ? 'Название клиники'
-                  : locale === 'uz'
+                  : selectedInputLang === 'uz'
                     ? 'Klinika nomi'
                     : 'Clinic Name'
               }
@@ -170,9 +183,9 @@ export const Profile = () => {
                   setFormData({ experience: Number(e.target.value) })
                 }
                 placeholder={
-                  locale === 'ru'
+                  selectedInputLang === 'ru'
                     ? 'Опыт'
-                    : locale === 'uz'
+                    : selectedInputLang === 'uz'
                       ? 'Tajribasi'
                       : 'Experience'
                 }
@@ -180,50 +193,73 @@ export const Profile = () => {
               />
               <MdOutlineDateRange className="text-muted-foreground absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#747474]" />
             </div>
-
             <div className="relative">
-              <input
+              <InputMask
+                mask="+998 (99) 999-99-99"
                 value={phone}
-                onChange={(e) => setFormData({ phone: e.target.value })}
-                placeholder={
-                  locale === 'ru'
-                    ? 'Телефон'
-                    : locale === 'uz'
-                      ? 'Telefon'
-                      : 'Phone'
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setFormData({ phone: e.target.value })
                 }
-                className="focus:ring-ring w-full rounded-[12px] bg-[#F8F8F8] px-[15px] py-[18px] pl-[40px] text-[#747474] focus:outline-none focus:ring-1"
-              />
+              >
+                {(inputProps) => (
+                  <input
+                    {...inputProps}
+                    type="tel"
+                    placeholder={
+                      selectedInputLang === 'ru'
+                        ? 'Телефон'
+                        : selectedInputLang === 'uz'
+                          ? 'Telefon'
+                          : 'Phone'
+                    }
+                    className="focus:ring-ring w-full rounded-[12px] bg-[#F8F8F8] px-[15px] py-[18px] pl-[40px] text-[#747474] focus:outline-none focus:ring-1"
+                  />
+                )}
+              </InputMask>
               <GoPencil className="text-muted-foreground absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#747474]" />
             </div>
 
             <div className="relative">
-              <input
+              <InputMask
+                mask="+998 (99) 999-99-99"
                 value={phone2}
-                onChange={(e) => setFormData({ phone2: e.target.value })}
-                placeholder={
-                  locale === 'ru'
-                    ? 'Телефон 2'
-                    : locale === 'uz'
-                      ? 'Telefon 2'
-                      : 'Phone 2'
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setFormData({ phone2: e.target.value })
                 }
-                className="focus:ring-ring w-full rounded-[12px] bg-[#F8F8F8] px-[15px] py-[18px] pl-[40px] text-[#747474] focus:outline-none focus:ring-1"
-              />
+              >
+                {(inputProps) => (
+                  <input
+                    {...inputProps}
+                    type="tel"
+                    placeholder={
+                      selectedInputLang === 'ru'
+                        ? 'Телефон 2'
+                        : selectedInputLang === 'uz'
+                          ? 'Telefon 2'
+                          : 'Phone 2'
+                    }
+                    className="focus:ring-ring w-full rounded-[12px] bg-[#F8F8F8] px-[15px] py-[18px] pl-[40px] text-[#747474] focus:outline-none focus:ring-1"
+                  />
+                )}
+              </InputMask>
               <TbPhone className="text-muted-foreground absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#747474]" />
             </div>
 
             <div>
               <p className="font-medium text-titleDark">
-                {locale === 'ru' ? 'Logo' : locale === 'uz' ? 'Logo' : 'Logo'}
+                {selectedInputLang === 'ru'
+                  ? 'Лого '
+                  : selectedInputLang === 'uz'
+                    ? 'Logo'
+                    : 'Logo'}
               </p>
             </div>
             <div className="hidden 2xl:block">
               <p className="font-medium text-titleDark">
-                {locale === 'ru'
-                  ? 'Режим работы  '
-                  : locale === 'uz'
-                    ? 'ish voqtlari'
+                {selectedInputLang === 'ru'
+                  ? 'Режим работы'
+                  : selectedInputLang === 'uz'
+                    ? 'Ish vaqtlari'
                     : 'Work schedule'}
               </p>
             </div>
@@ -239,9 +275,13 @@ export const Profile = () => {
                     src={
                       logo instanceof File
                         ? URL.createObjectURL(logo)
-                        : typeof logo === 'string'
-                          ? logo
-                          : previewLogo
+                        : typeof logo === 'object' &&
+                            logo !== null &&
+                            'url' in logo
+                          ? logo.url
+                          : typeof logo === 'string'
+                            ? logo
+                            : previewLogo
                     }
                     alt="Logo Preview"
                     width={120}
@@ -254,9 +294,9 @@ export const Profile = () => {
                 <div className="flex flex-col items-center">
                   <MdOutlineAttachFile className="h-5 w-5 rotate-45 text-MyBlue 2xl:h-6 2xl:w-6" />
                   <p className="mt-3 font-medium text-MyBlue">
-                    {locale === 'ru'
+                    {selectedInputLang === 'ru'
                       ? 'Прикрепить Лого'
-                      : locale === 'uz'
+                      : selectedInputLang === 'uz'
                         ? 'Logoni yuklash'
                         : 'Upload Logo'}
                   </p>
@@ -274,20 +314,24 @@ export const Profile = () => {
             />
             <div className="block 2xl:hidden">
               <p className="font-medium text-titleDark">
-                {locale === 'ru'
-                  ? 'Режим работы  '
-                  : locale === 'uz'
-                    ? 'ish voqtlari'
+                {selectedInputLang === 'ru'
+                  ? 'Режим работы'
+                  : selectedInputLang === 'uz'
+                    ? 'Ish vaqtlari'
                     : 'Work schedule'}
               </p>
             </div>
             <div className="relative flex items-center">
               <input
-                value={workStart?.toString()}
+                value={workFrom?.toString()}
                 type="string"
-                onChange={(e) => setFormData({ workStart: e.target.value })}
+                onChange={(e) => setFormData({ workFrom: e.target.value })}
                 placeholder={
-                  locale === 'ru' ? 'От ' : locale === 'uz' ? '' : ''
+                  selectedInputLang === 'ru'
+                    ? 'От: 8:00'
+                    : selectedInputLang === 'uz'
+                      ? '8:00  Dan'
+                      : 'From: 8:00'
                 }
                 className="focus:ring-ring w-full rounded-[12px] bg-[#F8F8F8] px-[15px] py-[18px] pl-[40px] text-[#747474] focus:outline-none focus:ring-1"
               />
@@ -296,11 +340,15 @@ export const Profile = () => {
 
             <div className="relative flex items-center">
               <input
-                value={workEnd?.toString()}
+                value={workTo?.toString()}
                 type="string"
-                onChange={(e) => setFormData({ workEnd: e.target.value })}
+                onChange={(e) => setFormData({ workTo: e.target.value })}
                 placeholder={
-                  locale === 'ru' ? 'До' : locale === 'uz' ? '' : 'To'
+                  selectedInputLang === 'ru'
+                    ? 'До : 19:00'
+                    : selectedInputLang === 'uz'
+                      ? '19:00 Gacha'
+                      : 'To 19:00'
                 }
                 className="focus:ring-ring w-full rounded-[12px] bg-[#F8F8F8] px-[15px] py-[18px] pl-[40px] text-[#747474] focus:outline-none focus:ring-1"
               />
@@ -310,7 +358,10 @@ export const Profile = () => {
         </div>
         <div className="mt-[25px] flex w-full items-center 2xl:order-[3] 2xl:w-[100%] 2xl:justify-end">
           <div className="2xl:w-64">
-            <SaveButton selectedInputLang={locale} onClick={SaveChanges} />
+            <SaveButton
+              selectedInputLang={selectedInputLang}
+              onClick={SaveChanges}
+            />
           </div>
         </div>
       </div>

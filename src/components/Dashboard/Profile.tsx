@@ -93,7 +93,7 @@ const Profile = ({ selectedInputLang }: ILangTopProps) => {
   return (
     <div className="mt-[25px] 2xl:mt-[37px]">
       <div className="flex flex-col 2xl:flex-row 2xl:flex-wrap 2xl:gap-[2%]">
-        <div className="relative h-[264px] w-full overflow-hidden bg-white p-[4px] slg:h-[300px] 2xl:h-[350px] 2xl:w-[38%]">
+        <div className="relative h-[264px] w-full overflow-hidden rounded-[18px] bg-white p-[4px] slg:h-[300px] 2xl:h-[350px] 2xl:w-[33%]">
           <label
             htmlFor="file-input"
             className="absolute z-[99] h-full w-full cursor-pointer"

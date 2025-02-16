@@ -5,7 +5,7 @@ import { GrFormPrevious } from 'react-icons/gr';
 import { IoIosArrowDown, IoMdNotificationsOutline } from 'react-icons/io';
 import 'toastr/build/toastr.min.css';
 import { Profile } from './Profile';
-
+import { Notifications } from './Notification';
 interface SelectedInterface {
   ru: string;
   uz: string;
@@ -153,12 +153,12 @@ const DashboardSwitchers = () => {
       {/* DESKTOP */}
       <div className="mt-[20px] hidden w-full 2xl:block">
         <div className="inline-block w-full border-b border-b-[#EDEDED]">
-          <div className="grid w-full grid-cols-[repeat(7,_1fr)_minmax(0,_90px)]">
+          <div className="grid w-full grid-cols-[repeat(8,_1fr)_minmax(0,_80px)]">
             {options.map((option, index) => (
               <button
                 key={index}
                 onClick={() => handleSelect(option)}
-                className={`font-jost relative flex items-center justify-center py-[20px] text-center text-[16px] font-medium text-[#050B2B] ${selectedPage[locale] === option[locale] ? 'rounded-tl-[10px] rounded-tr-[10px] bg-[#0129E3] text-white' : 'bg-white text-[#050B2B]'}`}
+                className={`font-jost relative flex items-center justify-center py-[20px] text-center text-[15px] font-medium text-[#050B2B] ${selectedPage[locale] === option[locale] ? 'rounded-tl-[10px] rounded-tr-[10px] bg-[#0129E3] text-white' : 'bg-white text-[#050B2B]'}`}
               >
                 <span
                   className={`absolute right-0 top-1/2 h-[30px] w-[1px] -translate-y-1/2 transform ${selectedPage[locale] === option[locale] ? 'bg-[#0129E3]' : 'bg-[#EDEDED]'} `}
@@ -170,7 +170,10 @@ const DashboardSwitchers = () => {
         </div>
       </div>
 
-      {selectedPage.en === 'Profile' && <Profile />}
+      {selectedPage.en === 'Profile' && (
+        <Profile selectedInputLang={selectedLanguage} />
+      )}
+      {selectedPage.en === 'Notifications' && <Notifications />}
     </section>
   );
 };
