@@ -1,15 +1,13 @@
 import { create } from 'zustand';
 import axios from 'axios';
 
-// Интерфейс для изображения
 export interface ImageData {
   id: number;
   url: string;
 }
 
-// Основной интерфейс для данных клиники
 export interface ClinicProfileData {
-  id: string | number | null | undefined;
+  id: string | number | null;
   cityId: number | null;
   name: string;
   experience: number | null;
@@ -17,23 +15,16 @@ export interface ClinicProfileData {
   phone2: string;
   workFrom: string;
   workTo: string;
-  // logo и photo могут быть файлом, строкой или объектом с id и url
   logo: string | File | ImageData | null;
   photo: string | File | ImageData | null;
 }
 
-// Интерфейс для данных, возвращаемых с сервера. Он расширяет ClinicProfileData,
-// но сервер может возвращать дополнительные поля (например, slug) или переименованные (mainPhoto вместо photo).
 export interface ClinicProfileResponseData extends Partial<ClinicProfileData> {
   slug?: string;
-  // Если сервер возвращает фото под именем mainPhoto:
   mainPhoto?: string | ImageData;
-  // Если сервер возвращает logo по-другому:
   logo?: string | ImageData;
 }
 
-// Универсальный интерфейс для ответа API.
-// Если сервер возвращает данные сразу (без вложенного объекта), то используем такую структуру:
 export interface ApiResponse<T> {
   data: T;
 }
@@ -46,11 +37,6 @@ export interface ClinicProfileActions {
 
 export type ClinicProfileStore = ClinicProfileData & ClinicProfileActions;
 
-/**
- * Функция buildFormData формирует FormData, в которое помещается одно поле "json"
- * (содержащее сериализованный JSON с основными данными, включая id, если оно есть),
- * а также прикрепляются файлы (logo и photo) отдельно.
- */
 const buildFormData = (data: Partial<ClinicProfileData>): FormData => {
   const formData = new FormData();
 
@@ -64,8 +50,7 @@ const buildFormData = (data: Partial<ClinicProfileData>): FormData => {
     workTo: data.workTo,
   };
 
-  // Если id задан – включаем его в JSON
-  if (data.id !== undefined && data.id !== null) {
+  if (data.id !== null && data.id !== undefined) {
     profileData.id = data.id;
   }
 
@@ -123,7 +108,7 @@ export const useClinicProfileStore = create<ClinicProfileStore>((set, get) => {
         (Object.keys(currentState) as (keyof ClinicProfileData)[]).forEach(
           (key) => {
             if (currentState[key] !== savedData[key]) {
-              diff[key] = currentState[key];
+              (diff as any)[key] = currentState[key];
             }
           }
         );
@@ -133,13 +118,13 @@ export const useClinicProfileStore = create<ClinicProfileStore>((set, get) => {
           return true;
         }
 
-        diff.id = currentState.id;
+        (diff as any).id = currentState.id;
 
         const formData = buildFormData(diff);
         try {
           const response = await axios.put<
             ApiResponse<ClinicProfileResponseData>
-          >(`https://medyordam.result-me.uz/api/clinic`, formData, {
+          >('https://medyordam.result-me.uz/api/clinic', formData, {
             headers: {
               Authorization: `Bearer ${token}`,
               'Content-Type': 'multipart/form-data',
@@ -219,7 +204,7 @@ export const useClinicProfileStore = create<ClinicProfileStore>((set, get) => {
         const responseData = response.data.data;
         if (responseData) {
           const newState: ClinicProfileData = {
-            id: responseData.id,
+            id: responseData.id ?? null,
             cityId: responseData.cityId ?? 1,
             name: responseData.name ?? '',
             experience: responseData.experience ?? null,
