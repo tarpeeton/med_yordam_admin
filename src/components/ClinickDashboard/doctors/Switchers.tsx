@@ -1,60 +1,34 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useLocale } from 'next-intl';
-import { GrFormPrevious } from 'react-icons/gr';
 import { IoIosArrowDown, IoMdNotificationsOutline } from 'react-icons/io';
 import 'toastr/build/toastr.min.css';
-import { Profile } from './Profile';
-import { Doctors } from './doctors/Doctors';
+import Profile from './Profile';
+import DashboardLinks from './Links';
+import DashboardProInfo from './ProInfo';
+import DashboardServices from './Services';
+import DashboardFiles from './Files';
+import DashboardAddress from './Adress';
+import ApplicationMessage from './Application';
+import { ILangTopProps } from '@/interface/langtopProps';
 
-import { Notifications } from './Notification';
 interface SelectedInterface {
   ru: string;
   uz: string;
   en: string;
 }
 
-export const options = [
-  {
-    ru: 'Профиль',
-    uz: 'Profil',
-    en: 'Profile',
-  },
-  {
-    ru: 'Врачи',
-    uz: 'Shifokorlar',
-    en: 'Doctors',
-  },
-  {
-    ru: 'Профинформация',
-    uz: 'Profinformatsiya',
-    en: 'Professional Info',
-  },
-  {
-    ru: 'Место приема',
-    uz: 'Qabul joyi',
-    en: 'Reception Place',
-  },
+const options = [
+  { ru: 'Профиль', uz: 'Profil', en: 'Profile' },
+  { ru: 'Контакты', uz: 'Kontaktlar', en: 'Contacts' },
+  { ru: 'Профинформация', uz: 'Profinformatsiya', en: 'Profile Info' },
+  { ru: 'Место приема', uz: 'Qabul joyi', en: 'Reception Place' },
   {
     ru: 'Услуги и цены',
     uz: 'Xizmatlar va narxlar',
     en: 'Services and Prices',
   },
-  {
-    ru: 'Фотографии',
-    uz: 'Rasmlar',
-    en: 'Photos',
-  },
-  {
-    ru: 'Акции',
-    uz: 'Aksiyalar',
-    en: 'Promotions',
-  },
-  {
-    ru: 'Безопасность',
-    uz: 'Xavfsizlik',
-    en: 'Security',
-  },
+  { ru: 'Документы', uz: 'Hujjatlar', en: 'Documents' },
   {
     ru: 'Заявка',
     uz: 'Zayafkalar',
@@ -63,11 +37,8 @@ export const options = [
   },
 ];
 
-const DashboardSwitchers = () => {
+const DashboardSwitchers = ({ selectedInputLang }: ILangTopProps) => {
   const locale = useLocale() as 'ru' | 'uz' | 'en';
-  const [selectedLanguage, setSelectedLanguage] = useState<'ru' | 'uz' | 'en'>(
-    locale
-  );
 
   const [selectedPage, setSelectedPage] = useState<SelectedInterface>(
     options[0]
@@ -92,34 +63,6 @@ const DashboardSwitchers = () => {
 
   return (
     <section>
-      <div className="flex flex-row items-center justify-between">
-        <div className="font-jost flex flex-row items-center text-[14px] font-medium text-[#0129E3] 2xl:text-[20px]">
-          <GrFormPrevious className="h-[25px] w-[25px] 2xl:h-[25px] 2xl:w-[25px]" />
-          <button>
-            {locale === 'ru' ? 'Назад' : locale === 'uz' ? 'Orqaga' : 'Back'}
-          </button>
-        </div>
-        <div className="flex flex-row items-center gap-[4px]">
-          <button
-            onClick={() => setSelectedLanguage('ru')}
-            className={`font-jost h-[24px] w-[32px] rounded-bl-[10px] rounded-tl-[10px] text-[14px] font-medium 2xl:h-[42px] 2xl:w-[48px] 2xl:text-[20px] ${selectedLanguage === 'ru' ? 'bg-[#0129E3] text-white' : 'bg-white text-[#050B2B]'}`}
-          >
-            Ru
-          </button>
-          <button
-            onClick={() => setSelectedLanguage('uz')}
-            className={`font-jost h-[24px] w-[32px] text-[14px] font-medium 2xl:h-[42px] 2xl:w-[48px] 2xl:text-[20px] ${selectedLanguage === 'uz' ? 'bg-[#0129E3] text-white' : 'bg-white text-[#050B2B]'}`}
-          >
-            Uz
-          </button>
-          <button
-            onClick={() => setSelectedLanguage('en')}
-            className={`font-jost h-[24px] w-[32px] rounded-br-[10px] rounded-tr-[10px] text-[14px] font-medium 2xl:h-[42px] 2xl:w-[48px] 2xl:text-[20px] ${selectedLanguage === 'en' ? 'bg-[#0129E3] text-white' : 'bg-white text-[#050B2B]'}`}
-          >
-            Eng
-          </button>
-        </div>
-      </div>
       <div className="mt-[20px] 2xl:mt-[18px] 2xl:hidden">
         <button
           className="flex w-full flex-row items-center justify-between rounded-[8px] bg-[#0129E31A] bg-opacity-[10%] px-[20px] py-[15px]"
@@ -155,12 +98,12 @@ const DashboardSwitchers = () => {
       {/* DESKTOP */}
       <div className="mt-[20px] hidden w-full 2xl:block">
         <div className="inline-block w-full border-b border-b-[#EDEDED]">
-          <div className="grid w-full grid-cols-[repeat(8,_1fr)_minmax(0,_80px)]">
+          <div className="grid w-full grid-cols-[repeat(6,_1fr)_minmax(0,_60px)]">
             {options.map((option, index) => (
               <button
                 key={index}
                 onClick={() => handleSelect(option)}
-                className={`font-jost relative flex items-center justify-center py-[20px] text-center text-[15px] font-medium text-[#050B2B] ${selectedPage[locale] === option[locale] ? 'rounded-tl-[10px] rounded-tr-[10px] bg-[#0129E3] text-white' : 'bg-white text-[#050B2B]'}`}
+                className={`font-jost relative flex items-center justify-center py-[20px] text-center text-[16px] font-medium text-[#050B2B] ${selectedPage[locale] === option[locale] ? 'rounded-tl-[10px] rounded-tr-[10px] bg-[#0129E3] text-white' : 'bg-white text-[#050B2B]'}`}
               >
                 <span
                   className={`absolute right-0 top-1/2 h-[30px] w-[1px] -translate-y-1/2 transform ${selectedPage[locale] === option[locale] ? 'bg-[#0129E3]' : 'bg-[#EDEDED]'} `}
@@ -173,12 +116,24 @@ const DashboardSwitchers = () => {
       </div>
 
       {selectedPage.en === 'Profile' && (
-        <Profile selectedInputLang={selectedLanguage} />
+        <Profile selectedInputLang={selectedInputLang} />
       )}
-      {selectedPage.en === 'Doctors' && (
-        <Doctors selectedInputLang={selectedLanguage} />
+      {selectedPage.en === 'Contacts' && (
+        <DashboardLinks selectedInputLang={selectedInputLang} />
       )}
-      {selectedPage.en === 'Notifications' && <Notifications />}
+      {selectedPage.en === 'Profile Info' && (
+        <DashboardProInfo selectedInputLang={selectedInputLang} />
+      )}
+      {selectedPage.en === 'Services and Prices' && (
+        <DashboardServices selectedInputLang={selectedInputLang} />
+      )}
+      {selectedPage.en === 'Documents' && (
+        <DashboardFiles selectedInputLang={selectedInputLang} />
+      )}
+      {selectedPage.en === 'Reception Place' && (
+        <DashboardAddress selectedInputLang={selectedInputLang} />
+      )}
+      {selectedPage.en === 'Notifications' && <ApplicationMessage />}
     </section>
   );
 };
