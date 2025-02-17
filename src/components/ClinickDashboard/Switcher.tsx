@@ -6,7 +6,8 @@ import { IoIosArrowDown, IoMdNotificationsOutline } from 'react-icons/io';
 import 'toastr/build/toastr.min.css';
 import { Profile } from './Profile';
 import { Doctors } from './doctors/Doctors';
-
+import { ProInfoClinic } from './proInfoClinic';
+import { ClinicAddress } from './Address';
 import { Notifications } from './Notification';
 interface SelectedInterface {
   ru: string;
@@ -177,6 +178,12 @@ const DashboardSwitchers = () => {
       )}
       {selectedPage.en === 'Doctors' && (
         <Doctors selectedInputLang={selectedLanguage} />
+      )}
+      {selectedPage.en === 'Professional Info' && (
+        <ProInfoClinic selectedInputLang={selectedLanguage} />
+      )}
+      {selectedPage.en === 'Reception Place' && (
+        <ClinicAddress selectedInputLang={selectedLanguage} />
       )}
       {selectedPage.en === 'Notifications' && <Notifications />}
     </section>

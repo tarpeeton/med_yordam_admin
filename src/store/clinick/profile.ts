@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import axios from 'axios';
-
+import { useAddressStore, AddressEntry } from './address';
 export interface ImageData {
   id: number;
   url: string;
@@ -17,6 +17,7 @@ export interface ClinicProfileData {
   workTo: string;
   logo: string | File | ImageData | null;
   photo: string | File | ImageData | null;
+  receptionTimes: AddressEntry[];
 }
 
 export interface ClinicProfileResponseData extends Partial<ClinicProfileData> {
@@ -87,6 +88,7 @@ export const useClinicProfileStore = create<ClinicProfileStore>((set, get) => {
     workTo: '',
     logo: null,
     photo: null,
+    receptionTimes: [],
   };
 
   return {
@@ -214,7 +216,12 @@ export const useClinicProfileStore = create<ClinicProfileStore>((set, get) => {
             workTo: responseData.workTo ?? '',
             logo: responseData.logo ?? null,
             photo: responseData.mainPhoto ?? null,
+            receptionTimes: responseData.receptionTimes ?? [],
           };
+          useAddressStore
+            .getState()
+            .setAllData(responseData?.receptionTimes || []);
+
           set(newState);
           savedData = newState;
           return true;
