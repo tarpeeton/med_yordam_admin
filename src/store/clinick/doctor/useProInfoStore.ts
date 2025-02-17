@@ -448,7 +448,6 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
       });
 
       const experienceTransformed = state.workExperiences.map((experience) => {
-        // Используем optional chaining и значение по умолчанию
         const nameRu = experience.name?.ru || '';
         const nameUz = experience.name?.uz || '';
         const nameEn = experience.name?.en || '';

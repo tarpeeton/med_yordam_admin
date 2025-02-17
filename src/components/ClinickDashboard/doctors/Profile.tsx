@@ -75,13 +75,13 @@ const Profile = ({ selectedInputLang }: ILangTopProps) => {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      setImage(file); // Устанавливаем выбранный файл в Zustand
+      setImage(file);
       setSelectedFile(file);
 
       const reader = new FileReader();
       reader.onload = () => {
         if (reader.result) {
-          setPreviewImage(reader.result as string); // Предпросмотр изображения
+          setPreviewImage(reader.result as string);
         }
       };
       reader.readAsDataURL(file);
@@ -110,8 +110,7 @@ const Profile = ({ selectedInputLang }: ILangTopProps) => {
               width={1000}
               height={950}
               loading="lazy"
-              layout="responsive"
-              quality={75}
+              quality={100}
               className="h-full w-full rounded-[20px] object-cover"
             />
             <button className="absolute right-[20px] top-[20px] z-10 flex h-[40px] w-[40px] items-center justify-center rounded-full bg-[#050B2B80] bg-opacity-[50%] text-center text-white 2xl:h-[45px] 2xl:w-[45px]">

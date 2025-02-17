@@ -138,29 +138,12 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
       return false;
     }
 
-    if (photo?.id) {
-      const formData = new FormData();
-      if (image instanceof File) {
-        formData.append('new-photo', image);
-      }
-      await axios.put(
-        `https://medyordam.result-me.uz/api/photo/${photo.id}`,
-        formData,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      return true;
-    }
-
-    const genderEnum = gender.en.toUpperCase();
-
     try {
       const formData = new FormData();
-
       if (image instanceof File) {
         formData.append('photo', image);
       }
+      const genderEnum = gender.en.toUpperCase();
 
       const profileJson = JSON.stringify({
         id: id > 0 ? id : undefined,
@@ -170,27 +153,38 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
         exp,
         phone,
         gender: genderEnum,
+        // Yangi profil yaratishda kerak bo'lsa
         ...(id === 0 && { cityId: 1 }),
       });
+      formData.append('json', profileJson);
 
       const clinicId = useClinicProfileStore.getState().id;
-
-      formData.append('json', profileJson);
       formData.append('clinicId', String(clinicId));
 
-      const endpoint = 'https://medyordam.result-me.uz/api/clinic/add-doctor';
-      const headers = {
-        Authorization: `Bearer ${token}`,
-        'Accept-Language': '',
-      };
+      let response;
 
-      const response = await axios.post(endpoint, formData, { headers });
+      if (id > 0) {
+        const endpoint = `https://medyordam.result-me.uz/api/clinic/update-doctor`;
+        response = await axios.put(endpoint, formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Accept-Language': '',
+          },
+        });
+      } else {
+        const endpoint = 'https://medyordam.result-me.uz/api/clinic/add-doctor';
+        response = await axios.post(endpoint, formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Accept-Language': '',
+          },
+        });
+      }
 
       set({ success: true });
       const updatedProfile: ServerResponse = response.data.data;
       localStorage.setItem('slug-doctor', updatedProfile.slug);
       get().setProfile(updatedProfile);
-
       return true;
     } catch (error) {
       console.error('Error saving profile:', error);
