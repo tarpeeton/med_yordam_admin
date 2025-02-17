@@ -26,6 +26,7 @@
     "react-input-mask": "^2.0.4",
     "react-loader-spinner": "^6.1.6",
     "react-player": "^2.16.0",
+    "react-tooltip": "^5.28.0",
     "styled-components": "^6.1.13",
     "swiper": "^11.1.14",
     "toastr": "^2.1.4",

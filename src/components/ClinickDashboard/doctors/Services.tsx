@@ -129,7 +129,14 @@ const DashboardServices = ({ selectedInputLang }: ILangTopProps) => {
                           <GoPencil className="absolute left-1 top-1/2 h-5 w-5 -translate-y-1/2 text-[#747474]" />
                           {selectedCategory ? (
                             <span>
-                              {selectedCategory.name[selectedInputLang]}
+                              {(() => {
+                                const text =
+                                  selectedCategory?.name?.[selectedInputLang] ||
+                                  '';
+                                return text.length > 50
+                                  ? text.slice(0, 50) + '...'
+                                  : text;
+                              })()}
                             </span>
                           ) : (
                             <span>
@@ -147,6 +154,7 @@ const DashboardServices = ({ selectedInputLang }: ILangTopProps) => {
                           }`}
                         />
                       </button>
+
                       {openCategoryIndex === index && (
                         <div
                           onMouseLeave={() => setOpenCategoryIndex(null)}
@@ -205,7 +213,14 @@ const DashboardServices = ({ selectedInputLang }: ILangTopProps) => {
                           <GoPencil className="absolute left-1 top-1/2 h-5 w-5 -translate-y-1/2 text-[#747474]" />
                           {selectedService ? (
                             <span>
-                              {selectedService.name[selectedInputLang]}
+                              {(() => {
+                                const text =
+                                  selectedService?.name?.[selectedInputLang] ||
+                                  '';
+                                return text.length > 30
+                                  ? text.slice(0, 30) + '...'
+                                  : text;
+                              })()}
                             </span>
                           ) : (
                             <span>
@@ -313,7 +328,6 @@ const DashboardServices = ({ selectedInputLang }: ILangTopProps) => {
             })}
           </div>
 
-          {/* Кнопка добавления сервиса */}
           <button
             onClick={addServiceList}
             className="mt-[15px] h-[50px] w-full rounded-[12px] border border-[#0129E3] text-[15px] font-medium text-[#0129E3] 2xl:w-[220px] 2xl:text-[16px]"
@@ -512,18 +526,17 @@ const DashboardServices = ({ selectedInputLang }: ILangTopProps) => {
               </div>
             </div>
           ))}
+          <button
+            onClick={addPromotion}
+            className="mt-[15px] h-[50px] w-full rounded-[12px] border border-[#0129E3] text-[15px] font-medium text-[#0129E3] 2xl:mt-[120px] 2xl:w-[220px] 2xl:text-[16px]"
+          >
+            {selectedInputLang === 'ru'
+              ? 'Добавить еще акции'
+              : selectedInputLang === 'uz'
+                ? "Ko'proq aktsiyalarni qo'shish"
+                : 'Add more promotions'}
+          </button>
         </div>
-
-        <button
-          onClick={addPromotion}
-          className="mt-[15px] h-[50px] w-full rounded-[12px] border border-[#0129E3] text-[15px] font-medium text-[#0129E3] 2xl:mt-[120px] 2xl:w-[220px] 2xl:text-[16px]"
-        >
-          {selectedInputLang === 'ru'
-            ? 'Добавить еще акции'
-            : selectedInputLang === 'uz'
-              ? "Ko'proq aktsiyalarni qo'shish"
-              : 'Add more promotions'}
-        </button>
       </div>
       {/* BUTTON SAVE */}
       <div className="mt-[25px] flex w-full items-center 2xl:order-[3] 2xl:w-[100%] 2xl:justify-end">

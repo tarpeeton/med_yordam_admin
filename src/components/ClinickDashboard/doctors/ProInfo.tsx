@@ -20,7 +20,7 @@ const DashboardProInfo = ({ selectedInputLang }: ILangTopProps) => {
   const {
     specialties,
     languages,
-    achievements,
+    achievement,
     educations,
     toggleSpecialty,
     toggleLanguage,
@@ -169,29 +169,30 @@ const DashboardProInfo = ({ selectedInputLang }: ILangTopProps) => {
                     : 'Achievements'}
               </h1>
               <div className="mt-[15px] grid grid-cols-1 gap-[15px] 2xl:grid-cols-2">
-                {achievements.map((achievement, index) => (
-                  <div key={index} className="relative w-full">
-                    <input
-                      value={achievement[selectedInputLang]?.[0] || ''}
-                      onChange={(e) =>
-                        updateAchievementField(
-                          index,
-                          selectedInputLang,
-                          e.target.value
-                        )
-                      }
-                      placeholder={
-                        selectedInputLang === 'ru'
-                          ? 'Достижение'
-                          : selectedInputLang === 'uz'
-                            ? 'Yutuqlar'
-                            : 'Achievements'
-                      }
-                      className="focus:ring-ring w-full rounded-[12px] bg-[#F8F8F8] px-[15px] py-[18px] pl-[40px] text-[#747474] focus:outline-none focus:ring-1"
-                    />
-                    <GoPencil className="text-muted-foreground absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#747474]" />
-                  </div>
-                ))}
+                {achievement &&
+                  achievement?.map((item, index) => (
+                    <div key={index} className="relative w-full">
+                      <input
+                        value={item[selectedInputLang]?.[0] || ''}
+                        onChange={(e) =>
+                          updateAchievementField(
+                            index,
+                            selectedInputLang,
+                            e.target.value
+                          )
+                        }
+                        placeholder={
+                          selectedInputLang === 'ru'
+                            ? 'Достижение'
+                            : selectedInputLang === 'uz'
+                              ? 'Yutuqlar'
+                              : 'Achievements'
+                        }
+                        className="focus:ring-ring w-full rounded-[12px] bg-[#F8F8F8] px-[15px] py-[18px] pl-[40px] text-[#747474] focus:outline-none focus:ring-1"
+                      />
+                      <GoPencil className="text-muted-foreground absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#747474]" />
+                    </div>
+                  ))}
               </div>
               <button
                 onClick={handleAddAchievement}
@@ -271,7 +272,7 @@ const DashboardProInfo = ({ selectedInputLang }: ILangTopProps) => {
                       {/* Start Year */}
                       <input
                         type="text"
-                        value={education.fromYear}
+                        value={education.fromYear || ''}
                         onChange={(e) =>
                           updateEducationField(
                             index,
@@ -296,7 +297,7 @@ const DashboardProInfo = ({ selectedInputLang }: ILangTopProps) => {
                       {/* End Year */}
                       <input
                         type="text"
-                        value={education.toYear}
+                        value={education.toYear || ''}
                         onChange={(e) =>
                           updateEducationField(
                             index,
@@ -347,13 +348,13 @@ const DashboardProInfo = ({ selectedInputLang }: ILangTopProps) => {
                     <div className="relative">
                       <input
                         type="text"
-                        value={experience?.name[selectedInputLang]}
+                        value={experience.name?.[selectedInputLang] || ''}
                         onChange={(e) =>
                           updateWorkExperienceFieldByIndex(
                             index,
-                            'name', // Поле для обновления
-                            selectedInputLang, // Язык (например, 'ru', 'uz', 'en')
-                            e.target.value // Новое значение
+                            'name',
+                            selectedInputLang,
+                            e.target.value
                           )
                         }
                         placeholder={
@@ -370,13 +371,13 @@ const DashboardProInfo = ({ selectedInputLang }: ILangTopProps) => {
                     <div className="relative">
                       <input
                         type="text"
-                        value={experience.city[selectedInputLang]}
+                        value={experience.city?.[selectedInputLang] || ''}
                         onChange={(e) =>
                           updateWorkExperienceFieldByIndex(
                             index,
-                            'city', // Поле для обновления
-                            selectedInputLang, // Язык (например, 'ru', 'uz', 'en')
-                            e.target.value // Новое значение
+                            'city',
+                            selectedInputLang,
+                            e.target.value
                           )
                         }
                         placeholder={
@@ -393,13 +394,13 @@ const DashboardProInfo = ({ selectedInputLang }: ILangTopProps) => {
                     <div className="relative">
                       <input
                         type="text"
-                        value={experience.fromYear}
+                        value={experience.fromYear || ''}
                         onChange={(e) =>
                           updateWorkExperienceFieldByIndex(
                             index,
-                            'fromYear', // Поле для обновления
-                            null, // Язык (например, 'ru', 'uz', 'en')
-                            e.target.value // Новое значение
+                            'fromYear',
+                            null,
+                            e.target.value
                           )
                         }
                         placeholder={
@@ -417,7 +418,7 @@ const DashboardProInfo = ({ selectedInputLang }: ILangTopProps) => {
                       <MdOutlineDateRange className="text-muted-foreground absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#747474]" />
                       <input
                         type="text"
-                        value={experience.toYear}
+                        value={experience.toYear || ''}
                         onChange={(e) =>
                           updateWorkExperienceFieldByIndex(
                             index,
@@ -439,7 +440,7 @@ const DashboardProInfo = ({ selectedInputLang }: ILangTopProps) => {
                   </div>
                   <div className="mt-[15px] flex w-full flex-col items-center justify-between rounded-[12px] bg-[#F8F8F8] p-[7px] 2xl:mt-[12px] 2xl:flex-row 2xl:p-[14px]">
                     <div className="grid grid-cols-2 gap-[10px] 2xl:grid-cols-6">
-                      {experience.position[selectedInputLang]?.map(
+                      {experience?.position?.[selectedInputLang]?.map(
                         (item, index) => (
                           <div
                             key={index}

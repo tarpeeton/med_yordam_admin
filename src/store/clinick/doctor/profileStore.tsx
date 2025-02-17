@@ -11,7 +11,7 @@ import { useAddressStore } from '@/store/clinick/doctor/createAddressStore';
 import { useUploadFiles } from './createFilesStore';
 import { useClinicProfileStore } from '../profile';
 
-const transformAchievements = (data: {
+export const transformAchievements = (data: {
   ru: string[];
   uz: string[];
   en: string[];
