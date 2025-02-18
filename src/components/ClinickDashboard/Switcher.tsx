@@ -9,6 +9,10 @@ import { Doctors } from './doctors/Doctors';
 import { ProInfoClinic } from './proInfoClinic';
 import { ClinicAddress } from './Address';
 import { Notifications } from './Notification';
+import { Promotions } from './Promotions';
+import { Gallery } from './Gallery';
+import DashboardSecurity from '../Dashboard/Password';
+
 interface SelectedInterface {
   ru: string;
   uz: string;
@@ -184,6 +188,15 @@ const DashboardSwitchers = () => {
       )}
       {selectedPage.en === 'Reception Place' && (
         <ClinicAddress selectedInputLang={selectedLanguage} />
+      )}
+      {selectedPage.en === 'Promotions' && (
+        <Promotions selectedInputLang={selectedLanguage} />
+      )}
+      {selectedPage.en === 'Security' && (
+        <DashboardSecurity selectedInputLang={selectedLanguage} />
+      )}
+      {selectedPage.en === 'Photos' && (
+        <Gallery selectedInputLang={selectedLanguage} />
       )}
       {selectedPage.en === 'Notifications' && <Notifications />}
     </section>

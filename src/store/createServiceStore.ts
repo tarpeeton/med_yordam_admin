@@ -273,7 +273,6 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
         name: s.name,
         price: s.price || 0,
       }));
-      // Обновляем данные для выбранной категории, не затирая предыдущие
       set((state) => ({
         servicesByCategory: {
           ...state.servicesByCategory,
@@ -287,7 +286,6 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
   setSelectedServiceCategory: (category: ServiceCategory | null) => {
     set({ selectedServiceCategory: category });
     if (category) {
-      // Если для данной категории услуг ещё нет — запрашиваем
       if (!get().servicesByCategory[category.id]) {
         get().fetchServicesByCategory(category.id);
       }
@@ -354,7 +352,6 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
     const state = get();
     const serviceItem = state.serviceList[index];
 
-    // Если у элемента есть id (который будет использован для удаления на сервере)
     if (serviceItem && serviceItem.id) {
       try {
         const { id: doctorId } = useProfileStore.getState();
@@ -375,7 +372,6 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
           },
         });
 
-        // Удаляем элемент из состояния после успешного ответа от сервера
         set((state) => ({
           serviceList: state.serviceList.filter((_, i) => i !== index),
         }));
@@ -385,7 +381,6 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
         return false;
       }
     } else {
-      // Если id отсутствует, удаляем локально без запроса к серверу
       set((state) => ({
         serviceList: state.serviceList.filter((_, i) => i !== index),
       }));
@@ -422,7 +417,6 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
       const { id } = useProfileStore.getState();
       const token = sessionStorage.getItem('token');
 
-      // Преобразование списка акций
       const promotionList = await Promise.all(
         promotions.map(async (promotion) => {
           let imageId: number | null = null;

@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import axios from 'axios';
 import { useAddressStore, AddressEntry } from './address';
+import { useUploadFiles } from './gallery';
 export interface ImageData {
   id: number;
   url: string;
@@ -18,6 +19,7 @@ export interface ClinicProfileData {
   logo: string | File | ImageData | null;
   photo: string | File | ImageData | null;
   receptionTimes: AddressEntry[];
+  photos?: { id: number; url: string }[];
 }
 
 export interface ClinicProfileResponseData extends Partial<ClinicProfileData> {
@@ -218,6 +220,7 @@ export const useClinicProfileStore = create<ClinicProfileStore>((set, get) => {
             photo: responseData.mainPhoto ?? null,
             receptionTimes: responseData.receptionTimes ?? [],
           };
+          useUploadFiles.getState().setAllGallery(responseData?.photos || []);
           useAddressStore
             .getState()
             .setAllData(responseData?.receptionTimes || []);
