@@ -11,6 +11,7 @@ import { ClinicAddress } from './Address';
 import { Notifications } from './Notification';
 import { Promotions } from './Promotions';
 import { Gallery } from './Gallery';
+import { ClinicService } from './Service';
 import DashboardSecurity from '../Dashboard/Password';
 
 interface SelectedInterface {
@@ -197,6 +198,9 @@ const DashboardSwitchers = () => {
       )}
       {selectedPage.en === 'Photos' && (
         <Gallery selectedInputLang={selectedLanguage} />
+      )}
+      {selectedPage.en === 'Services and Prices' && (
+        <ClinicService selectedInputLang={selectedLanguage} />
       )}
       {selectedPage.en === 'Notifications' && <Notifications />}
     </section>
