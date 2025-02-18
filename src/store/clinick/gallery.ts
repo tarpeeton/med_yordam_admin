@@ -31,7 +31,7 @@ interface UploadFilesState {
   resetFiles: () => void;
   setDocuments: (documents: DocumentData[]) => void;
   deleteFile: (backendId: number) => Promise<void>;
-  saveFiles: () => Promise<void>;
+  saveFiles: () => Promise<boolean>;
   setAllGallery: (photos: { id: number; url: string }[]) => void;
 }
 
@@ -119,7 +119,7 @@ export const useUploadFiles = create<UploadFilesState>((set, get) => ({
     }
   },
 
-  saveFiles: async () => {
+  saveFiles: async (): Promise<boolean> => {
     try {
       const { files } = get();
       const token = sessionStorage.getItem('token');
@@ -127,7 +127,7 @@ export const useUploadFiles = create<UploadFilesState>((set, get) => ({
       const filesToUpload = files.filter((file) => file.fileObj);
       if (!filesToUpload.length) {
         console.warn('No files to upload');
-        return;
+        return false;
       }
       const formData = new FormData();
       const clinickID = useClinicProfileStore.getState().id;
@@ -149,21 +149,31 @@ export const useUploadFiles = create<UploadFilesState>((set, get) => ({
           },
         }
       );
-      const documents: DocumentData[] = response.data.documents;
-      set((state) => ({
-        files: state.files.map((file, index) => {
-          if (file.fileObj && documents[index]) {
-            return {
-              ...file,
-              status: 'success',
-              backendId: documents[index].id,
-              url: documents[index].file.url,
-              fileObj: undefined,
-            };
-          }
-          return file;
-        }),
-      }));
+      const photos: { id: number; url: string }[] = response.data.data.photos;
+      set((state) => {
+        let uploadIndex = 0;
+        return {
+          files: state.files.map((file) => {
+            if (file.fileObj) {
+              const photo = photos[uploadIndex];
+              uploadIndex++;
+              if (photo) {
+                return {
+                  ...file,
+                  status: 'success',
+                  backendId: photo.id,
+                  url: photo.url,
+                  fileObj: undefined,
+                };
+              } else {
+                return { ...file, status: 'error' };
+              }
+            }
+            return file;
+          }),
+        };
+      });
+      return true;
     } catch (error) {
       console.error('Error uploading files:', error);
       set((state) => ({
@@ -171,6 +181,7 @@ export const useUploadFiles = create<UploadFilesState>((set, get) => ({
           file.fileObj ? { ...file, status: 'error' } : file
         ),
       }));
+      return false;
     }
   },
 

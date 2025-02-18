@@ -5,14 +5,35 @@ import { IoCloseOutline } from 'react-icons/io5';
 import React from 'react';
 import { ILangTopProps } from '@/interface/langtopProps';
 import SaveButton from '@/ui/saveButton';
+import { useLocale } from 'next-intl';
+import toastr from 'toastr';
+
 export const Gallery = ({ selectedInputLang }: ILangTopProps) => {
   const { files, addFiles, deleteFile, saveFiles } = useUploadFiles();
-
+  const locale = useLocale();
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const filesList = event.target.files;
     if (filesList) {
       addFiles(filesList);
     }
+  };
+
+  const SaveChanges = async () => {
+    const success = await saveFiles();
+    const message =
+      locale === 'ru'
+        ? success
+          ? 'успешно сохранён!'
+          : 'Ошибка при сохранении'
+        : locale === 'uz'
+          ? success
+            ? 'muvaffaqiyatli saqlandi!'
+            : 'Saqlashda xatolik yuz berdi.'
+          : success
+            ? 'Saved successfully!'
+            : 'Error saving profile.';
+
+    toastr[success ? 'success' : 'error'](message);
   };
 
   return (
@@ -57,9 +78,6 @@ export const Gallery = ({ selectedInputLang }: ILangTopProps) => {
                       <input
                         type="file"
                         className="absolute inset-0 cursor-pointer opacity-0"
-                        onChange={(e) => {
-                          const selectedFile = e.target.files?.[0];
-                        }}
                       />
                     </>
                   )}
@@ -90,7 +108,7 @@ export const Gallery = ({ selectedInputLang }: ILangTopProps) => {
         <div className="2xl:w-64">
           <SaveButton
             selectedInputLang={selectedInputLang}
-            onClick={saveFiles}
+            onClick={SaveChanges}
           />
         </div>
       </div>
