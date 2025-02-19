@@ -4,6 +4,7 @@ import { useAddressStore, AddressEntry } from './address';
 import { useUploadFiles } from './gallery';
 import { clinickServiceStore, BackendServiceResponse } from './service';
 import { useSertificatesStore, AboutUsItem, IAdress } from './sertificates';
+import { useServiceStore } from '../createServiceStore';
 
 export interface ImageData {
   id: number;
@@ -238,6 +239,10 @@ export const useClinicProfileStore = create<ClinicProfileStore>((set, get) => {
             .getState()
             .setAllServiceList(responseData?.services || []);
           useUploadFiles.getState().setAllGallery(responseData?.photos || []);
+          useServiceStore
+            .getState()
+            .setAllServiceList(responseData?.services || []);
+
           useSertificatesStore
             .getState()
             .setAllSertificates(responseData?.certificates || []);

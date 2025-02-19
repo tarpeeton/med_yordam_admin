@@ -62,7 +62,7 @@ export const ProInfoClinic = ({ selectedInputLang }: ILangTopProps) => {
                 <div className="relative">
                   <input
                     type="text"
-                    value={item.title[selectedInputLang]}
+                    value={item.title?.[selectedInputLang] || ''}
                     onChange={(e) =>
                       updateAboutUs(
                         index,
@@ -84,7 +84,7 @@ export const ProInfoClinic = ({ selectedInputLang }: ILangTopProps) => {
                 </div>
                 <div className="relative col-span-full 2xl:h-[150px]">
                   <textarea
-                    value={item.description[selectedInputLang]}
+                    value={item.description?.[selectedInputLang] || ''}
                     onChange={(e) =>
                       updateAboutUs(
                         index,

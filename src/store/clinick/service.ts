@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import axios from 'axios';
 import { multiLang } from '@/interface/multiLang';
-import { useProfileStore } from '@/store/profileStore';
 import { useClinicProfileStore } from './profile';
 
 export interface ServiceCategory {
@@ -12,10 +11,13 @@ export interface ServiceCategory {
 
 export interface BackendServiceResponse {
   id: number;
-  categoryId: number;
-  slug: string;
-  name: multiLang;
-  price?: number;
+  service: {
+    id: number;
+    categoryId: number;
+    slug: string;
+    name: multiLang;
+  };
+  price: number;
 }
 
 export interface Service {
@@ -170,8 +172,8 @@ export const clinickServiceStore = create<ClinickServiceStoreType>(
     setAllService: (serviceList: BackendServiceResponse[]) => {
       const transformedServices: Service[] = serviceList.map((s) => ({
         id: s.id,
-        name: s.name,
-        price: s.price ?? 0, // если price отсутствует, подставляем 0
+        name: s.service.name,
+        price: s.price ?? 0,
       }));
       set({ services: transformedServices });
     },
@@ -188,23 +190,27 @@ export const clinickServiceStore = create<ClinickServiceStoreType>(
 
       if (serviceItem && serviceItem.id) {
         try {
-          const { id: doctorId } = useProfileStore.getState();
+          const { id: doctorId } = useClinicProfileStore.getState();
           const token = sessionStorage.getItem('token');
+
           const payload = {
             id: doctorId,
-            serviceList: [
+            services: [
               {
                 id: serviceItem.id,
               },
             ],
           };
+          const formData = new FormData();
+          formData.append('json', JSON.stringify(payload));
 
           await axios.put(
             'https://medyordam.result-me.uz/api/clinic',
-            payload,
+            formData,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
+                'Accept-Language': '',
               },
             }
           );
@@ -232,17 +238,18 @@ export const clinickServiceStore = create<ClinickServiceStoreType>(
         }),
       }));
     },
+
     setAllServiceList: (backendServiceList: BackendServiceResponse[]) => {
       const transformedServiceList: SelectedServiceItem[] =
         backendServiceList.map((item) => ({
           id: item.id,
           service: {
-            id: item.id,
-            categoryId: item.categoryId,
-            slug: item.slug,
-            name: item.name,
+            id: item.service.id,
+            categoryId: item.service.categoryId,
+            slug: item.service.slug,
+            name: item.service.name,
           },
-          price: item.price,
+          price: item.price ?? 0,
         }));
       set({ serviceList: transformedServiceList });
     },
@@ -256,10 +263,9 @@ export const clinickServiceStore = create<ClinickServiceStoreType>(
         const transformedServices = serviceList.map((item) => ({
           ...(item.id ? { id: item.id } : {}),
           service: {
-            id: item.service.categoryId ?? null,
-            categoryId: item.service?.categoryId ?? 1,
+            id: item.service.id,
+            categoryId: item.service?.categoryId ?? null,
           },
-          categoryId: item.service?.categoryId ?? 1,
           price: item.price ?? 0,
         }));
 
@@ -289,10 +295,10 @@ export const clinickServiceStore = create<ClinickServiceStoreType>(
               (item: BackendServiceResponse) => ({
                 id: item.id,
                 service: {
-                  id: item.id,
-                  categoryId: item.categoryId,
-                  slug: item.slug,
-                  name: item.name,
+                  id: item.service.id,
+                  categoryId: item.service.categoryId,
+                  slug: item.service.slug,
+                  name: item.service.name,
                 },
                 price: item.price ?? 0,
               })
