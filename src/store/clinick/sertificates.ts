@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import axios from 'axios';
 import { useClinicProfileStore } from './profile';
+import { multiLang } from '@/interface/multiLang';
 
 export interface UploadFile {
   id: string;
@@ -12,6 +13,24 @@ export interface UploadFile {
   fileObj?: File;
 }
 
+interface IPayload {
+  id: number;
+  aboutUs: AboutUsItem[];
+  address: IAdress[];
+}
+export interface AboutUsItem {
+  id?: number | null;
+  title: {
+    uz: string;
+    ru: string;
+    en: string;
+  };
+  description: {
+    uz: string;
+    ru: string;
+    en: string;
+  };
+}
 interface DocumentData {
   id: number;
   file: {
@@ -20,9 +39,26 @@ interface DocumentData {
   };
 }
 
+interface DataIsBackend {
+  address: IAdress[];
+  aboutUs: AboutUsItem[];
+}
+
+export interface IAdress {
+  id?: number;
+  name: {
+    uz: string;
+    ru: string;
+    en: string;
+  };
+}
+
 interface UploadFilesState {
   files: UploadFile[];
+  aboutUs: AboutUsItem[];
+  address: IAdress[];
   addFiles: (files: FileList) => void;
+
   updateFileStatus: (
     id: string,
     status: 'uploading' | 'success' | 'error'
@@ -31,12 +67,39 @@ interface UploadFilesState {
   resetFiles: () => void;
   setDocuments: (documents: DocumentData[]) => void;
   deleteFile: (backendId: number) => Promise<void>;
-  saveFiles: () => Promise<boolean>;
-  setAllGallery: (photos: { id: number; url: string }[]) => void;
+  setAllSertificates: (photos: { id: number; url: string }[]) => void;
+
+  saveData: () => Promise<boolean>;
+  // ADRESS
+  updateAboutUs: (
+    index: number,
+    lang: 'ru' | 'uz' | 'en',
+    field: 'title' | 'description',
+    value: string
+  ) => void;
+  updateAdress: (
+    index: number,
+    lang: 'ru' | 'uz' | 'en',
+    value: string
+  ) => void;
+  addAdress: () => void;
+  // ABOUT
+
+  deleteAboutUs: (index: number) => void;
+  addAboutUs: () => void;
+  // SET ABOUT AND ADDRESS
+  setAddressAndAbout: (address: IAdress[], aboutUs: AboutUsItem[]) => void;
 }
 
 export const useSertificatesStore = create<UploadFilesState>((set, get) => ({
   files: [],
+  aboutUs: [
+    {
+      title: { ru: '', uz: '', en: '' },
+      description: { ru: '', uz: '', en: '' },
+    },
+  ],
+  address: [{ name: { ru: '', uz: '', en: '' } }],
 
   addFiles: (files) => {
     const newFiles: UploadFile[] = Array.from(files).map((file) => {
@@ -117,16 +180,48 @@ export const useSertificatesStore = create<UploadFilesState>((set, get) => ({
     }
   },
 
-  saveFiles: async (): Promise<boolean> => {
+  addAboutUs: () => {
+    set((state) => ({
+      aboutUs: [
+        ...state.aboutUs,
+        {
+          title: { ru: '', uz: '', en: '' },
+          description: { ru: '', uz: '', en: '' },
+        },
+      ],
+    }));
+  },
+
+  updateAboutUs: (index, lang, field, value) => {
+    set((state) => {
+      const newAboutUs = [...state.aboutUs];
+      if (newAboutUs[index]) {
+        newAboutUs[index] = {
+          ...newAboutUs[index],
+          [field]: {
+            ...newAboutUs[index][field],
+            [lang]: value,
+          },
+        };
+      }
+      return { aboutUs: newAboutUs };
+    });
+  },
+
+  deleteAboutUs: (index) => {
+    set((state) => {
+      const newAboutUs = state.aboutUs.filter((_, i) => i !== index);
+      return { aboutUs: newAboutUs };
+    });
+  },
+
+  saveData: async (): Promise<boolean> => {
     try {
-      const { files } = get();
+      const { files, aboutUs, address } = get();
       const token = sessionStorage.getItem('token');
       const tokenHeader = token ? `Bearer ${token}` : '';
       const filesToUpload = files.filter((file) => file.fileObj);
-      if (!filesToUpload.length) {
-        console.warn('No files to upload');
-        return false;
-      }
+
       const formData = new FormData();
       const clinickID = useClinicProfileStore.getState().id;
       filesToUpload.forEach((file) => {
@@ -134,7 +229,29 @@ export const useSertificatesStore = create<UploadFilesState>((set, get) => ({
           formData.append('certificates', file.fileObj);
         }
       });
-      const payload = { id: clinickID };
+
+      const filteredAboutUs = aboutUs.filter(
+        (item) =>
+          Object.values(item.title).some((value) => value.trim() !== '') ||
+          Object.values(item.description).some((value) => value.trim() !== '')
+      );
+
+      const filteredAddress = address.filter((item) =>
+        Object.values(item.name).some((value) => value.trim() !== '')
+      );
+
+      const payload: Partial<Record<keyof IPayload, unknown>> = {
+        id: clinickID,
+      };
+
+      if (filteredAboutUs.length > 0) {
+        payload.aboutUs = filteredAboutUs;
+      }
+
+      if (filteredAddress.length > 0) {
+        payload.address = filteredAddress;
+      }
+
       formData.append('json', JSON.stringify(payload));
       const response = await axios.put(
         'https://medyordam.result-me.uz/api/clinic',
@@ -183,7 +300,26 @@ export const useSertificatesStore = create<UploadFilesState>((set, get) => ({
     }
   },
 
-  setAllGallery: (photos) => {
+  addAdress: () => {
+    set((state) => ({
+      address: [...state.address, { name: { ru: '', uz: '', en: '' } }],
+    }));
+  },
+
+  updateAdress: (index, lang, value) => {
+    set((state) => {
+      const newAddress = [...state.address];
+      if (newAddress[index]) {
+        newAddress[index] = {
+          ...newAddress[index],
+          name: { ...newAddress[index].name, [lang]: value },
+        };
+      }
+      return { address: newAddress };
+    });
+  },
+
+  setAllSertificates: (photos) => {
     const mappedFiles: UploadFile[] = photos.map((photo) => ({
       id: photo.id.toString(),
       backendId: photo.id,
@@ -192,5 +328,9 @@ export const useSertificatesStore = create<UploadFilesState>((set, get) => ({
       name: photo.url.split('/').pop()?.replace(/^\d+-/, '') || '',
     }));
     set({ files: mappedFiles });
+  },
+
+  setAddressAndAbout: (address, aboutUs) => {
+    set({ aboutUs: aboutUs, address: address });
   },
 }));

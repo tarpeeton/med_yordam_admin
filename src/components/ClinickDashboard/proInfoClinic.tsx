@@ -5,9 +5,21 @@ import { useLocale } from 'next-intl';
 import { IoCloseOutline } from 'react-icons/io5';
 import toastr from 'toastr';
 import { MdOutlineAttachFile } from 'react-icons/md';
+import SaveButton from '@/ui/saveButton';
 
 export const ProInfoClinic = ({ selectedInputLang }: ILangTopProps) => {
-  const { files, addFiles, deleteFile, saveFiles } = useSertificatesStore();
+  const {
+    files,
+    addFiles,
+    deleteFile,
+    saveData,
+    addAboutUs,
+    aboutUs,
+    updateAboutUs,
+    addAdress,
+    updateAdress,
+    address,
+  } = useSertificatesStore();
   const locale = useLocale();
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const filesList = event.target.files;
@@ -17,7 +29,7 @@ export const ProInfoClinic = ({ selectedInputLang }: ILangTopProps) => {
   };
 
   const SaveChanges = async () => {
-    const success = await saveFiles();
+    const success = await saveData();
     const message =
       locale === 'ru'
         ? success
@@ -38,53 +50,74 @@ export const ProInfoClinic = ({ selectedInputLang }: ILangTopProps) => {
       <div className="mt-[25px] 2xl:mt-[37px]">
         <div className="flex flex-col bg-[#FFFFFF]">
           <div className="p-4 2xl:p-6">
-            {/* ABOUT US */}
-            <div className="flex flex-col gap-3 2xl:gap-4">
-              <p className="text-[17px] font-medium mdl:text-[18px] 2xl:text-[20px]">
-                {selectedInputLang === 'ru'
-                  ? 'О нас '
-                  : selectedInputLang === 'uz'
-                    ? 'Biz Haqimizda'
-                    : 'About Us'}
-              </p>
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder={
-                    selectedInputLang === 'ru'
-                      ? 'Название клиники'
-                      : selectedInputLang === 'uz'
-                        ? 'Klinika nomi'
-                        : 'Clinic Name'
-                  }
-                  className="focus:ring-ring w-full rounded-[12px] bg-[#F8F8F8] px-[15px] py-[18px] pl-[50px] text-[#747474] focus:outline-none focus:ring-1"
-                />
-                <GoPencil className="absolute left-[1.2rem] top-1/2 h-5 w-5 -translate-y-1/2 text-[#0129E3]" />
+            {aboutUs.map((item, index) => (
+              <div key={index} className="flex flex-col gap-3 2xl:gap-4">
+                <p className="text-[17px] font-medium mdl:text-[18px] 2xl:text-[20px]">
+                  {selectedInputLang === 'ru'
+                    ? 'О нас '
+                    : selectedInputLang === 'uz'
+                      ? 'Biz Haqimizda'
+                      : 'About Us'}
+                </p>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={item.title[selectedInputLang]}
+                    onChange={(e) =>
+                      updateAboutUs(
+                        index,
+                        selectedInputLang,
+                        'title',
+                        e.target.value
+                      )
+                    }
+                    placeholder={
+                      selectedInputLang === 'ru'
+                        ? 'Название клиники'
+                        : selectedInputLang === 'uz'
+                          ? 'Klinika nomi'
+                          : 'Clinic Name'
+                    }
+                    className="focus:ring-ring w-full rounded-[12px] bg-[#F8F8F8] px-[15px] py-[18px] pl-[50px] text-[#747474] focus:outline-none focus:ring-1"
+                  />
+                  <GoPencil className="absolute left-[1.2rem] top-1/2 h-5 w-5 -translate-y-1/2 text-[#0129E3]" />
+                </div>
+                <div className="relative col-span-full 2xl:h-[150px]">
+                  <textarea
+                    value={item.description[selectedInputLang]}
+                    onChange={(e) =>
+                      updateAboutUs(
+                        index,
+                        selectedInputLang,
+                        'description',
+                        e.target.value
+                      )
+                    }
+                    maxLength={500}
+                    placeholder={
+                      selectedInputLang === 'ru'
+                        ? 'Введите текст'
+                        : selectedInputLang === 'uz'
+                          ? 'Matn kiriting'
+                          : 'Enter text'
+                    }
+                    className="focus:ring-ring w-full resize-none rounded-[12px] bg-[#F8F8F8] px-[15px] py-[18px] pl-[50px] text-[#747474] focus:outline-none focus:ring-1 2xl:h-[150px]"
+                  />
+                  <GoPencil className="text-muted-foreground absolute left-3 top-[30px] h-5 w-5 -translate-y-1/2 text-[#0129E3]" />
+                </div>
+                <button
+                  onClick={addAboutUs}
+                  className="mt-[15px] h-[50px] w-full rounded-[12px] border border-[#0129E3] text-[15px] font-medium text-[#0129E3] 2xl:w-[220px] 2xl:text-[16px]"
+                >
+                  {selectedInputLang === 'ru'
+                    ? ' Добавить'
+                    : selectedInputLang === 'uz'
+                      ? ' Qo`shish'
+                      : 'Add'}
+                </button>
               </div>
-              <div className="relative col-span-full 2xl:h-[150px]">
-                <textarea
-                  maxLength={500}
-                  placeholder={
-                    selectedInputLang === 'ru'
-                      ? 'Введите текст '
-                      : selectedInputLang === 'uz'
-                        ? 'Matni kiriting'
-                        : ''
-                  }
-                  className="focus:ring-ring w-full resize-none rounded-[12px] bg-[#F8F8F8] px-[15px] py-[18px] pl-[50px] text-[#747474] focus:outline-none focus:ring-1 2xl:h-[150px]"
-                />
-                <GoPencil className="text-muted-foreground absolute left-3 top-[30px] h-5 w-5 -translate-y-1/2 text-[#0129E3]" />
-              </div>
-              {/* button add */}
-              <button className="mt-[15px] h-[50px] w-full rounded-[12px] border border-[#0129E3] text-[15px] font-medium text-[#0129E3] 2xl:w-[220px] 2xl:text-[16px]">
-                {selectedInputLang === 'ru'
-                  ? ' Добавить'
-                  : selectedInputLang === 'uz'
-                    ? ' Qo`shish'
-                    : 'Add'}
-              </button>
-            </div>
-            {/* ADDRESS */}
+            ))}
+
             <div className="mt-[25px] flex flex-col gap-3 2xl:mt-[60px] 2xl:gap-4">
               <p className="text-[17px] font-medium mdl:text-[18px] 2xl:text-[20px]">
                 {selectedInputLang === 'ru'
@@ -93,22 +126,31 @@ export const ProInfoClinic = ({ selectedInputLang }: ILangTopProps) => {
                     ? 'Manzil'
                     : 'Address'}
               </p>
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder={
-                    selectedInputLang === 'ru'
-                      ? 'Юнусабадский район, ул. Чинобод 10A'
-                      : selectedInputLang === 'uz'
-                        ? 'Yunusobod tumani, Chinobod ko‘chasi 10A'
-                        : 'Yunusobod district, Chinobod street 10A'
-                  }
-                  className="focus:ring-ring w-full rounded-[12px] bg-[#F8F8F8] px-[15px] py-[18px] pl-[50px] text-[#747474] focus:outline-none focus:ring-1"
-                />
-                <GoPencil className="absolute left-[1.2rem] top-1/2 h-5 w-5 -translate-y-1/2 text-[#0129E3]" />
-              </div>
-              {/* button add */}
-              <button className="mt-[15px] h-[50px] w-full rounded-[12px] border border-[#0129E3] text-[15px] font-medium text-[#0129E3] 2xl:w-[220px] 2xl:text-[16px]">
+              {address.map((item, index) => (
+                <div key={index} className="relative">
+                  <input
+                    type="text"
+                    value={item.name[selectedInputLang]}
+                    onChange={(e) =>
+                      updateAdress(index, selectedInputLang, e.target.value)
+                    }
+                    placeholder={
+                      selectedInputLang === 'ru'
+                        ? 'Юнусабадский район, ул. Чинобод 10A'
+                        : selectedInputLang === 'uz'
+                          ? 'Yunusobod tumani, Chinobod ko‘chasi 10A'
+                          : 'Yunusobod district, Chinobod street 10A'
+                    }
+                    className="focus:ring-ring w-full rounded-[12px] bg-[#F8F8F8] px-[15px] py-[18px] pl-[50px] text-[#747474] focus:outline-none focus:ring-1"
+                  />
+                  <GoPencil className="absolute left-[1.2rem] top-1/2 h-5 w-5 -translate-y-1/2 text-[#0129E3]" />
+                </div>
+              ))}
+
+              <button
+                onClick={addAdress}
+                className="mt-[15px] h-[50px] w-full rounded-[12px] border border-[#0129E3] text-[15px] font-medium text-[#0129E3] 2xl:w-[220px] 2xl:text-[16px]"
+              >
                 {selectedInputLang === 'ru'
                   ? ' Добавить'
                   : selectedInputLang === 'uz'
@@ -116,7 +158,6 @@ export const ProInfoClinic = ({ selectedInputLang }: ILangTopProps) => {
                     : 'Add'}
               </button>
             </div>
-            {/* SERTIFICATES */}
             <div className="mt-[25px] flex flex-col gap-3 2xl:mt-[60px] 2xl:gap-4">
               <p className="mdl:-[18px] text-[17px] font-medium 2xl:text-[20px]">
                 {selectedInputLang === 'ru'
@@ -179,6 +220,14 @@ export const ProInfoClinic = ({ selectedInputLang }: ILangTopProps) => {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+        <div className="mt-[25px] flex w-full items-center 2xl:order-[3] 2xl:w-[100%] 2xl:justify-end">
+          <div className="2xl:w-64">
+            <SaveButton
+              selectedInputLang={selectedInputLang}
+              onClick={SaveChanges}
+            />
           </div>
         </div>
       </div>

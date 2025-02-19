@@ -246,6 +246,7 @@ export const clinickServiceStore = create<ClinickServiceStoreType>(
         }));
       set({ serviceList: transformedServiceList });
     },
+
     save: async (): Promise<boolean> => {
       try {
         const { serviceList } = get();
@@ -254,9 +255,12 @@ export const clinickServiceStore = create<ClinickServiceStoreType>(
 
         const transformedServices = serviceList.map((item) => ({
           ...(item.id ? { id: item.id } : {}),
-          categoryId: item.service?.categoryId,
-          price: item.price,
-          name: item.service?.name,
+          service: {
+            id: item.service.categoryId ?? null,
+            categoryId: item.service?.categoryId ?? 1,
+          },
+          categoryId: item.service?.categoryId ?? 1,
+          price: item.price ?? 0,
         }));
 
         const formData = new FormData();
