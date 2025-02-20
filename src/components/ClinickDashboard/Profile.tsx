@@ -357,7 +357,7 @@ export const Profile = ({ selectedInputLang }: ILangTopProps) => {
           </div>
         </div>
         <div className="mt-[25px] flex w-full items-center 2xl:order-[3] 2xl:w-[100%] 2xl:justify-end">
-          <div className="2xl:w-64">
+          <div className="w-full lg:w-60 2xl:w-64">
             <SaveButton
               selectedInputLang={selectedInputLang}
               onClick={SaveChanges}
