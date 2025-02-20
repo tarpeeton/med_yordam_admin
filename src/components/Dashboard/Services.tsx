@@ -278,7 +278,6 @@ const DashboardServices = ({ selectedInputLang }: ILangTopProps) => {
                       )}
                     </div>
 
-                    {/* Поле ввода цены */}
                     <div className="relative">
                       <input
                         type="number"
@@ -313,7 +312,6 @@ const DashboardServices = ({ selectedInputLang }: ILangTopProps) => {
             })}
           </div>
 
-          {/* Кнопка добавления сервиса */}
           <button
             onClick={addServiceList}
             className="mt-[15px] h-[50px] w-full rounded-[12px] border border-[#0129E3] text-[15px] font-medium text-[#0129E3] 2xl:w-[220px] 2xl:text-[16px]"
