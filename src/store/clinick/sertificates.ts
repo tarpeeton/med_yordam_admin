@@ -163,7 +163,7 @@ export const useSertificatesStore = create<UploadFilesState>((set, get) => ({
       const formData = new FormData();
       const payload = {
         id: clinickID,
-        removingPhotos: [backendId],
+        removingCertificates: [backendId],
       };
       formData.append('json', JSON.stringify(payload));
       await axios.put('https://medyordam.result-me.uz/api/clinic', formData, {
@@ -230,29 +230,47 @@ export const useSertificatesStore = create<UploadFilesState>((set, get) => ({
         }
       });
 
-      const filteredAboutUs = aboutUs.filter(
-        (item) =>
-          Object.values(item.title).some((value) => value.trim() !== '') ||
-          Object.values(item.description).some((value) => value.trim() !== '')
-      );
+      const transformedAboutUs = aboutUs
+        .map((item) => {
+          const isEmptyTitle = Object.values(item.title).every(
+            (v) => (v ?? '').trim() === ''
+          );
+          const isEmptyDescription = Object.values(item.description).every(
+            (v) => (v ?? '').trim() === ''
+          );
+          if (isEmptyTitle && isEmptyDescription) {
+            return item.id ? { id: item.id } : null;
+          }
+          return item;
+        })
+        .filter((item) => item !== null);
 
-      const filteredAddress = address.filter((item) =>
-        Object.values(item.name).some((value) => value.trim() !== '')
-      );
+      const transformedAddress = address
+        .map((item) => {
+          const isEmptyName = Object.values(item.name).every(
+            (v) => (v ?? '').trim() === ''
+          );
+          if (isEmptyName) {
+            return item.id ? { id: item.id } : null;
+          }
+          return item;
+        })
+        .filter((item) => item !== null);
 
       const payload: Partial<Record<keyof IPayload, unknown>> = {
         id: clinickID,
       };
 
-      if (filteredAboutUs.length > 0) {
-        payload.aboutUs = filteredAboutUs;
+      if (transformedAboutUs.length > 0) {
+        payload.aboutUs = transformedAboutUs;
       }
 
-      if (filteredAddress.length > 0) {
-        payload.address = filteredAddress;
+      if (transformedAddress.length > 0) {
+        payload.address = transformedAddress;
       }
 
       formData.append('json', JSON.stringify(payload));
+
       const response = await axios.put(
         'https://medyordam.result-me.uz/api/clinic',
         formData,
@@ -264,30 +282,11 @@ export const useSertificatesStore = create<UploadFilesState>((set, get) => ({
           },
         }
       );
-      const photos: { id: number; url: string }[] = response.data.data.photos;
-      set((state) => {
-        let uploadIndex = 0;
-        return {
-          files: state.files.map((file) => {
-            if (file.fileObj) {
-              const photo = photos[uploadIndex];
-              uploadIndex++;
-              if (photo) {
-                return {
-                  ...file,
-                  status: 'success',
-                  backendId: photo.id,
-                  url: photo.url,
-                  fileObj: undefined,
-                };
-              } else {
-                return { ...file, status: 'error' };
-              }
-            }
-            return file;
-          }),
-        };
-      });
+
+      const photos: { id: number; url: string }[] =
+        response.data.data.certificates;
+      get().setAllSertificates(photos);
+
       return true;
     } catch (error) {
       console.error('Error uploading files:', error);

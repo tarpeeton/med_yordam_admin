@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import axios from 'axios';
 import { multiLang } from '@/interface/multiLang';
 import { useRegisterLinks } from '@/store/clinick/doctor/createLinksStore';
+
 import {
   Achievement,
   useProInfoStore,
@@ -77,6 +78,7 @@ interface ProfileState {
   setSuccess: (success: boolean) => void;
   getAllDataWithSlug: (slug: string) => void;
   saveProfile: () => Promise<boolean>;
+  refreshDoctorData: () => void;
 }
 
 export const useProfileStore = create<ProfileState>((set, get) => ({
@@ -134,7 +136,6 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
     const token = sessionStorage.getItem('token');
 
     if (!exp) {
-      toastr.error('Experience date is required.');
       return false;
     }
 
@@ -180,6 +181,8 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
           },
         });
       }
+      const clincikSlug = localStorage.getItem('slug');
+      useClinicProfileStore.getState().getclinickWithslug(clincikSlug || '');
 
       set({ success: true });
       const updatedProfile: ServerResponse = response.data.data;
@@ -226,5 +229,33 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
     } catch (error) {
       console.error('Error loading profile data:', error);
     }
+  },
+
+  refreshDoctorData: () => {
+    useUploadFiles.getState().setDocuments([]);
+    useServiceStore.getState().setAllPromotion([]);
+    useServiceStore.getState().setAllServiceList([]);
+    useAddressStore.getState().setAllData([]);
+
+    useRegisterLinks.getState().setAll('', '', '', '', '');
+
+    useProInfoStore
+      .getState()
+      .setAllData([], [], [], [], [], { ru: '', uz: '', en: '' });
+    set({
+      id: 0,
+      name: { ru: '', uz: '', en: '' },
+      surname: { ru: '', uz: '', en: '' },
+      patronymic: { ru: '', uz: '', en: '' },
+      slug: '',
+      phone: '',
+      contactId: null,
+      success: false,
+      photo: null,
+      exp: null,
+      gender: { ru: 'Мужчина', uz: 'Erkak', en: 'Male' },
+      image: null,
+      selectedLang: 'ru',
+    });
   },
 }));

@@ -136,7 +136,7 @@ export const Profile = ({ selectedInputLang }: ILangTopProps) => {
               width={1000}
               height={950}
               loading="lazy"
-              quality={75}
+              quality={100}
               className="h-full w-full rounded-[20px] object-cover"
             />
             <button

@@ -133,7 +133,6 @@ interface ServiceStoreType {
 }
 
 export const useServiceStore = create<ServiceStoreType>((set, get) => ({
-  /*** --- Promotions --- ***/
   serviceCategories: [],
   serviceList: [],
   services: [],

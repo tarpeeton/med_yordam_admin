@@ -3,7 +3,7 @@ import axios from 'axios';
 import { multiLang } from '@/interface/multiLang';
 import { useProfileStore } from '@/store/profileStore';
 
-interface BackendPromotion {
+export interface BackendPromotion {
   id: number;
   address: {
     ru: string;
@@ -29,7 +29,7 @@ interface BackendPromotion {
   } | null;
 }
 
-export interface IPromotions {
+interface IPromotions {
   id?: string;
   address: {
     ru: string;

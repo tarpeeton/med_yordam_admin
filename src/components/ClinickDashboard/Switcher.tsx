@@ -13,6 +13,7 @@ import { Promotions } from './Promotions';
 import { Gallery } from './Gallery';
 import { ClinicService } from './Service';
 import DashboardSecurity from '../Dashboard/Password';
+import { AllDoctors } from './allDoctors';
 
 interface SelectedInterface {
   ru: string;
@@ -182,7 +183,10 @@ const DashboardSwitchers = () => {
         <Profile selectedInputLang={selectedLanguage} />
       )}
       {selectedPage.en === 'Doctors' && (
-        <Doctors selectedInputLang={selectedLanguage} />
+        <div className="flex flex-col gap-3 2xl:gap-8">
+          <AllDoctors selectedInputLang={selectedLanguage} />
+          <Doctors selectedInputLang={selectedLanguage} />
+        </div>
       )}
       {selectedPage.en === 'Professional Info' && (
         <ProInfoClinic selectedInputLang={selectedLanguage} />

@@ -45,78 +45,82 @@ export const ProInfoClinic = ({ selectedInputLang }: ILangTopProps) => {
 
     toastr[success ? 'success' : 'error'](message);
   };
+
   return (
     <div>
       <div className="mt-[25px] 2xl:mt-[37px]">
         <div className="flex flex-col bg-[#FFFFFF]">
           <div className="p-4 2xl:p-6">
-            {aboutUs.map((item, index) => (
-              <div key={index} className="flex flex-col gap-3 2xl:gap-4">
-                <p className="text-[17px] font-medium mdl:text-[18px] 2xl:text-[20px]">
-                  {selectedInputLang === 'ru'
-                    ? 'О нас '
-                    : selectedInputLang === 'uz'
-                      ? 'Biz Haqimizda'
-                      : 'About Us'}
-                </p>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={item.title?.[selectedInputLang] || ''}
-                    onChange={(e) =>
-                      updateAboutUs(
-                        index,
-                        selectedInputLang,
-                        'title',
-                        e.target.value
-                      )
-                    }
-                    placeholder={
-                      selectedInputLang === 'ru'
-                        ? 'Название клиники'
-                        : selectedInputLang === 'uz'
-                          ? 'Klinika nomi'
-                          : 'Clinic Name'
-                    }
-                    className="focus:ring-ring w-full rounded-[12px] bg-[#F8F8F8] px-[15px] py-[18px] pl-[50px] text-[#747474] focus:outline-none focus:ring-1"
-                  />
-                  <GoPencil className="absolute left-[1.2rem] top-1/2 h-5 w-5 -translate-y-1/2 text-[#0129E3]" />
+            <div className="flex flex-col gap-3 2xl:gap-4">
+              <p className="text-[17px] font-medium mdl:text-[18px] 2xl:text-[20px]">
+                {selectedInputLang === 'ru'
+                  ? 'О нас '
+                  : selectedInputLang === 'uz'
+                    ? 'Biz Haqimizda'
+                    : 'About Us'}
+              </p>
+              {aboutUs.map((item, index) => (
+                <div key={index} className="flex flex-col gap-3 2xl:gap-4">
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={item.title?.[selectedInputLang] || ''}
+                      onChange={(e) =>
+                        updateAboutUs(
+                          index,
+                          selectedInputLang,
+                          'title',
+                          e.target.value
+                        )
+                      }
+                      placeholder={
+                        selectedInputLang === 'ru'
+                          ? 'Название клиники'
+                          : selectedInputLang === 'uz'
+                            ? 'Klinika nomi'
+                            : 'Clinic Name'
+                      }
+                      className="focus:ring-ring w-full rounded-[12px] bg-[#F8F8F8] px-[15px] py-[18px] pl-[50px] text-[#747474] focus:outline-none focus:ring-1"
+                    />
+                    <GoPencil className="absolute left-[1.2rem] top-1/2 h-5 w-5 -translate-y-1/2 text-[#0129E3]" />
+                  </div>
+                  <div className="relative col-span-full 2xl:h-[150px]">
+                    <textarea
+                      value={item.description?.[selectedInputLang] || ''}
+                      onChange={(e) =>
+                        updateAboutUs(
+                          index,
+                          selectedInputLang,
+                          'description',
+                          e.target.value
+                        )
+                      }
+                      maxLength={500}
+                      placeholder={
+                        selectedInputLang === 'ru'
+                          ? 'Введите текст'
+                          : selectedInputLang === 'uz'
+                            ? 'Matn kiriting'
+                            : 'Enter text'
+                      }
+                      className="focus:ring-ring w-full resize-none rounded-[12px] bg-[#F8F8F8] px-[15px] py-[18px] pl-[50px] text-[#747474] focus:outline-none focus:ring-1 2xl:h-[150px]"
+                    />
+                    <GoPencil className="text-muted-foreground absolute left-3 top-[30px] h-5 w-5 -translate-y-1/2 text-[#0129E3]" />
+                  </div>
                 </div>
-                <div className="relative col-span-full 2xl:h-[150px]">
-                  <textarea
-                    value={item.description?.[selectedInputLang] || ''}
-                    onChange={(e) =>
-                      updateAboutUs(
-                        index,
-                        selectedInputLang,
-                        'description',
-                        e.target.value
-                      )
-                    }
-                    maxLength={500}
-                    placeholder={
-                      selectedInputLang === 'ru'
-                        ? 'Введите текст'
-                        : selectedInputLang === 'uz'
-                          ? 'Matn kiriting'
-                          : 'Enter text'
-                    }
-                    className="focus:ring-ring w-full resize-none rounded-[12px] bg-[#F8F8F8] px-[15px] py-[18px] pl-[50px] text-[#747474] focus:outline-none focus:ring-1 2xl:h-[150px]"
-                  />
-                  <GoPencil className="text-muted-foreground absolute left-3 top-[30px] h-5 w-5 -translate-y-1/2 text-[#0129E3]" />
-                </div>
-                <button
-                  onClick={addAboutUs}
-                  className="mt-[15px] h-[50px] w-full rounded-[12px] border border-[#0129E3] text-[15px] font-medium text-[#0129E3] 2xl:w-[220px] 2xl:text-[16px]"
-                >
-                  {selectedInputLang === 'ru'
-                    ? ' Добавить'
-                    : selectedInputLang === 'uz'
-                      ? ' Qo`shish'
-                      : 'Add'}
-                </button>
-              </div>
-            ))}
+              ))}
+
+              <button
+                onClick={addAboutUs}
+                className="mt-[15px] h-[50px] w-full rounded-[12px] border border-[#0129E3] text-[15px] font-medium text-[#0129E3] 2xl:w-[220px] 2xl:text-[16px]"
+              >
+                {selectedInputLang === 'ru'
+                  ? ' Добавить'
+                  : selectedInputLang === 'uz'
+                    ? ' Qo`shish'
+                    : 'Add'}
+              </button>
+            </div>
 
             <div className="mt-[25px] flex flex-col gap-3 2xl:mt-[60px] 2xl:gap-4">
               <p className="text-[17px] font-medium mdl:text-[18px] 2xl:text-[20px]">

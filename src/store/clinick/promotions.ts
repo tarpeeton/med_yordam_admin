@@ -3,7 +3,7 @@ import axios from 'axios';
 import { multiLang } from '@/interface/multiLang';
 import { useClinicProfileStore } from '@/store/clinick/profile';
 
-interface BackendPromotion {
+export interface BackendPromotion {
   id: number;
   address: {
     ru: string;
@@ -22,7 +22,7 @@ interface BackendPromotion {
     uz: string;
     en: string;
   };
-  percent: number;
+  discount?: number;
   photo: {
     id: number;
     url: string;
@@ -42,7 +42,7 @@ export interface IPromotions {
     uz: string;
     en: string;
   };
-  discountPercentage?: number;
+  discount?: number;
   description: {
     ru: string;
     uz: string;
@@ -56,6 +56,7 @@ export interface IPromotions {
 interface PromotionStoreType {
   promotions: IPromotions[];
   newPromotion: IPromotions;
+  errorMessage: multiLang;
   addPromotion: () => void;
   updatePromotionFieldByIndex: (
     index: number,
@@ -65,7 +66,7 @@ interface PromotionStoreType {
   ) => void;
   deletePromotionByIndex: (index: number) => Promise<boolean>;
   setAllPromotion: (promotionList: BackendPromotion[]) => void;
-  savePromotions: () => Promise<boolean>;
+  savePromotions: () => Promise<{ status: boolean; message: multiLang }>;
 }
 
 export const useClinicPromotions = create<PromotionStoreType>((set, get) => ({
@@ -80,19 +81,17 @@ export const useClinicPromotions = create<PromotionStoreType>((set, get) => ({
       imageFile: undefined,
     },
   ],
-  // Yangi promotion uchun default ob'ekt
   newPromotion: {
     address: { ru: '', uz: '', en: '' },
     phone: '',
     title: { ru: '', uz: '', en: '' },
-    discountPercentage: 20,
+    discount: 20,
     description: { ru: '', uz: '', en: '' },
     imageUrl:
       'https://ucarecdn.com/568467e3-d7fd-4272-854e-884e5325aa23/-/preview/354x370/',
     imageFile: undefined,
   },
 
-  // Yangi promotion qo'shish funksiyasi
   addPromotion: () => {
     set((state) => ({
       promotions: [...state.promotions, state.newPromotion],
@@ -100,7 +99,7 @@ export const useClinicPromotions = create<PromotionStoreType>((set, get) => ({
         address: { ru: '', uz: '', en: '' },
         phone: '',
         title: { ru: '', uz: '', en: '' },
-        discountPercentage: 0,
+        discount: 0,
         description: { ru: '', uz: '', en: '' },
         imageUrl: '',
         imageFile: undefined,
@@ -135,18 +134,15 @@ export const useClinicPromotions = create<PromotionStoreType>((set, get) => ({
     const promotionToDelete = promotions[index];
     if (promotionToDelete?.id) {
       try {
-        const { id: profileId } = useClinicProfileStore.getState();
         const token = sessionStorage.getItem('token');
-        const payload = {
-          id: profileId,
-          promotionList: [{ id: promotionToDelete.id.toString() }],
-        };
-        await axios.put('https://medyordam.result-me.uz/api/doctor', payload, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
+        await axios.delete(
+          `https://medyordam.result-me.uz/api/promotion/${promotionToDelete?.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         set((state) => ({
           promotions: state.promotions.filter((_, i) => i !== index),
         }));
@@ -162,6 +158,7 @@ export const useClinicPromotions = create<PromotionStoreType>((set, get) => ({
       return true;
     }
   },
+  errorMessage: { ru: '', uz: '', en: '' },
 
   setAllPromotion: (promotionList: BackendPromotion[]) => {
     const transformedPromotions: IPromotions[] = promotionList.map(
@@ -170,7 +167,7 @@ export const useClinicPromotions = create<PromotionStoreType>((set, get) => ({
         address: promo.address,
         phone: promo.phone,
         title: promo.title,
-        discountPercentage: promo.percent,
+        discount: promo.discount,
         description: promo.description,
         imageUrl: promo.photo && promo.photo.url ? promo.photo.url : '',
         imageFile: undefined,
@@ -180,40 +177,115 @@ export const useClinicPromotions = create<PromotionStoreType>((set, get) => ({
     set({ promotions: transformedPromotions });
   },
 
-  // Promotionsni saqlash funksiyasi: rasm yuklash va promotion ma'lumotlarini API orqali yuborish
-  savePromotions: async (): Promise<boolean> => {
+  savePromotions: async (): Promise<{
+    status: boolean;
+    message: multiLang;
+  }> => {
     try {
       const { promotions } = get();
-      const { id } = useClinicProfileStore.getState();
+      for (const promotion of promotions) {
+        if (
+          !promotion.title.ru.trim() ||
+          !promotion.title.uz.trim() ||
+          !promotion.title.en.trim() ||
+          !promotion.description.ru.trim() ||
+          !promotion.description.uz.trim() ||
+          !promotion.description.en.trim() ||
+          !promotion.phone.trim() ||
+          !promotion.address.ru.trim() ||
+          !promotion.address.uz.trim() ||
+          !promotion.address.en.trim() ||
+          (!promotion.imageFile && !promotion.imageUrl.trim())
+        ) {
+          const errorMsg = {
+            ru: 'Пожалуйста, заполните все обязательные поля полностью на русском, узбекском и английском языках.',
+            uz: 'Iltimos, barcha majburiy maydonlarni rus, o‘zbek va ingliz tillarida to‘liq to‘ldiring.',
+            en: 'Please fill in all required fields completely in Russian, Uzbek, and English.',
+          };
+          set({ errorMessage: errorMsg });
+          return { status: false, message: errorMsg };
+        }
+      }
+      set({ errorMessage: { ru: '', uz: '', en: '' } });
+
+      const { id: clinicId } = useClinicProfileStore.getState();
       const token = sessionStorage.getItem('token');
 
-      const promotion = promotions[0];
+      const payloadPromotions = await Promise.all(
+        promotions.map(async (promotion) => {
+          let photoPayload: { id: number; url: string } = {
+            id: promotion.photoId || 0,
+            url: promotion.imageUrl,
+          };
+
+          // Если задан файл для загрузки, сначала загружаем его
+          if (promotion.imageFile) {
+            const photoData = new FormData();
+            photoData.append('photo', promotion.imageFile);
+            const photoResponse = await axios.post(
+              'https://medyordam.result-me.uz/api/photo',
+              photoData,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  'Accept-Language': '',
+                  'Content-Type': 'multipart/form-data',
+                },
+              }
+            );
+            console.log('Photo upload response:', photoResponse.data);
+            if (
+              photoResponse.data &&
+              Array.isArray(photoResponse.data.data) &&
+              photoResponse.data.data.length > 0
+            ) {
+              const uploadedPhoto = photoResponse.data.data[0];
+              photoPayload = {
+                id: uploadedPhoto.id,
+                url: uploadedPhoto.url,
+              };
+            }
+          } else {
+            if (!promotion.imageUrl) {
+              photoPayload = {} as any;
+            }
+          }
+
+          const basePromotion = {
+            title: promotion.title,
+            description: promotion.description,
+            phone: promotion.phone,
+            discount: promotion.discount || 0,
+            address: {
+              ru: promotion.address.ru,
+              uz: promotion.address.uz,
+              en: promotion.address.en,
+            },
+            clinicId: clinicId,
+            photo: photoPayload,
+          };
+
+          if (promotion.id) {
+            return { ...basePromotion, id: Number(promotion.id) };
+          }
+          return basePromotion;
+        })
+      );
 
       const payload = {
-        clinicId: id,
-        ...(promotion.id ? { id: promotion.id } : {}),
-        title: promotion.title,
-        description: promotion.description,
-        phone: promotion.phone,
-        discount: promotion.discountPercentage,
-        address: promotion.address,
+        promotions: payloadPromotions,
       };
-      const formData = new FormData();
-      formData.append('json', JSON.stringify(payload));
 
-      promotions.forEach((promotion) => {
-        if (promotion.imageFile) {
-          formData.append('photos', promotion.imageFile);
-        }
-      });
+      console.log('Final payload:', payload);
 
-      const response = await axios.post(
+      const response = await axios.put(
         'https://medyordam.result-me.uz/api/promotion',
-        formData,
+        payload,
         {
           headers: {
             Authorization: `Bearer ${token}`,
             'Accept-Language': '',
+            'Content-Type': 'application/json',
           },
         }
       );
@@ -226,7 +298,7 @@ export const useClinicPromotions = create<PromotionStoreType>((set, get) => ({
               address: promo.address,
               phone: promo.phone,
               title: promo.title,
-              discountPercentage: promo.percent,
+              discount: promo.discount,
               description: promo.description,
               imageUrl: promo.photo && promo.photo.url ? promo.photo.url : '',
               imageFile: undefined,
@@ -236,10 +308,20 @@ export const useClinicPromotions = create<PromotionStoreType>((set, get) => ({
         });
       }
 
-      return true;
+      const successMsg = {
+        ru: 'Акции успешно сохранены!',
+        uz: 'Aksiyalar muvaffaqiyatli saqlandi!',
+        en: 'Promotions saved successfully!',
+      };
+      return { status: true, message: successMsg };
     } catch (error) {
       console.error('Failed to save promotions', error);
-      return false;
+      const errorMsg = {
+        ru: 'Акции сохранить не удалось.',
+        uz: "Aksiyalarni saqlash muvaffaqiyatli bo'lmadi.",
+        en: 'Failed to save promotions.',
+      };
+      return { status: false, message: errorMsg };
     }
   },
 }));

@@ -150,29 +150,7 @@ export const useUploadFiles = create<UploadFilesState>((set, get) => ({
         }
       );
       const photos: { id: number; url: string }[] = response.data.data.photos;
-      set((state) => {
-        let uploadIndex = 0;
-        return {
-          files: state.files.map((file) => {
-            if (file.fileObj) {
-              const photo = photos[uploadIndex];
-              uploadIndex++;
-              if (photo) {
-                return {
-                  ...file,
-                  status: 'success',
-                  backendId: photo.id,
-                  url: photo.url,
-                  fileObj: undefined,
-                };
-              } else {
-                return { ...file, status: 'error' };
-              }
-            }
-            return file;
-          }),
-        };
-      });
+      get().setAllGallery(photos);
       return true;
     } catch (error) {
       console.error('Error uploading files:', error);

@@ -4,11 +4,19 @@ import { useAddressStore, AddressEntry } from './address';
 import { useUploadFiles } from './gallery';
 import { clinickServiceStore, BackendServiceResponse } from './service';
 import { useSertificatesStore, AboutUsItem, IAdress } from './sertificates';
-import { useServiceStore } from '../createServiceStore';
+import { useServiceStore, BackendPromotion } from '../createServiceStore';
+import { useClinicPromotions } from './promotions';
+import { multiLang } from '@/interface/multiLang';
 
 export interface ImageData {
   id: number;
   url: string;
+}
+
+interface IAllDoctors {
+  name: multiLang;
+  slug: string;
+  id?: string;
 }
 
 export interface ClinicProfileData {
@@ -28,6 +36,8 @@ export interface ClinicProfileData {
   services: BackendServiceResponse[];
   aboutUs: AboutUsItem[];
   address: IAdress[];
+  promotions: BackendPromotion[];
+  doctors: IAllDoctors[];
 }
 
 export interface ClinicProfileResponseData extends Partial<ClinicProfileData> {
@@ -103,6 +113,8 @@ export const useClinicProfileStore = create<ClinicProfileStore>((set, get) => {
     certificates: [],
     address: [],
     aboutUs: [],
+    promotions: [],
+    doctors: [],
   };
 
   return {
@@ -144,6 +156,7 @@ export const useClinicProfileStore = create<ClinicProfileStore>((set, get) => {
             headers: {
               Authorization: `Bearer ${token}`,
               'Content-Type': 'multipart/form-data',
+              'Accept-Language': '',
             },
           });
 
@@ -178,6 +191,7 @@ export const useClinicProfileStore = create<ClinicProfileStore>((set, get) => {
             headers: {
               Authorization: `Bearer ${token}`,
               'Content-Type': 'multipart/form-data',
+              'Accept-Language': '',
             },
           });
 
@@ -234,11 +248,20 @@ export const useClinicProfileStore = create<ClinicProfileStore>((set, get) => {
             services: responseData.services ?? [],
             address: responseData.address ?? [],
             aboutUs: responseData.aboutUs ?? [],
+            promotions: responseData.promotions ?? [],
+            doctors: responseData.doctors ?? [],
           };
+
+          set((state) => ({
+            doctors: responseData.doctors,
+          }));
           clinickServiceStore
             .getState()
             .setAllServiceList(responseData?.services || []);
           useUploadFiles.getState().setAllGallery(responseData?.photos || []);
+          useClinicPromotions
+            .getState()
+            .setAllPromotion(responseData?.promotions || []);
           useServiceStore
             .getState()
             .setAllServiceList(responseData?.services || []);
