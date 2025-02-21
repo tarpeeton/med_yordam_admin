@@ -3,6 +3,7 @@ import { multiLang } from '@/interface/multiLang';
 // Zustand store
 import { create } from 'zustand';
 import { useProfileStore } from '@/store/profileStore';
+import { transformAchievements } from './clinick/doctor/profileStore';
 
 export type Language = 'ru' | 'uz' | 'en';
 
@@ -26,7 +27,7 @@ export interface Achievement {
 }
 
 interface Education {
-  id: number | null;
+  id?: number | null;
   name: multiLang;
   faculty: multiLang;
   fromYear: string;
@@ -41,7 +42,7 @@ interface Quote {
 }
 
 interface WorkExperience {
-  id: number | null;
+  id?: number | null;
   name: multiLang;
   city: multiLang;
   fromYear: string;
@@ -75,7 +76,7 @@ interface ProInfoState {
   addEducation: () => void;
   setSuccess: (success: boolean) => void;
   updateEducationField: (
-    id: number | null,
+    index: number,
     field: 'name' | 'faculty' | 'fromYear' | 'toYear',
     lang: Language | null,
     value: string
@@ -95,14 +96,17 @@ interface ProInfoState {
     lang: Language | null,
     value: string | number
   ) => void;
-  addPositionToWorkExperience: (id: number, lng: Language) => void;
+  addPositionToWorkExperience: (index: number, lng: Language) => void;
   updatePositionInWorkExperience: (
-    id: number,
+    index: number,
     positionIndex: number,
     lang: Language,
     value: string
   ) => void;
-  removePositionFromWorkExperience: (id: number, positionIndex: number) => void;
+  removePositionFromWorkExperience: (
+    index: number,
+    positionIndex: number
+  ) => void;
   removeWorkExperience: (id: number) => void;
   // Save method
   save: () => Promise<boolean>;
@@ -129,7 +133,6 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
   achievements: [{ ru: [''], uz: [''], en: [''] }],
   educations: [
     {
-      id: 1,
       name: { ru: 'Университет', uz: 'Universitet', en: 'University' },
       faculty: { ru: 'Информатика', uz: 'Informatika', en: 'Computer Science' },
       fromYear: '2015',
@@ -138,7 +141,6 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
   ],
   workExperiences: [
     {
-      id: null,
       name: { ru: 'Компания X', uz: 'Kompaniya X', en: 'Company X' },
       city: { ru: 'Москва', uz: 'Moskva', en: 'Moscow' },
       fromYear: '2020',
@@ -227,14 +229,14 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
   },
 
   updateEducationField: (
-    id: number | null,
+    index,
     field: 'name' | 'faculty' | 'fromYear' | 'toYear',
     lang: Language | null,
     value: string
   ) => {
     set((state) => ({
-      educations: state.educations.map((education) =>
-        education.id === id
+      educations: state.educations.map((education, indexEducation) =>
+        indexEducation === index
           ? {
               ...education,
               [field]: lang
@@ -292,17 +294,17 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
     }));
   },
 
-  addPositionToWorkExperience: (id, lng) => {
+  addPositionToWorkExperience: (index) => {
     set((state) => ({
-      workExperiences: state.workExperiences.map((experience) =>
-        experience.id === id
+      workExperiences: state.workExperiences.map((experience, expIndex) =>
+        expIndex === index
           ? {
               ...experience,
               position: {
                 ...experience.position,
-                ru: [...experience.position.ru, ''],
-                uz: [...experience.position.uz, ''],
-                en: [...experience.position.en, ''],
+                ru: [...(experience.position?.ru ?? []), ''],
+                uz: [...(experience.position?.uz ?? []), ''],
+                en: [...(experience.position?.en ?? []), ''],
               },
             }
           : experience
@@ -310,18 +312,16 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
     }));
   },
 
-  updatePositionInWorkExperience: (id, positionIndex, lang, value) => {
+  updatePositionInWorkExperience: (index, positionIndex, lang, value) => {
     set((state) => ({
-      workExperiences: state.workExperiences.map((experience) => {
-        if (experience.id === id) {
+      workExperiences: state.workExperiences.map((experience, indexExp) => {
+        if (index === indexExp) {
           return {
             ...experience,
             position: {
               ...experience.position,
               [lang]: experience.position[lang].map((position, index) =>
-                index === positionIndex
-                  ? value // Bu yerda faqat string qiymatini saqlaymiz
-                  : position
+                index === positionIndex ? value : position
               ),
             },
           };
@@ -331,10 +331,10 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
     }));
   },
 
-  removePositionFromWorkExperience: (id, positionIndex) => {
+  removePositionFromWorkExperience: (index, positionIndex) => {
     set((state) => ({
-      workExperiences: state.workExperiences.map((experience) =>
-        experience.id === id
+      workExperiences: state.workExperiences.map((experience, expIndex) =>
+        expIndex === index
           ? {
               ...experience,
               position: {
@@ -423,45 +423,83 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
       // =========
       // Education Transformation
       // =========
-      const educationTransformed = state.educations.map((education) => ({
-        id: education.id ?? null,
-        name: {
-          ru: education.name.ru,
-          uz: education.name.uz,
-          en: education.name.en,
-        },
-        faculty: {
-          ru: education.faculty.ru,
-          uz: education.faculty.uz,
-          en: education.faculty.en,
-        },
-        fromYear: Number(education.fromYear),
-        toYear: Number(education.toYear),
-      }));
+      const educationTransformed = state.educations.map((education) => {
+        const isEmptyName =
+          !education.name.ru && !education.name.uz && !education.name.en;
+        const isEmptyFaculty =
+          !education.faculty.ru &&
+          !education.faculty.uz &&
+          !education.faculty.en;
+        const isEmptyYears =
+          (!education.fromYear || Number(education.fromYear) === 0) &&
+          (!education.toYear || Number(education.toYear) === 0);
 
-      // =========
-      // Work Experience Transformation
-      // =========
-      const experienceTransformed = state.workExperiences.map((experience) => ({
-        id: experience.id ?? null,
-        name: {
-          ru: experience.name.ru,
-          uz: experience.name.uz,
-          en: experience.name.en,
-        },
-        city: {
-          ru: experience.city.ru,
-          uz: experience.city.uz,
-          en: experience.city.en,
-        },
-        position: {
-          ru: experience.position.ru.filter(Boolean),
-          uz: experience.position.uz.filter(Boolean),
-          en: experience.position.en.filter(Boolean),
-        },
-        fromYear: Number(experience.fromYear),
-        toYear: Number(experience.toYear),
-      }));
+        if (isEmptyName && isEmptyFaculty && isEmptyYears) {
+          return { id: education.id };
+        }
+
+        return {
+          id: education.id,
+          name: {
+            ru: education.name.ru,
+            uz: education.name.uz,
+            en: education.name.en,
+          },
+          faculty: {
+            ru: education.faculty.ru,
+            uz: education.faculty.uz,
+            en: education.faculty.en,
+          },
+          fromYear: Number(education.fromYear),
+          toYear: Number(education.toYear),
+        };
+      });
+
+      const experienceTransformed = state.workExperiences.map((experience) => {
+        const nameRu = experience.name?.ru || '';
+        const nameUz = experience.name?.uz || '';
+        const nameEn = experience.name?.en || '';
+
+        const cityRu = experience.city?.ru || '';
+        const cityUz = experience.city?.uz || '';
+        const cityEn = experience.city?.en || '';
+
+        const posRu = (experience.position?.ru || []).filter(Boolean);
+        const posUz = (experience.position?.uz || []).filter(Boolean);
+        const posEn = (experience.position?.en || []).filter(Boolean);
+
+        const isEmptyName = !nameRu && !nameUz && !nameEn;
+        const isEmptyCity = !cityRu && !cityUz && !cityEn;
+        const isEmptyPosition = !posRu.length && !posUz.length && !posEn.length;
+        const isEmptyYears =
+          (!experience.fromYear || Number(experience.fromYear) === 0) &&
+          (!experience.toYear || Number(experience.toYear) === 0);
+
+        if (isEmptyName && isEmptyCity && isEmptyPosition && isEmptyYears) {
+          return { id: experience.id };
+        }
+
+        return {
+          id: experience.id ?? null,
+          name: {
+            ru: nameRu,
+            uz: nameUz,
+            en: nameEn,
+          },
+          city: {
+            ru: cityRu,
+            uz: cityUz,
+            en: cityEn,
+          },
+          position: {
+            ru: posRu,
+            uz: posUz,
+            en: posEn,
+          },
+          fromYear: Number(experience.fromYear),
+          toYear: Number(experience.toYear),
+        };
+      });
 
       // =========
       // Specialities and Languages
@@ -490,13 +528,33 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
       // =========
       // API Call
       // =========
-      await axios.put('https://medyordam.result-me.uz/api/doctor', payload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+      const res = await axios.put(
+        'https://medyordam.result-me.uz/api/doctor',
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      const {
+        experience,
+        education,
+        language,
+        speciality,
+        achievement,
+        quote,
+      } = res.data.data;
 
+      get().setAllData(
+        experience,
+        education,
+        language,
+        speciality,
+        transformAchievements(achievement),
+        quote
+      );
       return true;
     } catch (error) {
       console.error('Error saving data:', error);

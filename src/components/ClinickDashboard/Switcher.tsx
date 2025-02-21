@@ -8,7 +8,7 @@ import { Profile } from './Profile';
 import { Doctors } from './doctors/Doctors';
 import { ProInfoClinic } from './proInfoClinic';
 import { ClinicAddress } from './Address';
-import { Notifications } from './Notification';
+import { Notification } from './Notification';
 import { Promotions } from './Promotions';
 import { Gallery } from './Gallery';
 import { ClinicService } from './Service';
@@ -206,7 +206,7 @@ const DashboardSwitchers = () => {
       {selectedPage.en === 'Services and Prices' && (
         <ClinicService selectedInputLang={selectedLanguage} />
       )}
-      {selectedPage.en === 'Notifications' && <Notifications />}
+      {selectedPage.en === 'Notifications' && <Notification />}
     </section>
   );
 };

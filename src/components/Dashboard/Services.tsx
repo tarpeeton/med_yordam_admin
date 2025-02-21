@@ -205,7 +205,14 @@ const DashboardServices = ({ selectedInputLang }: ILangTopProps) => {
                           <GoPencil className="absolute left-1 top-1/2 h-5 w-5 -translate-y-1/2 text-[#747474]" />
                           {selectedService ? (
                             <span>
-                              {selectedService.name[selectedInputLang]}
+                              {(() => {
+                                const text =
+                                  selectedService?.name?.[selectedInputLang] ||
+                                  '';
+                                return text.length > 30
+                                  ? text.slice(0, 30) + '...'
+                                  : text;
+                              })()}
                             </span>
                           ) : (
                             <span>

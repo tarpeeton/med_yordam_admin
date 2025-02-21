@@ -131,8 +131,7 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
   },
 
   saveProfile: async (): Promise<boolean> => {
-    const { id, name, surname, patronymic, phone, exp, gender, image, photo } =
-      get();
+    const { id, name, surname, patronymic, phone, exp, gender, image } = get();
     const token = sessionStorage.getItem('token');
 
     if (!exp) {
@@ -154,7 +153,6 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
         exp,
         phone,
         gender: genderEnum,
-        // Yangi profil yaratishda kerak bo'lsa
         ...(id === 0 && { cityId: 1 }),
       });
       formData.append('json', profileJson);

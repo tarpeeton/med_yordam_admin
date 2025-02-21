@@ -130,59 +130,80 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
     const token = sessionStorage.getItem('token');
 
     if (!exp) {
-      toastr.error('Experience date is required.');
       return false;
     }
 
-    if (photo?.id) {
-      const formData = new FormData();
-      if (image instanceof File) {
-        formData.append('new-photo', image);
-      }
-      await axios.put(
-        `https://medyordam.result-me.uz/api/photo/${photo.id}`,
-        formData,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      return true;
-    }
-
-    const genderEnum = gender.en.toUpperCase();
-
     try {
-      const formData = new FormData();
-
-      if (image instanceof File) {
-        formData.append('photo', image);
+      if (id > 0) {
+        // Mavjud profilni update qilayotganda:
+        // Agar yangi rasm kiritilgan bo'lsa, uni avvalo update qilamiz
+        if (image instanceof File && photo?.id) {
+          const formData = new FormData();
+          formData.append('new-photo', image);
+          await axios.put(
+            `https://medyordam.result-me.uz/api/photo/${photo.id}`,
+            formData,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+          // Eski kodda bu yerda "return true" qilinib, keyingi JSON update so'rovi yuborilmay qolardi.
+        }
+        // Endi profilning qolgan JSON maʼlumotlarini update qilamiz
+        const genderEnum = gender.en.toUpperCase();
+        const profileData = {
+          id, // mavjud profil uchun id ni jo'natamiz
+          name,
+          surname,
+          patronymic,
+          exp,
+          phone,
+          gender: genderEnum,
+        };
+        const response = await axios.put(
+          'https://medyordam.result-me.uz/api/doctor',
+          profileData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Accept-Language': '',
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+        localStorage.setItem('slug', response.data.data.slug);
+        return response.data.data.slug;
+      } else {
+        // Yangi profil yaratish (id === 0)
+        const genderEnum = gender.en.toUpperCase();
+        const profileData = {
+          id: undefined,
+          name,
+          surname,
+          patronymic,
+          exp,
+          phone,
+          gender: genderEnum,
+          cityId: 1,
+        };
+        const formData = new FormData();
+        if (image instanceof File) {
+          formData.append('photo', image);
+        }
+        formData.append('json', JSON.stringify(profileData));
+        const response = await axios.post(
+          'https://medyordam.result-me.uz/api/doctor',
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Accept-Language': '',
+            },
+          }
+        );
+        localStorage.setItem('slug', response.data.data.slug);
+        return response.data.data.slug;
       }
-
-      const profileJson = JSON.stringify({
-        id: id > 0 ? id : undefined,
-        name,
-        surname,
-        patronymic,
-        exp,
-        phone,
-        gender: genderEnum,
-        ...(id === 0 && { cityId: 1 }),
-      });
-      formData.append('json', profileJson);
-
-      const endpoint = 'https://medyordam.result-me.uz/api/doctor';
-      const headers = {
-        Authorization: `Bearer ${token}`,
-      };
-
-      const response = await axios.post(endpoint, formData, { headers });
-
-      set({ success: true });
-      const updatedProfile: ServerResponse = response.data.data;
-      localStorage.setItem('slug', updatedProfile.slug);
-      get().setProfile(updatedProfile);
-
-      return true; // Muvaffaqiyat
     } catch (error) {
       console.error('Error saving profile:', error);
       return false;

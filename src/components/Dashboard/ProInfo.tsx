@@ -216,7 +216,7 @@ const DashboardProInfo = ({ selectedInputLang }: ILangTopProps) => {
                     : 'Education'}
               </h1>
               <div className="mt-[15px] flex w-full flex-col gap-[12px] 2xl:gap-[15px]">
-                {educations?.map((education) => (
+                {educations?.map((education, index) => (
                   <div
                     key={education.id}
                     className="grid w-full grid-cols-1 gap-[12px] 2xl:grid-cols-2 2xl:gap-[15px]"
@@ -224,10 +224,10 @@ const DashboardProInfo = ({ selectedInputLang }: ILangTopProps) => {
                     {/* Education Name */}
                     <div className="relative">
                       <input
-                        value={education.name[selectedInputLang]}
+                        value={education?.name?.[selectedInputLang] || ''}
                         onChange={(e) =>
                           updateEducationField(
-                            education.id,
+                            index,
                             'name',
                             selectedInputLang,
                             e.target.value
@@ -247,10 +247,10 @@ const DashboardProInfo = ({ selectedInputLang }: ILangTopProps) => {
                     {/* Education Direction */}
                     <div className="relative">
                       <input
-                        value={education?.faculty?.[selectedInputLang]}
+                        value={education?.faculty?.[selectedInputLang] || ''}
                         onChange={(e) =>
                           updateEducationField(
-                            education.id,
+                            index,
                             'faculty',
                             selectedInputLang,
                             e.target.value
@@ -271,10 +271,10 @@ const DashboardProInfo = ({ selectedInputLang }: ILangTopProps) => {
                       {/* Start Year */}
                       <input
                         type="text"
-                        value={education.fromYear}
+                        value={education?.fromYear}
                         onChange={(e) =>
                           updateEducationField(
-                            education?.id,
+                            index,
                             'fromYear',
                             null,
                             e.target.value
@@ -299,7 +299,7 @@ const DashboardProInfo = ({ selectedInputLang }: ILangTopProps) => {
                         value={education.toYear}
                         onChange={(e) =>
                           updateEducationField(
-                            education.id,
+                            index,
                             'toYear',
                             null,
                             e.target.value
@@ -347,7 +347,7 @@ const DashboardProInfo = ({ selectedInputLang }: ILangTopProps) => {
                     <div className="relative">
                       <input
                         type="text"
-                        value={experience?.name[selectedInputLang]}
+                        value={experience?.name?.[selectedInputLang] || ''}
                         onChange={(e) =>
                           updateWorkExperienceFieldByIndex(
                             index,
@@ -370,7 +370,7 @@ const DashboardProInfo = ({ selectedInputLang }: ILangTopProps) => {
                     <div className="relative">
                       <input
                         type="text"
-                        value={experience.city[selectedInputLang]}
+                        value={experience?.city?.[selectedInputLang] || ''}
                         onChange={(e) =>
                           updateWorkExperienceFieldByIndex(
                             index,
@@ -439,18 +439,18 @@ const DashboardProInfo = ({ selectedInputLang }: ILangTopProps) => {
                   </div>
                   <div className="mt-[15px] flex w-full flex-col items-center justify-between rounded-[12px] bg-[#F8F8F8] p-[7px] 2xl:mt-[12px] 2xl:flex-row 2xl:p-[14px]">
                     <div className="grid grid-cols-2 gap-[10px] 2xl:grid-cols-6">
-                      {experience.position[selectedInputLang]?.map(
-                        (item, index) => (
+                      {experience?.position?.[selectedInputLang]?.map(
+                        (item, positonIndex) => (
                           <div
-                            key={index}
+                            key={positonIndex}
                             className="relative flex items-center rounded-[8px] bg-[#0129E3] px-[15px] py-[8px] text-white"
                           >
                             <input
                               value={item}
                               onChange={(e) => {
                                 updatePositionInWorkExperience(
-                                  experience.id as number,
                                   index,
+                                  positonIndex,
                                   selectedInputLang,
                                   e.target.value
                                 );
@@ -460,8 +460,8 @@ const DashboardProInfo = ({ selectedInputLang }: ILangTopProps) => {
                             <button
                               onClick={() =>
                                 removePositionFromWorkExperience(
-                                  experience.id as number,
-                                  index
+                                  index,
+                                  positonIndex
                                 )
                               }
                               className="ml-[5px] text-white"
@@ -475,10 +475,7 @@ const DashboardProInfo = ({ selectedInputLang }: ILangTopProps) => {
                     <button className="mt-[25px] h-[20px] w-[20px] text-[#0129E3] 2xl:mt-0">
                       <FaPlus
                         onClick={() =>
-                          addPositionToWorkExperience(
-                            experience.id as number,
-                            selectedInputLang
-                          )
+                          addPositionToWorkExperience(index, selectedInputLang)
                         }
                         className="h-full w-full"
                       />

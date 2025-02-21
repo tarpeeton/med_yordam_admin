@@ -45,8 +45,7 @@ const LoginCodeVerify: FC = () => {
   const handleConfirm = () => {
     try {
       setSuccessModalOpen(true);
-
-      if (role === UserRole.ROLE_ROOT) {
+      if (role === UserRole.ROLE_DOCTOR) {
         router.push(`/${locale}/dashboard`);
       } else if (role === UserRole.ROLE_CLINIC) {
         router.push(`/${locale}/clinick`);
