@@ -97,14 +97,17 @@ interface ProInfoState {
     lang: Language | null,
     value: string | number
   ) => void;
-  addPositionToWorkExperience: (id: number, lng: Language) => void;
+  addPositionToWorkExperience: (index: number, lng: Language) => void;
   updatePositionInWorkExperience: (
-    id: number,
+    index: number,
     positionIndex: number,
     lang: Language,
     value: string
   ) => void;
-  removePositionFromWorkExperience: (id: number, positionIndex: number) => void;
+  removePositionFromWorkExperience: (
+    index: number,
+    positionIndex: number
+  ) => void;
   removeWorkExperience: (id: number) => void;
   // Save method
   save: () => Promise<boolean>;
@@ -294,17 +297,17 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
     }));
   },
 
-  addPositionToWorkExperience: (id, lng) => {
+  addPositionToWorkExperience: (index) => {
     set((state) => ({
-      workExperiences: state.workExperiences.map((experience) =>
-        experience.id === id
+      workExperiences: state.workExperiences.map((experience, expIndex) =>
+        expIndex === index
           ? {
               ...experience,
               position: {
                 ...experience.position,
-                ru: [...experience.position.ru, ''],
-                uz: [...experience.position.uz, ''],
-                en: [...experience.position.en, ''],
+                ru: [...(experience.position?.ru ?? []), ''],
+                uz: [...(experience.position?.uz ?? []), ''],
+                en: [...(experience.position?.en ?? []), ''],
               },
             }
           : experience
@@ -312,18 +315,16 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
     }));
   },
 
-  updatePositionInWorkExperience: (id, positionIndex, lang, value) => {
+  updatePositionInWorkExperience: (index, positionIndex, lang, value) => {
     set((state) => ({
-      workExperiences: state.workExperiences.map((experience) => {
-        if (experience.id === id) {
+      workExperiences: state.workExperiences.map((experience, indexExp) => {
+        if (index === indexExp) {
           return {
             ...experience,
             position: {
               ...experience.position,
               [lang]: experience.position[lang].map((position, index) =>
-                index === positionIndex
-                  ? value // Bu yerda faqat string qiymatini saqlaymiz
-                  : position
+                index === positionIndex ? value : position
               ),
             },
           };
@@ -333,10 +334,10 @@ export const useProInfoStore = create<ProInfoState>((set, get) => ({
     }));
   },
 
-  removePositionFromWorkExperience: (id, positionIndex) => {
+  removePositionFromWorkExperience: (index, positionIndex) => {
     set((state) => ({
-      workExperiences: state.workExperiences.map((experience) =>
-        experience.id === id
+      workExperiences: state.workExperiences.map((experience, expIndex) =>
+        expIndex === index
           ? {
               ...experience,
               position: {

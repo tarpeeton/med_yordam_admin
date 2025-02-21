@@ -441,17 +441,17 @@ const DashboardProInfo = ({ selectedInputLang }: ILangTopProps) => {
                   <div className="mt-[15px] flex w-full flex-col items-center justify-between rounded-[12px] bg-[#F8F8F8] p-[7px] 2xl:mt-[12px] 2xl:flex-row 2xl:p-[14px]">
                     <div className="grid grid-cols-2 gap-[10px] 2xl:grid-cols-6">
                       {experience?.position?.[selectedInputLang]?.map(
-                        (item, index) => (
+                        (item, positionIndex) => (
                           <div
-                            key={index}
+                            key={positionIndex}
                             className="relative flex items-center rounded-[8px] bg-[#0129E3] px-[15px] py-[8px] text-white"
                           >
                             <input
                               value={item}
                               onChange={(e) => {
                                 updatePositionInWorkExperience(
-                                  experience.id as number,
                                   index,
+                                  positionIndex,
                                   selectedInputLang,
                                   e.target.value
                                 );
@@ -461,8 +461,8 @@ const DashboardProInfo = ({ selectedInputLang }: ILangTopProps) => {
                             <button
                               onClick={() =>
                                 removePositionFromWorkExperience(
-                                  experience.id as number,
-                                  index
+                                  index,
+                                  positionIndex
                                 )
                               }
                               className="ml-[5px] text-white"
@@ -476,10 +476,7 @@ const DashboardProInfo = ({ selectedInputLang }: ILangTopProps) => {
                     <button className="mt-[25px] h-[20px] w-[20px] text-[#0129E3] 2xl:mt-0">
                       <FaPlus
                         onClick={() =>
-                          addPositionToWorkExperience(
-                            experience.id as number,
-                            selectedInputLang
-                          )
+                          addPositionToWorkExperience(index, selectedInputLang)
                         }
                         className="h-full w-full"
                       />
