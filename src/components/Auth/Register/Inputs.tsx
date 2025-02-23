@@ -134,7 +134,7 @@ const RegisterForm: FC = () => {
                   <button
                     type="button"
                     onClick={() => handleSelectRole('ROLE_CLINIC')}
-                    className="rounded-lg border border-[#0129E3] py-3 2xl:w-52"
+                    className={`w-[120px] rounded-lg border border-[#0129E3] py-3 font-medium 2xl:w-52 ${selectedRole === 'ROLE_CLINIC' ? 'bg-[#0129E3] text-white' : ''}`}
                   >
                     {lng === 'ru'
                       ? 'Клиника'
@@ -145,7 +145,7 @@ const RegisterForm: FC = () => {
                   <button
                     type="button"
                     onClick={() => handleSelectRole('ROLE_DOCTOR')}
-                    className="rounded-lg border border-[#0129E3] py-3 2xl:w-52"
+                    className={`w-[120px] rounded-lg border border-[#0129E3] py-3 font-medium 2xl:w-52 ${selectedRole === 'ROLE_DOCTOR' ? 'bg-[#0129E3] text-white' : ''}`}
                   >
                     {lng === 'ru'
                       ? 'Врач'
