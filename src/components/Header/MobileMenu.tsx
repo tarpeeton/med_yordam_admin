@@ -34,7 +34,7 @@ const MobileMenu: FC<MobileMenuProps> = ({ closeMenu }) => {
           <div className="mt-[31px] flex flex-col gap-[12px]">
             <Link
               href={'/login'}
-              className="min-w-[120px] rounded-full bg-white py-[15px] text-[14px] font-medium"
+              className="min-w-[120px] rounded-full bg-white py-[15px] text-center text-[14px] font-medium"
             >
               {locale === 'ru' ? 'Вход' : locale === 'uz' ? 'Kirish' : 'Login'}
             </Link>
