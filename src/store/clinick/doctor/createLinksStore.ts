@@ -55,7 +55,7 @@ export const useRegisterLinks = create<RegisterState>((set, get) => ({
     try {
       const { phone, instagram, telegram, facebook, youtube } = get();
       const { id, contactId } = useProfileStore.getState();
-      const token = sessionStorage.getItem('token');
+      const token = localStorage.getItem('token');
       const formData = new FormData();
       const clinicId = useClinicProfileStore.getState().id;
       const payload = {

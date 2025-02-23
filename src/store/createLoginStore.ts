@@ -108,7 +108,7 @@ export const useLoginStore = create<LoginState>((set, get) => ({
         }
       );
       const { token, role } = response.data.data;
-      sessionStorage.setItem('token', token);
+      localStorage.setItem('token', token);
       set({ success: true, error: false, role: role });
     } catch (error) {
       console.error('Login failed:', error);

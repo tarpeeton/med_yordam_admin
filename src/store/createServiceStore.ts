@@ -210,7 +210,7 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
     if (promotionToDelete?.id) {
       try {
         const { id: profileId } = useProfileStore.getState();
-        const token = sessionStorage.getItem('token');
+        const token = localStorage.getItem('token');
         const payload = {
           id: profileId,
           promotionList: [{ id: promotionToDelete.id.toString() }],
@@ -308,7 +308,7 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
     const serviceToDelete = services[index];
     if (serviceToDelete?.id) {
       try {
-        const token = sessionStorage.getItem('token');
+        const token = localStorage.getItem('token');
         await axios.delete(
           `https://medyordam.result-me.uz/api/service/${serviceToDelete.id}`,
           {
@@ -355,7 +355,7 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
     if (serviceItem && serviceItem.id) {
       try {
         const { id: doctorId } = useProfileStore.getState();
-        const token = sessionStorage.getItem('token');
+        const token = localStorage.getItem('token');
         const payload = {
           id: doctorId,
           serviceList: [
@@ -415,7 +415,7 @@ export const useServiceStore = create<ServiceStoreType>((set, get) => ({
     try {
       const { promotions, serviceList } = get();
       const { id } = useProfileStore.getState();
-      const token = sessionStorage.getItem('token');
+      const token = localStorage.getItem('token');
 
       const promotionList = await Promise.all(
         promotions.map(async (promotion) => {

@@ -134,7 +134,7 @@ export const useClinicPromotions = create<PromotionStoreType>((set, get) => ({
     const promotionToDelete = promotions[index];
     if (promotionToDelete?.id) {
       try {
-        const token = sessionStorage.getItem('token');
+        const token = localStorage.getItem('token');
         await axios.delete(
           `https://medyordam.result-me.uz/api/promotion/${promotionToDelete?.id}`,
           {
@@ -209,7 +209,7 @@ export const useClinicPromotions = create<PromotionStoreType>((set, get) => ({
       set({ errorMessage: { ru: '', uz: '', en: '' } });
 
       const { id: clinicId } = useClinicProfileStore.getState();
-      const token = sessionStorage.getItem('token');
+      const token = localStorage.getItem('token');
 
       const payloadPromotions = await Promise.all(
         promotions.map(async (promotion) => {

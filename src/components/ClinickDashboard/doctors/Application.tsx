@@ -10,7 +10,7 @@ const ApplicationMessage = () => {
     IUserApplication[] | []
   >([]);
   const { id } = useProfileStore();
-  const token = sessionStorage.getItem('token');
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
     const fetchApplication = async () => {

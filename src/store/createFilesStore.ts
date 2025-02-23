@@ -41,7 +41,7 @@ export const useUploadFiles = create<UploadFilesState>((set, get) => ({
   files: [],
   addFiles: (files, fileType = 'DOCUMENT') => {
     const { id: doctorId } = useProfileStore.getState();
-    const token = sessionStorage.getItem('token');
+    const token = localStorage.getItem('token');
 
     const newFiles: UploadFile[] = Array.from(files).map((file) => {
       const fileId = crypto.randomUUID();
@@ -98,7 +98,7 @@ export const useUploadFiles = create<UploadFilesState>((set, get) => ({
   },
 
   updateFile: async (id, file) => {
-    const token = sessionStorage.getItem('token');
+    const token = localStorage.getItem('token');
     try {
       const formData = new FormData();
       formData.append('file', file);
@@ -181,8 +181,8 @@ export const useUploadFiles = create<UploadFilesState>((set, get) => ({
         `https://medyordam.result-me.uz/api/doctor/file-deleted/${backendId}`,
         {
           headers: {
-            Authorization: sessionStorage.getItem('token')
-              ? `Bearer ${sessionStorage.getItem('token')}`
+            Authorization: localStorage.getItem('token')
+              ? `Bearer ${localStorage.getItem('token')}`
               : '',
           },
         }

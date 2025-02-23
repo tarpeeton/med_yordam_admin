@@ -7,7 +7,7 @@ import { useLocale } from 'next-intl';
 const DashboardMain = () => {
   const router = useRouter();
   const locale = useLocale();
-  const token = sessionStorage.getItem('token');
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
     if (!token) {

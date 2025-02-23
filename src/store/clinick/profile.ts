@@ -128,7 +128,7 @@ export const useClinicProfileStore = create<ClinicProfileStore>((set, get) => {
     },
 
     saveClinicProfile: async () => {
-      const token = sessionStorage.getItem('token') || '';
+      const token = localStorage.getItem('token') || '';
       const currentState = get();
 
       if (currentState.id) {
@@ -221,7 +221,7 @@ export const useClinicProfileStore = create<ClinicProfileStore>((set, get) => {
     },
 
     getclinickWithslug: async (slug: string) => {
-      const token = sessionStorage.getItem('token') || '';
+      const token = localStorage.getItem('token') || '';
       try {
         const response = await axios.get<
           ApiResponse<ClinicProfileResponseData>

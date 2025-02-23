@@ -143,7 +143,7 @@ export const clinickServiceStore = create<ClinickServiceStoreType>(
       const serviceToDelete = services[index];
       if (serviceToDelete?.id) {
         try {
-          const token = sessionStorage.getItem('token');
+          const token = localStorage.getItem('token');
           await axios.delete(
             `https://medyordam.result-me.uz/api/service/${serviceToDelete.id}`,
             {
@@ -191,7 +191,7 @@ export const clinickServiceStore = create<ClinickServiceStoreType>(
       if (serviceItem && serviceItem.id) {
         try {
           const { id: doctorId } = useClinicProfileStore.getState();
-          const token = sessionStorage.getItem('token');
+          const token = localStorage.getItem('token');
 
           const payload = {
             id: doctorId,
@@ -258,7 +258,7 @@ export const clinickServiceStore = create<ClinickServiceStoreType>(
       try {
         const { serviceList } = get();
         const { id } = useClinicProfileStore.getState();
-        const token = sessionStorage.getItem('token');
+        const token = localStorage.getItem('token');
 
         const transformedServices = serviceList.map((item) => ({
           ...(item.id ? { id: item.id } : {}),

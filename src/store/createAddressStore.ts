@@ -143,7 +143,7 @@ export const useAddressStore = create<AddressState>((set, get) => ({
     axios
       .put('https://medyordam.result-me.uz/api/doctor', payload, {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json',
         },
       })
@@ -159,7 +159,7 @@ export const useAddressStore = create<AddressState>((set, get) => ({
     try {
       const mapData = get().mapData;
       const { id } = useProfileStore.getState();
-      const token = sessionStorage.getItem('token');
+      const token = localStorage.getItem('token');
 
       if (mapData.length === 0) {
         throw new Error('No addresses to save');

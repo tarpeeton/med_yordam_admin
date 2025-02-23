@@ -127,7 +127,7 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
   saveProfile: async (): Promise<boolean> => {
     const { id, name, surname, patronymic, phone, exp, gender, image, photo } =
       get();
-    const token = sessionStorage.getItem('token');
+    const token = localStorage.getItem('token');
 
     if (!exp) {
       return false;

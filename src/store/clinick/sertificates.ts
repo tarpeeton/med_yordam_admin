@@ -159,7 +159,7 @@ export const useSertificatesStore = create<UploadFilesState>((set, get) => ({
   deleteFile: async (backendId) => {
     const clinickID = useClinicProfileStore.getState().id;
     try {
-      const token = sessionStorage.getItem('token');
+      const token = localStorage.getItem('token');
       const formData = new FormData();
       const payload = {
         id: clinickID,
@@ -218,7 +218,7 @@ export const useSertificatesStore = create<UploadFilesState>((set, get) => ({
   saveData: async (): Promise<boolean> => {
     try {
       const { files, aboutUs, address } = get();
-      const token = sessionStorage.getItem('token');
+      const token = localStorage.getItem('token');
       const tokenHeader = token ? `Bearer ${token}` : '';
       const filesToUpload = files.filter((file) => file.fileObj);
 

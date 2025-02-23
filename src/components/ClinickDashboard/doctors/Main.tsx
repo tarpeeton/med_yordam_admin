@@ -8,7 +8,7 @@ import { ILangTopProps } from '@/interface/langtopProps';
 const DashboardMain = ({ selectedInputLang }: ILangTopProps) => {
   const router = useRouter();
   const locale = useLocale();
-  const token = sessionStorage.getItem('token');
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
     if (!token) {

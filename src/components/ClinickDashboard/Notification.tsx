@@ -10,7 +10,7 @@ export const Notification = () => {
     IUserApplication[] | []
   >([]);
   const { id } = useClinicProfileStore();
-  const token = sessionStorage.getItem('token');
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
     const fetchApplication = async () => {
