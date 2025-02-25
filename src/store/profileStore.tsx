@@ -174,7 +174,6 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
         localStorage.setItem('slug', response.data.data.slug);
         return response.data.data.slug;
       } else {
-        // Yangi profil yaratish (id === 0)
         const genderEnum = gender.en.toUpperCase();
         const profileData = {
           id: undefined,
@@ -201,6 +200,8 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
             },
           }
         );
+        get().setProfile(response.data.data);
+
         localStorage.setItem('slug', response.data.data.slug);
         return response.data.data.slug;
       }
